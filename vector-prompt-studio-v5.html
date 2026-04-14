@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vector Prompt Studio v5 — Adobe Stock</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Fraunces:ital,wght@0,300;0,500;0,700;1,300;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0E0F13;--bg2:#13151B;--bg3:#1A1D26;--bg4:#222634;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#E8EAF0;--text2:#8B90A8;--text3:#4A5068;
+  --red:#E8432A;--gold:#D4A017;--green:#2ECC71;--blue:#4A9EFF;
+  --purple:#9B6DFF;--teal:#00D4AA;--accent:#E8432A;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.5;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:1000}
+
+.topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{width:32px;height:32px;background:var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.brand-name{font-family:'Fraunces',serif;font-size:17px;font-weight:500;color:var(--text);letter-spacing:-.02em}
+.brand-name em{font-style:italic;color:var(--accent)}
+.brand-ver{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:.1em;margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.mode-pill{padding:6px 14px;border-radius:3px;font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;border:1px solid var(--border2);color:var(--text2);background:transparent;font-family:'DM Sans',sans-serif;transition:all .15s}
+.mode-pill:hover{color:var(--text);border-color:var(--border2)}
+.mode-pill.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.shell{display:grid;grid-template-columns:350px 1fr;min-height:calc(100vh - 52px)}
+@media(max-width:860px){.shell{grid-template-columns:1fr}}
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;max-height:calc(100vh - 52px);position:sticky;top:52px}
+@media(max-width:860px){.sidebar{max-height:none;position:static}}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.sb-sec{border-bottom:1px solid var(--border);padding:18px 20px}
+.sb-num{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:.12em;margin-bottom:5px;display:block}
+.sb-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:2px;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-family:'IBM Plex Mono',monospace}
+.tag-req{background:rgba(232,67,42,.15);color:var(--red)}
+.tag-opt{background:rgba(212,160,23,.15);color:var(--gold)}
+.tag-key{background:rgba(46,204,113,.15);color:var(--green)}
+.tag-pro{background:rgba(74,158,255,.15);color:var(--blue)}
+.tag-sell{background:rgba(0,212,170,.15);color:var(--teal)}
+
+.field{margin-bottom:13px}
+.field:last-child{margin-bottom:0}
+.flabel{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.fhint{font-size:10px;color:var(--text3);margin-top:4px;line-height:1.5}
+.fhint-warn{font-size:10px;color:var(--gold);margin-top:4px;line-height:1.5;padding:5px 8px;background:rgba(212,160,23,.08);border-radius:3px;border-left:2px solid var(--gold)}
+.fhint-good{font-size:10px;color:var(--teal);margin-top:4px;line-height:1.5;padding:5px 8px;background:rgba(0,212,170,.08);border-radius:3px;border-left:2px solid var(--teal)}
+input[type=text],input[type=number],textarea,select{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:11px;padding:8px 11px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+input[type=text]:focus,input[type=number]:focus,textarea:focus,select:focus{border-color:var(--teal);background:var(--bg4)}
+textarea{resize:vertical;line-height:1.6}
+select option{background:var(--bg3)}
+
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{padding:4px 10px;border-radius:3px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--border2);color:var(--text2);background:var(--bg3);transition:all .12s;font-family:'DM Sans',sans-serif;letter-spacing:.02em}
+.chip:hover{border-color:var(--teal);color:var(--teal)}
+.chip.on{background:var(--teal);border-color:var(--teal);color:#000;font-weight:700}
+.chip.on-gold{background:rgba(212,160,23,.15);border-color:var(--gold);color:var(--gold)}
+.chip.on-red{background:rgba(232,67,42,.15);border-color:var(--red);color:var(--red)}
+.chip.on-blue{background:rgba(74,158,255,.15);border-color:var(--blue);color:var(--blue)}
+.chip.on-pur{background:rgba(155,109,255,.15);border-color:var(--purple);color:var(--purple)}
+
+.style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.style-card{border:1px solid var(--border2);border-radius:4px;padding:9px 6px 7px;cursor:pointer;text-align:center;transition:all .15s;background:var(--bg3)}
+.style-card:hover{border-color:var(--text2)}
+.style-card.on{border-color:var(--teal);background:rgba(0,212,170,.08)}
+.style-card.on .sc-lbl{color:var(--teal)}
+.sc-ico{font-size:18px;margin-bottom:3px;display:block;line-height:1}
+.sc-lbl{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.05em;text-transform:uppercase;line-height:1.3}
+
+/* BACKGROUND PICKER — new visual design */
+.bg-picker{display:flex;flex-direction:column;gap:6px}
+.bg-option{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:5px;border:1px solid var(--border2);cursor:pointer;transition:all .15s;background:var(--bg3)}
+.bg-option:hover{border-color:var(--text2)}
+.bg-option.on{border-color:var(--teal);background:rgba(0,212,170,.06)}
+.bg-option.on-gold{border-color:var(--gold);background:rgba(212,160,23,.06)}
+.bg-option.on-red{border-color:var(--red);background:rgba(232,67,42,.06)}
+.bg-preview{width:36px;height:36px;border-radius:5px;flex-shrink:0;border:1px solid rgba(255,255,255,.1)}
+.bg-info{flex:1;min-width:0}
+.bg-name{font-size:11px;font-weight:600;color:var(--text);margin-bottom:1px}
+.bg-sub{font-size:10px;color:var(--text3);line-height:1.4}
+.bg-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:2px;font-family:'IBM Plex Mono',monospace;flex-shrink:0}
+.bb-best{background:rgba(0,212,170,.2);color:var(--teal)}
+.bb-good{background:rgba(46,204,113,.15);color:var(--green)}
+.bb-ok{background:rgba(74,158,255,.15);color:var(--blue)}
+.bb-warn{background:rgba(212,160,23,.15);color:var(--gold)}
+.bb-bad{background:rgba(232,67,42,.15);color:var(--red)}
+.bg-custom-row{display:flex;align-items:center;gap:8px;padding:8px 11px;border-radius:5px;border:1px dashed var(--border2);background:var(--bg3)}
+.bg-custom-swatch{width:28px;height:28px;border-radius:4px;border:1px solid var(--border2);overflow:hidden;flex-shrink:0;position:relative}
+.bg-custom-swatch input[type=color]{position:absolute;width:150%;height:150%;top:-25%;left:-25%;border:none;cursor:pointer;opacity:0}
+.bg-custom-ico{font-size:16px;color:var(--text3);pointer-events:none}
+
+.sw-row{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.sw{width:26px;height:26px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:transform .15s;flex-shrink:0}
+.sw:hover{transform:scale(1.15)}
+.sw.on{outline:2px solid var(--teal);outline-offset:2px}
+
+.range-row{display:flex;align-items:center;gap:10px}
+input[type=range]{flex:1;height:3px;border-radius:2px;-webkit-appearance:none;background:var(--bg4);outline:none;cursor:pointer;border:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:var(--teal);cursor:pointer}
+.range-val{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--teal);min-width:90px;font-weight:500}
+
+.tog-group{display:flex;flex-direction:column;gap:7px}
+.tog-row{display:flex;align-items:center;justify-content:space-between}
+.tog-txt{font-size:11px;color:var(--text2)}
+.tog{width:30px;height:17px;border-radius:9px;background:var(--bg4);border:1px solid var(--border2);cursor:pointer;position:relative;transition:all .2s;flex-shrink:0}
+.tog.on{background:var(--teal);border-color:var(--teal)}
+.tog::after{content:'';position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;background:#fff;transition:transform .2s}
+.tog.on::after{transform:translateX(13px)}
+
+.tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tpl-card{border:1px solid var(--border2);border-radius:5px;padding:10px 11px;cursor:pointer;transition:all .15s;background:var(--bg3);position:relative;overflow:hidden}
+.tpl-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity .15s}
+.tpl-card:hover{border-color:var(--text2)}
+.tpl-card:hover::before{opacity:1}
+.tpl-card.on{border-color:var(--teal)}
+.tpl-card.on::before{background:var(--teal);opacity:1}
+.tpl-name{font-size:11px;font-weight:600;color:var(--text);margin-bottom:2px}
+.tpl-sub{font-size:10px;color:var(--text3);line-height:1.4}
+.tpl-badge{position:absolute;top:8px;right:8px;font-size:8px;font-weight:700;padding:1px 5px;border-radius:2px;font-family:'IBM Plex Mono',monospace}
+.tpl-hot{background:rgba(232,67,42,.2);color:var(--red)}
+.tpl-new{background:rgba(46,204,113,.2);color:var(--green)}
+.tpl-sell{background:rgba(0,212,170,.2);color:var(--teal)}
+
+.stag-area{min-height:76px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:7px;display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start;cursor:text;transition:border-color .2s}
+.stag-area:focus-within{border-color:var(--teal)}
+.stag-item{display:flex;align-items:center;gap:4px;background:var(--bg4);border:1px solid var(--border2);border-radius:3px;padding:3px 7px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text);white-space:nowrap}
+.stag-del{cursor:pointer;color:var(--text3);font-size:11px;line-height:1;padding:0 1px}
+.stag-del:hover{color:var(--red)}
+.stag-input{border:none;background:transparent;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:10px;outline:none;min-width:80px;flex:1}
+.stag-add-btn{font-size:10px;padding:3px 8px;border-radius:3px;background:var(--bg4);border:1px dashed var(--border2);color:var(--text3);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .12s;white-space:nowrap}
+.stag-add-btn:hover{border-color:var(--teal);color:var(--teal)}
+
+.qf-wrap{position:relative}
+.qf-dd{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bg3);border:1px solid var(--border2);border-radius:5px;z-index:50;max-height:200px;overflow-y:auto}
+.qf-dd.open{display:block}
+.qf-item{padding:8px 11px;cursor:pointer;font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text2);border-bottom:1px solid var(--border);line-height:1.4;transition:background .1s}
+.qf-item:last-child{border-bottom:none}
+.qf-item:hover{background:var(--bg4);color:var(--text)}
+.qf-item strong{display:block;color:var(--text);font-size:10px;margin-bottom:2px}
+
+.consist-box{background:var(--bg3);border:1px solid var(--border2);border-radius:5px;padding:13px}
+.consist-mode{display:flex;align-items:center;gap:6px;margin-bottom:11px}
+.consist-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.consist-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--green);font-family:'IBM Plex Mono',monospace}
+
+/* ALERT INSIGHT */
+.insight-box{padding:9px 12px;border-radius:4px;font-size:10px;line-height:1.6;margin-bottom:10px}
+.insight-teal{background:rgba(0,212,170,.08);border-left:2px solid var(--teal);color:var(--teal)}
+.insight-gold{background:rgba(212,160,23,.08);border-left:2px solid var(--gold);color:var(--gold)}
+.insight-red{background:rgba(232,67,42,.08);border-left:2px solid var(--red);color:var(--red)}
+
+/* COLOR STRATEGY PANEL */
+.color-strategy{background:var(--bg3);border:1px solid var(--border2);border-radius:5px;padding:12px;margin-bottom:10px}
+.cs-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3);margin-bottom:10px}
+.cs-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:10px}
+.cs-row:last-child{margin-bottom:0}
+.cs-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.cs-label{color:var(--text2);flex:1}
+.cs-val{font-family:'IBM Plex Mono',monospace;color:var(--text);font-size:9px}
+
+.main{padding:24px 28px 60px}
+@media(max-width:860px){.main{padding:16px}}
+
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:20px}
+@media(max-width:700px){.stats{grid-template-columns:repeat(3,1fr)}}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:10px 12px}
+.stat-l{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:3px}
+.stat-v{font-family:'Fraunces',serif;font-size:22px;color:var(--text);font-weight:500}
+.stat-v.c-teal{color:var(--teal)}
+.stat-v.c-gold{color:var(--gold)}
+.stat-v.c-green{color:var(--green)}
+.stat-v.c-pur{color:var(--purple)}
+
+/* RESEARCH BANNER */
+.research-banner{background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.2);border-radius:6px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:flex-start;gap:12px}
+.rb-icon{width:32px;height:32px;background:rgba(0,212,170,.15);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.rb-content{}
+.rb-title{font-size:11px;font-weight:700;color:var(--teal);margin-bottom:4px}
+.rb-text{font-size:10px;color:var(--text2);line-height:1.6}
+.rb-data{display:flex;gap:16px;margin-top:8px;flex-wrap:wrap}
+.rb-stat{font-size:10px;color:var(--text3);font-family:'IBM Plex Mono',monospace}
+.rb-stat span{color:var(--teal);font-weight:600}
+
+.warn{background:rgba(232,67,42,.1);border:1px solid rgba(232,67,42,.3);border-radius:4px;padding:9px 13px;font-size:11px;color:var(--red);margin-bottom:12px;display:none}
+.formula{display:flex;gap:4px;flex-wrap:wrap;align-items:center;padding:10px 13px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;margin-bottom:14px;font-family:'IBM Plex Mono',monospace;font-size:10px}
+.f{padding:3px 8px;border-radius:2px;font-weight:600}
+.fsep{color:var(--text3);font-size:12px}
+.f-s{background:rgba(46,204,113,.15);color:var(--green)}
+.f-st{background:rgba(74,158,255,.15);color:var(--blue)}
+.f-c{background:rgba(0,212,170,.15);color:var(--teal)}
+.f-co{background:rgba(155,109,255,.15);color:var(--purple)}
+.f-a{background:rgba(232,67,42,.15);color:var(--red)}
+
+.tabs{display:flex;gap:1px;background:var(--border);border-radius:4px;padding:2px;margin-bottom:16px;width:fit-content}
+.tab{padding:6px 16px;border-radius:3px;font-size:11px;font-weight:600;cursor:pointer;color:var(--text2);background:transparent;border:none;font-family:'DM Sans',sans-serif;letter-spacing:.02em;transition:all .15s}
+.tab.on{background:var(--bg3);color:var(--text)}
+
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.btn{padding:8px 18px;border-radius:3px;font-size:11px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.03em;transition:all .15s;border:1px solid transparent}
+.btn-main{background:var(--teal);color:#000;border-color:var(--teal)}
+.btn-main:hover{opacity:.88}
+.btn-out{background:transparent;color:var(--text);border-color:var(--border2)}
+.btn-out:hover{border-color:var(--teal);color:var(--teal)}
+.btn-pur{background:rgba(155,109,255,.15);color:var(--purple);border-color:var(--purple)}
+.btn-pur:hover{background:rgba(155,109,255,.25)}
+.btn-gold{background:rgba(212,160,23,.15);color:var(--gold);border-color:var(--gold)}
+.btn-gold:hover{background:rgba(212,160,23,.25)}
+
+.out-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:14px}
+.out-head{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg3)}
+.out-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text2);display:flex;align-items:center;gap:8px}
+.qdot{width:7px;height:7px;border-radius:50%;background:var(--text3);transition:background .3s}
+.qdot.q1{background:var(--red)}
+.qdot.q2{background:var(--gold)}
+.qdot.q3{background:var(--green)}
+.qdot.q4{background:var(--teal)}
+.out-body{padding:16px}
+.prompt-box{font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.85;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:14px;min-height:140px;white-space:pre-wrap;word-break:break-word;cursor:text;transition:border-color .2s;outline:none}
+.prompt-box:focus{border-color:var(--teal)}
+.prompt-box:empty::before{content:attr(data-ph);color:var(--text3);font-style:italic}
+.prompt-meta{display:flex;justify-content:space-between;margin-top:7px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text3)}
+
+/* BG PREVIEW STRIP */
+.bg-preview-strip{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.bp-item{border-radius:5px;padding:8px 10px;font-size:10px;border:1px solid var(--border2);text-align:center;min-width:80px}
+.bp-name{font-weight:600;margin-bottom:2px}
+.bp-hex{font-family:'IBM Plex Mono',monospace;font-size:9px;opacity:.7}
+
+.meta-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:14px}
+.meta-head{padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg3);display:flex;align-items:center;justify-content:space-between}
+.meta-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--text2)}
+.meta-body{padding:14px 16px;display:flex;flex-direction:column;gap:9px}
+.meta-row{display:grid;grid-template-columns:90px 1fr;gap:8px;align-items:start}
+.mk{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text3);padding-top:8px;font-weight:500}
+.mv{font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:7px 10px;color:var(--text);line-height:1.6;min-height:32px;word-break:break-word}
+.kw-box{display:flex;flex-wrap:wrap;gap:3px;padding:6px;background:var(--bg);border:1px solid var(--border);border-radius:3px;min-height:36px}
+.kw{padding:2px 7px;border-radius:2px;background:var(--bg3);border:1px solid var(--border);font-size:9px;color:var(--text2);font-family:'IBM Plex Mono',monospace}
+
+.var-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.var-card{background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:11px 13px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.var-card:hover{border-color:var(--teal)}
+.var-card::after{content:'Load';position:absolute;bottom:8px;right:10px;font-size:9px;color:var(--text3);font-family:'IBM Plex Mono',monospace;opacity:0;transition:opacity .15s}
+.var-card:hover::after{opacity:1}
+.var-label{font-size:10px;font-weight:700;color:var(--teal);margin-bottom:4px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em}
+.var-preview{font-size:10px;color:var(--text2);line-height:1.5;font-family:'IBM Plex Mono',monospace;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+
+.hist-list{display:flex;flex-direction:column;gap:5px}
+.hist-item{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:9px 12px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text2);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;transition:border-color .15s}
+.hist-item:hover{border-color:var(--teal);color:var(--text)}
+
+.sec-head{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.sec-head::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider{border:none;border-top:1px solid var(--border);margin:14px 0}
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--teal);color:#000;padding:10px 18px;border-radius:4px;font-size:11px;font-weight:700;font-family:'DM Sans',sans-serif;transform:translateY(12px);opacity:0;transition:all .25s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* DELIVERY CHECKLIST */
+.checklist{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.cl-item{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--text2);padding:5px 8px;background:var(--bg3);border-radius:3px;border:1px solid var(--border)}
+.cl-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.cl-dot-teal{background:var(--teal)}
+.cl-dot-gold{background:var(--gold)}
+.cl-dot-red{background:var(--red)}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">V</div>
+    <div>
+      <div class="brand-name">Vector<em>Studio</em></div>
+      <div class="brand-ver">Adobe Stock Prompt Engine · v5.0 · Research-Backed</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button class="mode-pill on" onclick="setMode('model',this)">Model Consistent</button>
+    <button class="mode-pill" onclick="setMode('general',this)">General</button>
+    <button class="mode-pill" onclick="setMode('batch',this)">Batch Series</button>
+  </div>
+</header>
+
+<div class="shell">
+<aside class="sidebar">
+
+  <!-- 00 TEMPLATES -->
+  <div class="sb-sec">
+    <span class="sb-num">00</span>
+    <div class="sb-title">Quick Templates <span class="tag tag-sell">10 packs</span></div>
+    <div class="tpl-grid" id="tplGrid"></div>
+    <div style="margin-top:8px;font-size:10px;color:var(--text3)">Klik template → semua field auto-fill termasuk background yang benar</div>
+  </div>
+
+  <!-- 01 SUBJECT -->
+  <div class="sb-sec">
+    <span class="sb-num">01</span>
+    <div class="sb-title">Subject & Theme <span class="tag tag-req">Required</span></div>
+    <div class="field">
+      <div class="flabel">Theme / Topic</div>
+      <input type="text" id="theme" placeholder="e.g. Agentic AI Tech, Australian Animals..." oninput="scheduleGen()">
+      <div class="fhint">Spesifik lebih baik — "cute Australian animal faces" beats "animals"</div>
+    </div>
+    <div class="field">
+      <div class="flabel">Icon count</div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="text" id="count" value="24" style="width:56px" oninput="scheduleGen()">
+        <div class="chips">
+          <button class="chip" onclick="setCount(8)">8</button>
+          <button class="chip" onclick="setCount(16)">16</button>
+          <button class="chip" onclick="setCount(24)">24</button>
+          <button class="chip" onclick="setCount(32)">32</button>
+          <button class="chip" onclick="setCount(50)">50</button>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="flabel" style="justify-content:space-between">
+        Specific Subjects
+        <button class="stag-add-btn" onclick="toggleSubjectDD()" id="subjectDDBtn">+ Quick Fill ▾</button>
+      </div>
+      <div class="qf-wrap">
+        <div class="qf-dd" id="subjectDD"></div>
+      </div>
+      <div class="stag-area" id="stagArea" onclick="focusTagInput()">
+        <input class="stag-input" id="stagInput" placeholder="Ketik subject + Enter..." onkeydown="handleTagKey(event)">
+      </div>
+      <div class="fhint">Tiap tag = 1 icon subject. Enter untuk tambah, × untuk hapus.</div>
+    </div>
+  </div>
+
+  <!-- 02 STYLE -->
+  <div class="sb-sec">
+    <span class="sb-num">02</span>
+    <div class="sb-title">Visual Style <span class="tag tag-req">Required</span></div>
+    <div class="field">
+      <div class="flabel">Icon style</div>
+      <div class="style-grid" id="styleGrid">
+        <div class="style-card on" data-val="flat outlined, thin uniform 2px stroke, dark outline on light background" onclick="styleClick(this)"><span class="sc-ico">◻</span><span class="sc-lbl">Flat Outlined</span></div>
+        <div class="style-card" data-val="filled solid flat, clean silhouette, no outlines" onclick="styleClick(this)"><span class="sc-ico">◼</span><span class="sc-lbl">Filled Solid</span></div>
+        <div class="style-card" data-val="duotone two-color flat, foreground + accent color" onclick="styleClick(this)"><span class="sc-ico">◧</span><span class="sc-lbl">Duotone</span></div>
+        <div class="style-card" data-val="minimal line art, hairline single-weight strokes on white" onclick="styleClick(this)"><span class="sc-ico">—</span><span class="sc-lbl">Line Art</span></div>
+        <div class="style-card" data-val="bold filled rounded corners, chunky friendly shapes" onclick="styleClick(this)"><span class="sc-ico">▣</span><span class="sc-lbl">Bold Rounded</span></div>
+        <div class="style-card" data-val="isometric 3D flat, 45° projection, geometric depth, clean outlines" onclick="styleClick(this)"><span class="sc-ico">⬡</span><span class="sc-lbl">Isometric 3D</span></div>
+        <div class="style-card" data-val="cartoon illustration, expressive, playful proportions, thick outline" onclick="styleClick(this)"><span class="sc-ico">★</span><span class="sc-lbl">Cartoon</span></div>
+        <div class="style-card" data-val="sticker style, thick black outline, vibrant fill, drop shadow" onclick="styleClick(this)"><span class="sc-ico">◉</span><span class="sc-lbl">Sticker</span></div>
+        <div class="style-card" data-val="pixel art retro 16-bit, aliased crisp edges, limited color palette" onclick="styleClick(this)"><span class="sc-ico">⊞</span><span class="sc-lbl">Pixel Art</span></div>
+        <div class="style-card" data-val="glassmorphism frosted, translucent panels, light backdrop" onclick="styleClick(this)"><span class="sc-ico">◈</span><span class="sc-lbl">Glass</span></div>
+        <div class="style-card" data-val="clay 3D render, soft volumetric, pastel colors, subtle shadow" onclick="styleClick(this)"><span class="sc-ico">◍</span><span class="sc-lbl">Clay 3D</span></div>
+        <div class="style-card" data-val="gradient filled, smooth color transitions, modern app icon style" onclick="styleClick(this)"><span class="sc-ico">◑</span><span class="sc-lbl">Gradient</span></div>
+      </div>
+    </div>
+    <div class="field">
+      <div class="flabel">Detail level</div>
+      <div class="range-row">
+        <input type="range" min="1" max="5" value="3" id="detail" oninput="updateDetail(this.value);scheduleGen()">
+        <span class="range-val" id="detailLbl">Balanced</span>
+      </div>
+    </div>
+    <div class="field">
+      <div class="flabel">Quality tier</div>
+      <div class="chips" id="qualChips">
+        <button class="chip" data-val="sketch draft" onclick="chipOne(this,'qualChips')">Draft</button>
+        <button class="chip on" data-val="production quality, clean crisp edges, stock-ready" onclick="chipOne(this,'qualChips')">Production</button>
+        <button class="chip" data-val="premium ultra-detailed, professional stock quality" onclick="chipOne(this,'qualChips')">Premium</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 BACKGROUND — RESEARCH-BASED -->
+  <div class="sb-sec">
+    <span class="sb-num">03</span>
+    <div class="sb-title">Background <span class="tag tag-sell">Data-driven</span></div>
+
+    <div class="insight-teal insight-box">Riset Adobe Stock 2025: 60% top-seller menggunakan transparent background. Adobe official guidelines mewajibkan transparent untuk icon sheets.</div>
+
+    <div class="field">
+      <div class="flabel">Pilih background utama</div>
+      <div class="bg-picker" id="bgPicker">
+
+        <div class="bg-option on" data-bg="transparent background, no fill, checkerboard pattern, fully transparent" onclick="pickBg(this)">
+          <div class="bg-preview" style="background:repeating-conic-gradient(#555 0% 25%,#222 0% 50%) 0 0/10px 10px"></div>
+          <div class="bg-info">
+            <div class="bg-name">Transparent</div>
+            <div class="bg-sub">Paling versatile. Buyer bisa pakai di project apapun. Wajib Adobe.</div>
+          </div>
+          <span class="bg-badge bb-best">#1 BEST</span>
+        </div>
+
+        <div class="bg-option" data-bg="pure white #FFFFFF background" onclick="pickBg(this)">
+          <div class="bg-preview" style="background:#ffffff"></div>
+          <div class="bg-info">
+            <div class="bg-name">Pure White #FFF</div>
+            <div class="bg-sub">Thumbnail paling bersih di Adobe Stock grid. UI, fintech, medical.</div>
+          </div>
+          <span class="bg-badge bb-good">#2 GREAT</span>
+        </div>
+
+        <div class="bg-option" data-bg="#F5F4F0 off-white background" onclick="pickBg(this)">
+          <div class="bg-preview" style="background:#F5F4F0;border-color:rgba(255,255,255,.05)"></div>
+          <div class="bg-info">
+            <div class="bg-name">Off-White #F5F4F0</div>
+            <div class="bg-sub">Premium, organik, hangat. Cocok untuk food, lifestyle, nature.</div>
+          </div>
+          <span class="bg-badge bb-good">#3 GOOD</span>
+        </div>
+
+        <div class="bg-option" data-bg="#E8F4FF light blue background" onclick="pickBg(this)">
+          <div class="bg-preview" style="background:#E8F4FF;border-color:rgba(255,255,255,.05)"></div>
+          <div class="bg-info">
+            <div class="bg-name">Light Blue #E8F4FF</div>
+            <div class="bg-sub">Profesional, bersih. Cocok untuk tech, AI, fintech, medical.</div>
+          </div>
+          <span class="bg-badge bb-ok">#4 OK</span>
+        </div>
+
+        <div class="bg-option" data-bg="#EEF4FF very light blue icon background frame per icon" onclick="pickBg(this)">
+          <div class="bg-preview" style="background:linear-gradient(135deg,#EEF4FF 50%,#E0EEFF 100%);border-color:rgba(255,255,255,.05)"></div>
+          <div class="bg-info">
+            <div class="bg-name">Light Blue Frame (per icon)</div>
+            <div class="bg-sub">Rounded square bg per icon di atas transparent. Populer untuk tech pack.</div>
+          </div>
+          <span class="bg-badge bb-ok">#5 TREND</span>
+        </div>
+
+        <div class="bg-option" data-bg="#F0F8F0 mint green background" onclick="pickBg(this)">
+          <div class="bg-preview" style="background:#F0F8F0;border-color:rgba(255,255,255,.05)"></div>
+          <div class="bg-info">
+            <div class="bg-name">Mint Green #F0F8F0</div>
+            <div class="bg-sub">Situasional. Hanya untuk eco, health, wellness niche.</div>
+          </div>
+          <span class="bg-badge bb-warn">NICHE</span>
+        </div>
+
+        <div class="bg-option on-red" data-bg="dark navy background" onclick="pickBg(this)" id="darkBgOption">
+          <div class="bg-preview" style="background:#0E1020"></div>
+          <div class="bg-info">
+            <div class="bg-name">Dark / Navy</div>
+            <div class="bg-sub">Kurang laku — buyer tidak bisa langsung pakai. Pakai hanya jika ada alasan kuat.</div>
+          </div>
+          <span class="bg-badge bb-bad">AVOID</span>
+        </div>
+
+      </div>
+
+      <div id="darkBgWarn" class="insight-gold insight-box" style="display:none;margin-top:8px">
+        Background gelap dipilih. Pastikan icon color tetap kontras dan readable di white background juga. Pertimbangkan upload versi transparent sebagai file utama.
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="flabel">Custom hex (opsional)</div>
+      <div class="bg-custom-row">
+        <div class="bg-custom-swatch">
+          <input type="color" id="bgCustomColor" value="#ffffff" oninput="setBgCustom(this.value)">
+          <span class="bg-custom-ico">+</span>
+        </div>
+        <input type="text" id="bgCustomHex" placeholder="#RRGGBB" style="flex:1" oninput="setBgCustomHex(this.value)">
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 COLOR STRATEGY -->
+  <div class="sb-sec">
+    <span class="sb-num">04</span>
+    <div class="sb-title">Color Strategy <span class="tag tag-key">Icon Colors</span></div>
+
+    <div class="insight-teal insight-box">Ingat: warna di sini adalah warna ICON-nya, bukan background. Icon harus kontras dan readable di background terang.</div>
+
+    <div class="field">
+      <div class="flabel">Palette mood</div>
+      <div class="chips" id="palChips">
+        <button class="chip on" data-val="vibrant multicolor, warm and playful, high contrast on white" onclick="chipOne(this,'palChips')">Vibrant</button>
+        <button class="chip" data-val="pastel soft colors, muted saturation, gentle on white background" onclick="chipOne(this,'palChips')">Pastel</button>
+        <button class="chip" data-val="monochromatic single hue, tints and shades, works on white" onclick="chipOne(this,'palChips')">Mono</button>
+        <button class="chip" data-val="earthy muted natural organic tones, readable on light background" onclick="chipOne(this,'palChips')">Earthy</button>
+        <button class="chip" data-val="bold high-contrast colors, strong readable lines" onclick="chipOne(this,'palChips')">Bold</button>
+        <button class="chip" data-val="corporate blue gray professional, dark lines on white" onclick="chipOne(this,'palChips')">Corporate</button>
+        <button class="chip" data-val="electric tech blue violet teal, dark outlines for light bg compatibility" onclick="chipOne(this,'palChips')">Tech Blue</button>
+        <button class="chip" data-val="grayscale black and white only, universal compatibility" onclick="chipOne(this,'palChips')">Grayscale</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="flabel">Primary icon color / accent</div>
+      <input type="text" id="accentColor" placeholder="e.g. electric blue #4A9EFF, coral red, teal..." oninput="scheduleGen()">
+    </div>
+
+    <div class="field">
+      <div class="flabel">Custom palette (HEX, opsional)</div>
+      <input type="text" id="customPal" placeholder="#4A9EFF, #00D4AA, #9B6DFF" oninput="scheduleGen()">
+    </div>
+
+    <div class="field">
+      <div class="flabel">Stroke / outline color</div>
+      <div class="chips" id="strokeColorChips">
+        <button class="chip on" data-val="dark navy #1A2040 stroke outline, high contrast on light background" onclick="chipOne(this,'strokeColorChips')">Dark Navy</button>
+        <button class="chip" data-val="pure black #000000 stroke outline" onclick="chipOne(this,'strokeColorChips')">Black</button>
+        <button class="chip" data-val="colored stroke matching icon fill color" onclick="chipOne(this,'strokeColorChips')">Colored</button>
+        <button class="chip" data-val="no stroke, filled shapes only" onclick="chipOne(this,'strokeColorChips')">No Stroke</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 CONSISTENCY MODEL -->
+  <div class="sb-sec" id="consistSec">
+    <span class="sb-num">05</span>
+    <div class="sb-title">Consistency Model <span class="tag tag-key">Stock Key</span></div>
+    <div class="consist-box">
+      <div class="consist-mode">
+        <div class="consist-dot" id="consistDot"></div>
+        <div class="consist-lbl" id="consistLbl">Model Consistent</div>
+      </div>
+      <div class="field">
+        <div class="flabel">Series / model name</div>
+        <input type="text" id="modelName" placeholder="e.g. Agentic AI Series v1" oninput="scheduleGen()">
+      </div>
+      <div class="field">
+        <div class="flabel">Style DNA</div>
+        <textarea id="styleDna" rows="3" placeholder="e.g. rounded square face, large expressive eyes, consistent nose shape, same proportions, uniform line weight..." oninput="scheduleGen()"></textarea>
+        <div class="fhint">Ini yang mengunci visual model — disertakan di setiap prompt</div>
+      </div>
+      <div class="field">
+        <div class="flabel">Stroke & technical spec</div>
+        <input type="text" id="strokeSpec" placeholder="2px uniform stroke, rounded caps, 8px corner radius" oninput="scheduleGen()">
+      </div>
+      <div class="field">
+        <div class="flabel">Light source</div>
+        <div class="chips" id="lightChips">
+          <button class="chip on" data-val="top-left light source, consistent shadow direction" onclick="chipOne(this,'lightChips')">Top-left</button>
+          <button class="chip" data-val="top-center light source" onclick="chipOne(this,'lightChips')">Top</button>
+          <button class="chip" data-val="flat front-facing no shadow" onclick="chipOne(this,'lightChips')">Flat</button>
+          <button class="chip" data-val="ambient all-around soft light" onclick="chipOne(this,'lightChips')">Ambient</button>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <div class="flabel">Batch number</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input type="number" id="batchNum" value="1" min="1" style="width:56px" oninput="scheduleGen()">
+          <span style="font-size:10px;color:var(--text3)">Increment tiap batch baru untuk continuity</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 TECHNICAL -->
+  <div class="sb-sec">
+    <span class="sb-num">06</span>
+    <div class="sb-title">Technical Specs <span class="tag tag-pro">Adobe</span></div>
+    <div class="field">
+      <div class="flabel">Canvas size</div>
+      <div class="chips" id="canvasChips">
+        <button class="chip" data-val="64×64px canvas" onclick="chipOne(this,'canvasChips')">64px</button>
+        <button class="chip" data-val="512×512px canvas" onclick="chipOne(this,'canvasChips')">512px</button>
+        <button class="chip on" data-val="1024×1024px canvas" onclick="chipOne(this,'canvasChips')">1024px</button>
+        <button class="chip" data-val="2048×2048px canvas" onclick="chipOne(this,'canvasChips')">2048px</button>
+      </div>
+    </div>
+    <div class="field">
+      <div class="flabel">Output format</div>
+      <div class="chips" id="fmtChips">
+        <button class="chip on" data-val="SVG scalable vector" onclick="chipOne(this,'fmtChips')">SVG</button>
+        <button class="chip" data-val="Adobe Illustrator AI" onclick="chipOne(this,'fmtChips')">AI</button>
+        <button class="chip" data-val="EPS vector" onclick="chipOne(this,'fmtChips')">EPS</button>
+        <button class="chip" data-val="PNG transparent background" onclick="chipOne(this,'fmtChips')">PNG</button>
+      </div>
+    </div>
+    <div class="field">
+      <div class="flabel">Grid layout</div>
+      <div class="chips" id="gridChips">
+        <button class="chip" data-val="individual icons, no grid layout" onclick="chipOne(this,'gridChips')">Individual</button>
+        <button class="chip on" data-val="4×4 sprite sheet grid" onclick="chipOne(this,'gridChips')">4×4</button>
+        <button class="chip" data-val="4×6 sprite sheet grid" onclick="chipOne(this,'gridChips')">4×6</button>
+        <button class="chip" data-val="5×5 sprite sheet grid" onclick="chipOne(this,'gridChips')">5×5</button>
+        <button class="chip" data-val="6×4 sprite sheet grid" onclick="chipOne(this,'gridChips')">6×4</button>
+      </div>
+    </div>
+    <div class="field">
+      <div class="flabel">Safe zone padding</div>
+      <div class="chips" id="padChips">
+        <button class="chip" data-val="no padding" onclick="chipOne(this,'padChips')">None</button>
+        <button class="chip on" data-val="8px safe zone padding around each icon" onclick="chipOne(this,'padChips')">8px</button>
+        <button class="chip" data-val="12px safe zone padding" onclick="chipOne(this,'padChips')">12px</button>
+        <button class="chip" data-val="16px safe zone padding" onclick="chipOne(this,'padChips')">16px</button>
+      </div>
+    </div>
+
+    <!-- DELIVERY VERSIONS -->
+    <div class="field" style="margin-bottom:0">
+      <div class="flabel">Delivery versions (upload strategy)</div>
+      <div class="insight-teal insight-box">Adobe merekomendasikan upload sampai 3 meaningful variations. Gunakan ini untuk maksimalkan exposure.</div>
+      <div class="tog-group">
+        <div class="tog-row"><span class="tog-txt">Version A: Transparent background (primary)</span><div class="tog on" id="togVerA" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+        <div class="tog-row"><span class="tog-txt">Version B: White background</span><div class="tog on" id="togVerB" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+        <div class="tog-row"><span class="tog-txt">Version C: Light colored background</span><div class="tog" id="togVerC" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 COMPLIANCE -->
+  <div class="sb-sec">
+    <span class="sb-num">07</span>
+    <div class="sb-title">Adobe Stock Compliance <span class="tag tag-req">Required</span></div>
+    <div class="tog-group">
+      <div class="tog-row"><span class="tog-txt">No real identifiable persons</span><div class="tog on" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+      <div class="tog-row"><span class="tog-txt">No trademarked characters/logos</span><div class="tog on" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+      <div class="tog-row"><span class="tog-txt">No watermarks or text overlays</span><div class="tog on" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+      <div class="tog-row"><span class="tog-txt">Declare AI-generated (2024+ policy)</span><div class="tog on" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+      <div class="tog-row"><span class="tog-txt">Commercially safe, royalty-free</span><div class="tog on" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+      <div class="tog-row"><span class="tog-txt">Tambahkan negative prompt block</span><div class="tog" id="negTog" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+    </div>
+    <div class="field" style="margin-top:11px">
+      <div class="flabel">Negative prompt</div>
+      <input type="text" id="negPrompt" placeholder="blurry, distorted, watermark, text, logo, dark background, low quality..." oninput="scheduleGen()">
+    </div>
+  </div>
+
+  <!-- 08 EXTRA -->
+  <div class="sb-sec">
+    <span class="sb-num">08</span>
+    <div class="sb-title">Extra Notes <span class="tag tag-opt">Optional</span></div>
+    <textarea id="extra" rows="3" placeholder="Additional requirements..." oninput="scheduleGen()"></textarea>
+  </div>
+
+</aside>
+
+<main class="main">
+
+  <!-- RESEARCH BANNER -->
+  <div class="research-banner">
+    <div class="rb-icon">📊</div>
+    <div class="rb-content">
+      <div class="rb-title">Research-Backed: Data Riset Adobe Stock 2025</div>
+      <div class="rb-text">Prompt generator ini telah diupdate berdasarkan analisis top-seller vector Adobe Stock Juni–Sept 2025. Background, color strategy, dan delivery instructions sudah disesuaikan dengan data riset terbaru.</div>
+      <div class="rb-data">
+        <span class="rb-stat">Transparent bg: <span>60%</span> top sellers</span>
+        <span class="rb-stat">Background > Icons: <span>+30%</span> sales</span>
+        <span class="rb-stat">Adobe rule: <span>Transparent wajib</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-l">Built</div><div class="stat-v c-teal" id="sBuilt">0</div></div>
+    <div class="stat"><div class="stat-l">Chars</div><div class="stat-v c-gold" id="sChars">0</div></div>
+    <div class="stat"><div class="stat-l">Subjects</div><div class="stat-v c-green" id="sSubjects">0</div></div>
+    <div class="stat"><div class="stat-l">Batch</div><div class="stat-v c-pur" id="sBatch">1</div></div>
+    <div class="stat"><div class="stat-l">History</div><div class="stat-v" id="sHist">0</div></div>
+  </div>
+
+  <div class="formula">
+    <span class="f f-s">Subject</span><span class="fsep">+</span>
+    <span class="f f-st">Style</span><span class="fsep">+</span>
+    <span class="f f-c">BG+Color</span><span class="fsep">+</span>
+    <span class="f f-co">DNA+Batch</span><span class="fsep">+</span>
+    <span class="f f-a">Specs+Delivery</span>
+    <span style="margin-left:auto;color:var(--text3);font-size:9px;font-family:'IBM Plex Mono',monospace" id="modeFormula">MODE: MODEL CONSISTENT</span>
+  </div>
+
+  <div class="warn" id="warn"></div>
+
+  <div class="tabs">
+    <button class="tab on" onclick="switchTab('prompt',this)">Prompt</button>
+    <button class="tab" onclick="switchTab('meta',this)">Adobe Metadata</button>
+    <button class="tab" onclick="switchTab('vars',this)">Variations</button>
+    <button class="tab" onclick="switchTab('delivery',this)">Delivery Plan</button>
+    <button class="tab" onclick="switchTab('hist',this)">History</button>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-main" onclick="buildPrompt()">Generate Prompt</button>
+    <button class="btn btn-out" onclick="copyPrompt()">Copy Prompt</button>
+    <button class="btn btn-out" onclick="buildVariations()">4 Variations</button>
+    <button class="btn btn-pur" onclick="randomizeAll()">Randomize</button>
+    <button class="btn btn-gold" onclick="fixDarkBg()">Fix Dark BG ↗</button>
+    <button class="btn btn-out" onclick="clearAll()">Clear</button>
+  </div>
+
+  <!-- TAB: PROMPT -->
+  <div id="tab-prompt">
+    <div class="out-card">
+      <div class="out-head">
+        <div class="out-title">
+          <div class="qdot" id="qdot"></div>
+          Generated Prompt
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;background:rgba(0,212,170,.1);color:var(--teal)" id="modeTag">Model Consistent</span>
+        </div>
+        <span style="font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--text3)" id="qlabel">—</span>
+      </div>
+      <div class="out-body">
+        <div class="prompt-box" id="promptBox" contenteditable="true" data-ph="Isi field di kiri → klik Generate Prompt..."></div>
+        <div class="prompt-meta">
+          <span id="pmeta">0 chars · 0 words</span>
+          <span id="pscore" style="color:var(--green)"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: METADATA -->
+  <div id="tab-meta" style="display:none">
+    <div class="meta-card">
+      <div class="meta-head">
+        <div class="meta-title">Adobe Stock Metadata</div>
+        <button class="btn btn-out" style="padding:5px 11px;font-size:10px" onclick="copyAllMeta()">Copy All</button>
+      </div>
+      <div class="meta-body">
+        <div class="meta-row"><div class="mk">Title</div><div class="mv" id="mTitle">—</div></div>
+        <div class="meta-row"><div class="mk">Description</div><div class="mv" id="mDesc">—</div></div>
+        <div class="meta-row"><div class="mk">Category</div><div class="mv" id="mCat">—</div></div>
+        <div class="meta-row"><div class="mk">Keywords</div><div class="kw-box" id="mKw"></div></div>
+        <div class="meta-row"><div class="mk">Series</div><div class="mv" id="mSeries">—</div></div>
+        <div class="meta-row"><div class="mk">AI Flag</div><div class="mv" style="color:var(--red);font-weight:600">Generative AI — declare on upload (required 2024+)</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: VARIATIONS -->
+  <div id="tab-vars" style="display:none">
+    <div class="sec-head">4 Prompt Variations</div>
+    <div class="var-grid" id="varGrid">
+      <div style="grid-column:1/-1;text-align:center;padding:24px;font-size:11px;color:var(--text3);font-family:'IBM Plex Mono',monospace">
+        Klik "4 Variations" setelah generate main prompt
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: DELIVERY PLAN -->
+  <div id="tab-delivery" style="display:none">
+    <div class="out-card">
+      <div class="out-head">
+        <div class="out-title">Upload & Delivery Plan — Adobe Stock</div>
+        <button class="btn btn-out" style="padding:5px 11px;font-size:10px" onclick="copyDelivery()">Copy Plan</button>
+      </div>
+      <div class="out-body">
+        <div class="prompt-box" id="deliveryBox" style="min-height:200px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: HISTORY -->
+  <div id="tab-hist" style="display:none">
+    <div class="sec-head">Prompt History (last 10)</div>
+    <div class="hist-list" id="histList">
+      <div style="font-size:11px;color:var(--text3);padding:8px;font-family:'IBM Plex Mono',monospace">No prompts yet.</div>
+    </div>
+  </div>
+
+</main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const DETAIL_LABELS=['Minimal — simple silhouettes','Simple — basic shapes','Balanced — moderate detail','Detailed — rich features','Ultra — maximum fine detail'];
+const BLOCKED=[
+  {p:/\b(child|minor|kid|teen|underage).{0,20}(sex|nude|erotic|porn)\b/i,r:'Konten melibatkan minor dilarang.'},
+  {p:/\b(porn|pornograph|hentai|explicit.nude|xxx)\b/i,r:'Konten seksual eksplisit dilarang.'},
+  {p:/\b(terror|bomb.making|extremis)\b/i,r:'Konten kekerasan ekstremis dilarang.'},
+];
+
+const TEMPLATES=[
+  {name:'Australian Animals',badge:'hot',theme:'Cute Australian animal faces',count:24,subjects:['kangaroo','koala','wombat','platypus','echidna','quokka','Tasmanian devil','kookaburra','cockatoo','wallaby','possum','dingo','emu','cassowary','sugar glider','numbat','bilby','bandicoot','frilled lizard','saltwater crocodile','blue-tongue lizard','thorny devil','sea eagle','dugong'],style:'cartoon illustration, expressive, playful proportions, thick outline',palette:'vibrant multicolor warm and playful, high contrast on white',bg:'pure white #FFFFFF background',dna:'rounded square face shape, large expressive circular eyes, small button nose, consistent ear proportions, minimal fur texture lines, friendly expression',stroke:'2px uniform outline, rounded caps, 8px corner radius',light:'top-left light source, consistent shadow direction',accent:'warm earthy tones, natural colors',grid:'4×6 sprite sheet grid',canvas:'1024×1024px canvas',extra:'Each animal face only, shoulders and up. Friendly and approachable. Dark outline on white background.'},
+  {name:'Agentic AI Tech',badge:'new',theme:'Agentic AI Tech',count:24,subjects:['AI agent brain core','autonomous robot arm','multi-agent network mesh','LLM language model chip','neural pathway circuit','agent task queue pipeline','decision tree node','reinforcement learning loop','memory vector database','tool calling API connector','orchestration workflow engine','AI model inference server','agent observation sensor','reward signal optimizer','planning module CPU','environment simulation grid','policy gradient chip','embedding space cluster','attention mechanism head','transformer block unit','agent spawner controller','human-in-the-loop gate','feedback loop circuit','autonomous deployment pod'],style:'flat outlined, thin uniform 2px stroke, dark outline on light background',palette:'Tech Blue — electric blue violet teal, dark outlines for light bg',bg:'#E8F4FF light blue background',dna:'flat isometric 3D style, electric blue #4A9EFF primary color, teal #00D4AA accent, dark navy #1A2040 outlines, consistent 2px stroke, clean geometric shapes, NO glow effects, NO dark fill background',stroke:'2px uniform dark navy stroke, sharp technical corners, no glow',light:'top-left light source, consistent shadow direction',accent:'electric blue #4A9EFF primary, teal #00D4AA secondary',grid:'4×6 sprite sheet grid',canvas:'1024×1024px canvas',extra:'Icons must be clearly readable on white background. Electric blue and teal colored icons with dark navy outlines. Light blue #E8F4FF background. NO dark background fill on icons.'},
+  {name:'AI Tech Server',badge:'',theme:'AI Tech Server Detail',count:24,subjects:['CPU processor chip','GPU graphics card','RAM memory module','SSD storage drive','server rack unit','network switch','fiber optic cable','cooling fan','motherboard circuit','power supply unit','data center tower','ethernet port','USB hub connector','heat sink','PCIe expansion slot','NVMe drive','BIOS chip','liquid cooling system','bandwidth signal wave','cloud server node','firewall shield','router antenna','quantum processor','RAID array storage'],style:'flat outlined, thin uniform 2px stroke, dark outline on light background',palette:'corporate professional blue gray, dark outlines on white',bg:'pure white #FFFFFF background',dna:'technical blueprint aesthetic, precise 2px lines, metallic silver components, electric blue accent, clean geometric shapes, white background with blue accent',stroke:'2px uniform stroke, sharp technical corners',light:'top-center light source',accent:'electric blue #4A9EFF accents on white',grid:'4×6 sprite sheet grid',canvas:'1024×1024px canvas',extra:'Blueprint style, white background, blue accent lines only.'},
+  {name:'Fantasy RPG Items',badge:'hot',theme:'Fantasy RPG game items and weapons',count:32,subjects:['iron sword','magic staff','healing potion red','mana potion blue','dragon scale shield','enchanted bow','fire spell scroll','leather armor','iron helmet','ring of power','treasure chest','magic wand','ancient tome','crystal ball','rope grappling hook','lantern torch','silver axe','crossbow','throwing daggers','emerald amulet','shadow cloak','battle hammer','poison vial','golden crown'],style:'cartoon illustration, expressive, playful proportions, thick outline',palette:'vibrant multicolor warm and playful, high contrast',bg:'transparent background, no fill, checkerboard pattern, fully transparent',dna:'game item icon style, thick 3px black outline, vibrant saturated colors, subtle inner highlight, consistent icon size',stroke:'3px thick black outline, rounded corners, vibrant fill',light:'top-left light source, consistent shadow direction',accent:'gold #D4A017 legendary, red for weapons',grid:'4×4 sprite sheet grid',canvas:'512×512px canvas',extra:'Game-ready icon style. Transparent background. Drop shadow subtle per icon.'},
+  {name:'Food & Cuisine',badge:'',theme:'International street food and cuisine',count:24,subjects:['sushi roll','ramen bowl','tacos','pizza slice','burger','banh mi','pad thai','dim sum basket','shawarma wrap','paella','bao bun','empanada','jerk chicken','falafel wrap','pho bowl','curry bowl','crepe','churros','mango sticky rice','dumplings','fish and chips','lobster roll','biryani','kimchi bowl'],style:'cartoon illustration, expressive, playful proportions, thick outline',palette:'vibrant multicolor warm and playful, warm appetizing palette',bg:'pure white #FFFFFF background',dna:'cute food illustration, slight 3/4 top-down view, steam on hot food, consistent drop shadow, warm inviting colors',stroke:'2px outline, rounded soft edges',light:'top-left light source, consistent shadow direction',accent:'warm yellows and reds, appetizing warm tones',grid:'4×6 sprite sheet grid',canvas:'1024×1024px canvas',extra:'Appetizing and colorful. White background. No text labels inside icons.'},
+  {name:'Space & Astronomy',badge:'',theme:'Space exploration and astronomy',count:24,subjects:['rocket launch','astronaut helmet','space station','black hole','supernova explosion','moon base','mars rover','telescope','satellite dish','asteroid belt','comet','nebula cloud','space shuttle','alien planet','space suit glove','milky way galaxy','solar flare','meteor shower','space debris field','wormhole portal','quantum drive engine','cryo sleep pod','space beacon','planetary rings'],style:'flat outlined, thin uniform 2px stroke, dark outline on light background',palette:'Tech Blue — electric blue violet, dark outlines on light background',bg:'#E8F4FF light blue background',dna:'cosmic aesthetic, consistent blue and purple highlights, same glowing style but on light blue background, no dark fill',stroke:'2px stroke, dark navy outlines, clean sci-fi geometry',light:'ambient all-around soft light',accent:'cosmic blue #4A9EFF and purple #9B6DFF on light background',grid:'4×6 sprite sheet grid',canvas:'1024×1024px canvas',extra:'Cosmic style but on light blue background for Adobe Stock compatibility.'},
+  {name:'Finance & Fintech',badge:'',theme:'Finance and fintech digital banking icons',count:24,subjects:['crypto wallet','bitcoin coin','stock chart uptrend','bank building','credit card','digital payment QR','gold bar stack','piggy bank','investment graph','loan document','insurance shield','forex currency exchange','yield farming','DeFi protocol','NFT frame','digital vault','wire transfer','compound interest','tax document','portfolio pie chart','fund management','blockchain chain','savings jar','financial report'],style:'flat outlined, thin uniform 2px stroke, dark outline on white',palette:'corporate blue gray professional, dark outlines on white',bg:'pure white #FFFFFF background',dna:'clean fintech aesthetic, consistent 2px dark stroke, blue primary color, minimal geometric shapes, professional trustworthy feel',stroke:'2px uniform stroke, slightly rounded corners',light:'flat front-facing no shadow',accent:'trusted blue #4A9EFF, gold #D4A017 premium',grid:'4×6 sprite sheet grid',canvas:'1024×1024px canvas',extra:'Clean and professional. White background. No gradients.'},
+  {name:'Health & Medical',badge:'',theme:'Health wellness and medical icons',count:24,subjects:['stethoscope','heart rate monitor','DNA strand','pill capsule','syringe vaccine','medical cross','brain scan','lung organ','blood drop test','ambulance','hospital bed','x-ray scan','surgical tools','microscope','first aid kit','tooth dental','eye ophthalmology','kidney organ','liver organ','spine bone','ECG waveform','medical app phone','nutrition plate','meditation pose'],style:'flat outlined, thin uniform 2px stroke, dark outline on light background',palette:'pastel soft colors, muted saturation, gentle on white background',bg:'pure white #FFFFFF background',dna:'clean medical aesthetic, 2px stroke, soft pastel colors, reassuring clinical feel, consistent rounded shapes',stroke:'2px clean stroke, soft rounded corners',light:'flat front-facing no shadow',accent:'medical green #2ECC71 and clinical blue #4A9EFF on white',grid:'4×6 sprite sheet grid',canvas:'1024×1024px canvas',extra:'Trustworthy and clean. White background. Pastel tones.'},
+  {name:'Nature & Ecology',badge:'',theme:'Nature ecology and environment icons',count:24,subjects:['oak tree','solar panel','wind turbine','recycling arrows','water droplet','leaf sprout','coral reef','bee honeycomb','mountain peak','river flow','compost pile','electric car','carbon footprint','rainforest canopy','polar ice cap','wildfire alert','ocean wave','seed germination','bamboo stalk','butterfly lifecycle','soil layers','water filtration','green energy bolt','earth globe hand'],style:'bold filled rounded corners, chunky friendly shapes',palette:'earthy muted natural organic tones, readable on light background',bg:'#F0F8F0 mint green background',dna:'organic rounded shapes, earthy green and brown palette, friendly approachable, consistent thick rounded corners',stroke:'2.5px stroke, very rounded corners, organic flowing shapes',light:'top-center light source',accent:'nature green #2ECC71 and earth brown on mint background',grid:'4×6 sprite sheet grid',canvas:'1024×1024px canvas',extra:'Eco-positive and warm. Light mint background.'},
+  {name:'Architecture & Design',badge:'new',theme:'Architecture interior design and construction icons',count:24,subjects:['blueprint floor plan','modern house','skyscraper tower','bridge structure','window frame design','interior sofa','kitchen island','bathroom sink','ceiling beam','door handle','architectural column','spiral staircase','rooftop terrace','open floor plan','material samples','paint roller','measuring tape','CAD drawing tool','foundation layer','green roof','skylight window','modular shelving','outdoor deck','facade panels'],style:'minimal line art, hairline single-weight strokes on white',palette:'monochromatic single hue, tints and shades, works on white',bg:'pure white #FFFFFF background',dna:'architectural blueprint aesthetic, precise 1px hairline strokes, technical drawing feel, white background with blue accent elements only',stroke:'1px precise hairline stroke, sharp right angles',light:'flat front-facing no shadow',accent:'architectural blue #185FA5 on white',grid:'4×6 sprite sheet grid',canvas:'1024×1024px canvas',extra:'Technical precision. Blueprint aesthetic. Pure white background.'},
+];
+
+const SUBJECT_QUICK={
+  'AI / Tech':['AI agent brain','neural network','machine learning chip','API connector','data pipeline','cloud server','GPU cluster','vector database','transformer block','attention head'],
+  'Animals':['lion face','tiger','elephant','giraffe','wolf','fox','bear','owl','eagle','dolphin'],
+  'Food':['pizza','sushi','burger','tacos','ramen','coffee cup','cake slice','salad bowl','pasta','smoothie'],
+  'Nature':['oak tree','mountain peak','ocean wave','sun rays','moon phase','flower blossom','leaf','snowflake','rain drop','fire flame'],
+  'Business':['bar chart','pie chart','briefcase','handshake','calendar','email envelope','target goal','trophy','lightbulb idea','magnifying glass'],
+};
+
+let mode='model';
+let currentBgVal='transparent background, no fill, checkerboard pattern, fully transparent';
+let currentStyle='flat outlined, thin uniform 2px stroke, dark outline on light background';
+let subjects=[];
+let builtCount=0;
+let promptHistory=[];
+let genTimer=null;
+
+function init(){
+  buildTemplateGrid();
+  buildSubjectQuickDD();
+}
+
+function buildTemplateGrid(){
+  const grid=document.getElementById('tplGrid');
+  TEMPLATES.forEach((t,i)=>{
+    const el=document.createElement('div');
+    el.className='tpl-card';
+    el.innerHTML=`<div class="tpl-name">${t.name}</div><div class="tpl-sub">${t.theme.slice(0,34)}${t.theme.length>34?'...':''}</div>${t.badge?`<span class="tpl-badge tpl-${t.badge==='new'?'new':t.badge==='hot'?'hot':'sell'}">${t.badge}</span>`:''}`;
+    el.onclick=()=>loadTemplate(i,el);
+    grid.appendChild(el);
+  });
+}
+
+function buildSubjectQuickDD(){
+  const dd=document.getElementById('subjectDD');
+  Object.entries(SUBJECT_QUICK).forEach(([cat,items])=>{
+    const el=document.createElement('div');
+    el.className='qf-item';
+    el.innerHTML=`<strong>${cat}</strong>${items.slice(0,4).join(', ')}...`;
+    el.onclick=()=>{items.forEach(addSubject);closeSubjectDD();scheduleGen();};
+    dd.appendChild(el);
+  });
+}
+
+function loadTemplate(i,el){
+  document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  const t=TEMPLATES[i];
+  document.getElementById('theme').value=t.theme;
+  document.getElementById('count').value=t.count;
+  subjects=[];
+  document.querySelectorAll('.stag-item').forEach(e=>e.remove());
+  t.subjects.forEach(addSubject);
+  setStyleByVal(t.style);
+  chipOneByVal('palChips',t.palette);
+  setBgByVal(t.bg);
+  if(t.dna) document.getElementById('styleDna').value=t.dna;
+  if(t.stroke) document.getElementById('strokeSpec').value=t.stroke;
+  if(t.accent) document.getElementById('accentColor').value=t.accent;
+  if(t.extra) document.getElementById('extra').value=t.extra;
+  chipOneByVal('gridChips',t.grid);
+  chipOneByVal('canvasChips',t.canvas);
+  chipOneByVal('lightChips',t.light);
+  if(t.name) document.getElementById('modelName').value=t.name+' v1';
+  document.getElementById('customPal').value='';
+  updateStats();buildPrompt();
+  toast(`Loaded: ${t.name}`);
+}
+
+function pickBg(el){
+  document.querySelectorAll('.bg-option').forEach(e=>{e.classList.remove('on','on-gold','on-red');});
+  const val=el.dataset.bg;
+  if(val.includes('dark')||val.includes('navy')||val.includes('0E1020')){
+    el.classList.add('on-red');
+    document.getElementById('darkBgWarn').style.display='block';
+  } else {
+    el.classList.add('on');
+    document.getElementById('darkBgWarn').style.display='none';
+  }
+  currentBgVal=val;
+  scheduleGen();
+}
+
+function setBgByVal(val){
+  document.querySelectorAll('.bg-option').forEach(e=>e.classList.remove('on','on-gold','on-red'));
+  document.getElementById('darkBgWarn').style.display='none';
+  currentBgVal=val;
+  const opts=document.querySelectorAll('.bg-option');
+  let matched=false;
+  opts.forEach(o=>{
+    if(val.includes('transparent')&&o.dataset.bg.includes('transparent')){o.classList.add('on');matched=true;}
+    else if(val.includes('FFFFFF')&&o.dataset.bg.includes('FFFFFF')){o.classList.add('on');matched=true;}
+    else if(val.includes('F5F4F0')&&o.dataset.bg.includes('F5F4F0')){o.classList.add('on');matched=true;}
+    else if(val.includes('E8F4FF')&&o.dataset.bg.includes('E8F4FF')&&!o.dataset.bg.includes('EEF4FF')){o.classList.add('on');matched=true;}
+    else if(val.includes('EEF4FF')&&o.dataset.bg.includes('EEF4FF')){o.classList.add('on');matched=true;}
+    else if(val.includes('F0F8F0')&&o.dataset.bg.includes('F0F8F0')){o.classList.add('on');matched=true;}
+    else if((val.includes('dark')||val.includes('navy'))&&o.dataset.bg.includes('dark')){o.classList.add('on-red');document.getElementById('darkBgWarn').style.display='block';matched=true;}
+  });
+  if(!matched) opts[0].classList.add('on');
+}
+
+function setBgCustom(hex){
+  document.querySelectorAll('.bg-option').forEach(e=>e.classList.remove('on','on-gold','on-red'));
+  document.getElementById('bgCustomHex').value=hex;
+  currentBgVal=hex+' background';
+  scheduleGen();
+}
+function setBgCustomHex(val){
+  if(/^#[0-9A-Fa-f]{6}$/.test(val)){
+    document.getElementById('bgCustomColor').value=val;
+    setBgCustom(val);
+  }
+}
+
+function fixDarkBg(){
+  document.querySelectorAll('.bg-option').forEach(e=>e.classList.remove('on','on-gold','on-red'));
+  const transparentOpt=document.querySelector('.bg-option[data-bg*="transparent"]');
+  if(transparentOpt){transparentOpt.classList.add('on');currentBgVal=transparentOpt.dataset.bg;}
+  document.getElementById('darkBgWarn').style.display='none';
+  const palChip=document.querySelector('#palChips .chip[data-val*="Tech Blue"]');
+  if(palChip){chipOneByVal('palChips',palChip.dataset.val);}
+  const strokeChip=document.querySelector('#strokeColorChips .chip[data-val*="dark navy"]');
+  if(strokeChip){chipOneByVal('strokeColorChips',strokeChip.dataset.val);}
+  const dnaEl=document.getElementById('styleDna');
+  if(dnaEl.value.includes('dark background')||dnaEl.value.includes('navy background')){
+    dnaEl.value=dnaEl.value.replace(/dark background[^,]*/gi,'transparent background').replace(/navy background[^,]*/gi,'transparent background').replace(/glow effect[^,]*/gi,'clean sharp edges').replace(/neon glow[^,]*/gi,'crisp outlines');
+  }
+  scheduleGen();
+  toast('Background diperbaiki → Transparent + Dark outline');
+}
+
+function addSubject(val){
+  val=val.trim();
+  if(!val||subjects.includes(val.toLowerCase()))return;
+  subjects.push(val.toLowerCase());
+  const area=document.getElementById('stagArea');
+  const inp=document.getElementById('stagInput');
+  const tag=document.createElement('div');
+  tag.className='stag-item';tag.dataset.val=val;
+  tag.innerHTML=`${val}<span class="stag-del" onclick="removeSubject('${val.replace(/'/g,"\\'")}',this.parentNode)">×</span>`;
+  area.insertBefore(tag,inp);
+  document.getElementById('sSubjects').textContent=subjects.length;
+}
+
+function removeSubject(val,el){
+  subjects=subjects.filter(s=>s!==val.toLowerCase());el.remove();
+  document.getElementById('sSubjects').textContent=subjects.length;scheduleGen();
+}
+
+function handleTagKey(e){
+  if(e.key==='Enter'){e.preventDefault();const v=e.target.value.trim();if(v){addSubject(v);e.target.value='';scheduleGen();}}
+  if(e.key==='Backspace'&&!e.target.value){const tags=document.querySelectorAll('.stag-item');if(tags.length){const last=tags[tags.length-1];removeSubject(last.dataset.val,last);}}
+}
+
+function focusTagInput(){document.getElementById('stagInput').focus();}
+function toggleSubjectDD(){document.getElementById('subjectDD').classList.toggle('open');}
+function closeSubjectDD(){document.getElementById('subjectDD').classList.remove('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('.qf-wrap')&&!e.target.closest('#subjectDDBtn'))closeSubjectDD();});
+
+function setMode(m,el){
+  mode=m;
+  document.querySelectorAll('.mode-pill').forEach(e=>e.classList.remove('on'));el.classList.add('on');
+  const cs=document.getElementById('consistSec'),tag=document.getElementById('modeTag'),lbl=document.getElementById('consistLbl'),dot=document.getElementById('consistDot'),fm=document.getElementById('modeFormula');
+  if(m==='model'){cs.style.display='';tag.textContent='Model Consistent';lbl.textContent='Model Consistent';dot.style.background='var(--green)';fm.textContent='MODE: MODEL CONSISTENT';}
+  else if(m==='general'){cs.style.display='none';tag.textContent='General';lbl.textContent='General';dot.style.background='var(--gold)';fm.textContent='MODE: GENERAL';}
+  else{cs.style.display='';tag.textContent='Batch Series';lbl.textContent='Batch Series';dot.style.background='var(--blue)';fm.textContent='MODE: BATCH SERIES';}
+  scheduleGen();
+}
+
+function chipOne(el,groupId){document.querySelectorAll('#'+groupId+' .chip').forEach(e=>e.classList.remove('on','on-red','on-gold','on-pur','on-blue'));el.classList.add('on');scheduleGen();}
+function chipOneByVal(groupId,val){const chips=document.querySelectorAll('#'+groupId+' .chip');chips.forEach(e=>e.classList.remove('on'));const t=Array.from(chips).find(c=>c.dataset.val===val);if(t)t.classList.add('on');}
+function getChip(groupId){const el=document.querySelector('#'+groupId+' .chip.on');return el?el.dataset.val:'';}
+function styleClick(el){document.querySelectorAll('.style-card').forEach(e=>e.classList.remove('on'));el.classList.add('on');currentStyle=el.dataset.val;scheduleGen();}
+function setStyleByVal(val){document.querySelectorAll('.style-card').forEach(e=>{e.classList.remove('on');if(e.dataset.val===val){e.classList.add('on');currentStyle=val;}});}
+function updateDetail(v){document.getElementById('detailLbl').textContent=DETAIL_LABELS[v-1];}
+function setCount(n){document.getElementById('count').value=n;scheduleGen();}
+
+function switchTab(name,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');
+  ['prompt','meta','vars','delivery','hist'].forEach(t=>document.getElementById('tab-'+t).style.display=t===name?'':'none');
+  if(name==='delivery')buildDeliveryPlan();
+}
+
+function scheduleGen(){const box=document.getElementById('promptBox');if(!box.textContent.trim())return;clearTimeout(genTimer);genTimer=setTimeout(buildPrompt,400);}
+
+function buildPrompt(){
+  const theme=document.getElementById('theme').value.trim()||'vector icons';
+  const count=document.getElementById('count').value.trim()||'24';
+  const modelName=document.getElementById('modelName').value.trim();
+  const styleDna=document.getElementById('styleDna').value.trim();
+  const strokeSpec=document.getElementById('strokeSpec').value.trim();
+  const accentCol=document.getElementById('accentColor').value.trim();
+  const customPal=document.getElementById('customPal').value.trim();
+  const extra=document.getElementById('extra').value.trim();
+  const negPrompt=document.getElementById('negPrompt').value.trim();
+  const detail=parseInt(document.getElementById('detail').value);
+  const batch=document.getElementById('batchNum')?document.getElementById('batchNum').value:'1';
+  const palette=getChip('palChips');
+  const quality=getChip('qualChips');
+  const canvas=getChip('canvasChips');
+  const format=getChip('fmtChips');
+  const grid=getChip('gridChips');
+  const padding=getChip('padChips');
+  const light=getChip('lightChips');
+  const strokeColor=getChip('strokeColorChips');
+  const negOn=document.getElementById('negTog').classList.contains('on');
+  const verA=document.getElementById('togVerA').classList.contains('on');
+  const verB=document.getElementById('togVerB').classList.contains('on');
+  const verC=document.getElementById('togVerC').classList.contains('on');
+
+  const warnEl=document.getElementById('warn');
+  for(const b of BLOCKED){if(b.p.test([theme,styleDna,extra].join(' '))){warnEl.textContent='Policy: '+b.r;warnEl.style.display='block';return;}}
+  warnEl.style.display='none';
+
+  const lines=[];
+
+  let intro=`Create a cohesive set of ${count} vector icons on the theme of "${theme}"`;
+  if(mode==='batch') intro+=`, as Batch #${batch} of an ongoing commercial series`;
+  lines.push(intro+'.\n');
+
+  if(subjects.length>0){
+    lines.push('SUBJECTS TO INCLUDE (one icon per subject):');
+    subjects.forEach((s,i)=>lines.push(`  ${String(i+1).padStart(2,'0')}. ${s}`));
+    lines.push('');
+  }
+
+  lines.push('VISUAL STYLE:');
+  lines.push(`  Style:         ${currentStyle}`);
+  lines.push(`  Detail level:  ${DETAIL_LABELS[detail-1]}`);
+  lines.push(`  Quality:       ${quality}`);
+  if(accentCol) lines.push(`  Icon accent:   ${accentCol}`);
+  if(strokeColor) lines.push(`  Stroke color:  ${strokeColor}`);
+  lines.push('');
+
+  lines.push('BACKGROUND & COLOR:');
+  lines.push(`  Background:    ${currentBgVal}`);
+  lines.push(`  Icon palette:  ${customPal?'Custom — '+customPal:palette}`);
+  lines.push(`  Light source:  ${light}`);
+  lines.push(`  IMPORTANT:     Icons must be clearly readable and high-contrast on ${currentBgVal.includes('transparent')||currentBgVal.includes('white')?'white and light backgrounds':'the specified background'}`);
+  lines.push('');
+
+  if(mode==='model'||mode==='batch'){
+    lines.push('CONSISTENCY MODEL:');
+    if(modelName) lines.push(`  Series name:   "${modelName}" — maintain strict visual consistency`);
+    if(styleDna)  lines.push(`  Style DNA:     ${styleDna}`);
+    if(strokeSpec) lines.push(`  Stroke spec:   ${strokeSpec}`);
+    if(mode==='batch') lines.push(`  Batch:         #${batch} — match exactly style of previous batches`);
+    lines.push('  Requirement:   Every icon must share identical stroke weight, corner radius,');
+    lines.push('                 color language, and style treatment. No stylistic drift.');
+    lines.push('');
+  }
+
+  lines.push('TECHNICAL SPECIFICATIONS:');
+  lines.push(`  Canvas:        ${canvas}`);
+  lines.push(`  Format:        ${format}`);
+  lines.push(`  Safe zone:     ${padding}`);
+  lines.push(`  Layout:        ${grid}`);
+  lines.push('  Alignment:     Each icon centered, optically balanced within canvas');
+  lines.push('  Legibility:    Must be clear and readable at 32px minimum size');
+  lines.push('');
+
+  const deliverVersions=[];
+  if(verA) deliverVersions.push('Version A: transparent background (primary upload to Adobe Stock)');
+  if(verB) deliverVersions.push('Version B: pure white #FFFFFF background');
+  if(verC) deliverVersions.push('Version C: light colored background variant');
+  if(deliverVersions.length){
+    lines.push('DELIVERY VERSIONS (Adobe Stock multi-upload strategy):');
+    deliverVersions.forEach(v=>lines.push(`  — ${v}`));
+    lines.push('');
+  }
+
+  const comp=['No real identifiable persons depicted','No trademarked characters, logos, or IP','No watermarks, text overlays, or signatures','Content is AI-generated — will be declared per Adobe Stock 2024 policy','Commercially safe — licensed for UI, print, and digital use'];
+  lines.push('ADOBE STOCK COMPLIANCE:');
+  comp.forEach(c=>lines.push(`  — ${c}`));
+  lines.push('');
+
+  lines.push('QUALITY REQUIREMENTS:');
+  lines.push('  — Clean crisp vectors, no artifacts or fuzzy edges');
+  lines.push('  — Professional stock quality suitable for commercial licensing');
+  if(detail>=4) lines.push('  — Maximum detail: subtle highlights, shadow depth, fine decorative elements');
+  if(detail<=2) lines.push('  — Keep minimal — maximum negative space, simple clean shapes');
+  lines.push('');
+
+  if(extra){lines.push('ADDITIONAL NOTES:');lines.push('  '+extra);lines.push('');}
+
+  const deliverLine=grid!=='individual icons, no grid layout'
+    ?`Deliver all ${count} icons assembled into a ${grid}, and as individual labeled ${format} assets.`
+    :`Deliver all ${count} icons as individual labeled ${format} assets, clearly named by concept.`;
+  lines.push(deliverLine);
+
+  if(negOn&&negPrompt){lines.push('');lines.push(`AVOID / NEGATIVE PROMPT:\n  ${negPrompt}`);}
+
+  const prompt=lines.join('\n');
+  document.getElementById('promptBox').textContent=prompt;
+  updatePromptStats(prompt);
+  generateMetadata(theme,count,palette,format,modelName);
+  addToHistory(prompt);
+  builtCount++;
+  document.getElementById('sBuilt').textContent=builtCount;
+  document.getElementById('sBatch').textContent=batch||'1';
+  updateStats();
+}
+
+function updatePromptStats(txt){
+  const chars=txt.length,words=txt.trim()?txt.trim().split(/\s+/).length:0;
+  document.getElementById('pmeta').textContent=chars+' chars · '+words+' words';
+  document.getElementById('sChars').textContent=chars;
+  const dot=document.getElementById('qdot'),lbl=document.getElementById('qlabel'),sc=document.getElementById('pscore');
+  if(chars<150){dot.className='qdot q1';lbl.textContent='Weak';sc.textContent='Add more detail';sc.style.color='var(--red)';}
+  else if(chars<400){dot.className='qdot q2';lbl.textContent='Good';sc.textContent='Solid prompt';sc.style.color='var(--gold)';}
+  else if(chars<800){dot.className='qdot q3';lbl.textContent='Great';sc.textContent='Well-structured';sc.style.color='var(--green)';}
+  else{dot.className='qdot q4';lbl.textContent='Ultra';sc.textContent='Production-ready';sc.style.color='var(--teal)';}
+}
+
+function generateMetadata(theme,count,palette,format,modelName){
+  const styleEl=document.querySelector('.style-card.on');
+  const styleName=styleEl?styleEl.querySelector('.sc-lbl').textContent:'Flat';
+  const tc=theme.split(' ').map(w=>w[0].toUpperCase()+w.slice(1)).join(' ');
+  const fmt=format.split(' ')[0];
+  document.getElementById('mTitle').textContent=`${tc} Vector Icon Set — ${count} ${styleName} Icons | ${fmt} Stock Vector`;
+  document.getElementById('mDesc').textContent=`A cohesive collection of ${count} professionally-designed ${styleName.toLowerCase()} vector icons on the theme of ${theme}. Color palette: ${palette}. All icons share consistent visual language, weight, and style. Available on transparent and white background. Clean, scalable vectors for UI/UX design, mobile apps, websites, infographics, and commercial print. AI-generated and commercially licensed.`;
+  document.getElementById('mCat').textContent='Graphic Resources > Icons & Pictograms';
+  document.getElementById('mSeries').textContent=modelName?modelName+' · Batch #'+(document.getElementById('batchNum')?.value||'1'):'—';
+  const kws=[...new Set([theme,'vector icons','icon set',styleName.toLowerCase()+' icons',fmt.toLowerCase()+' icons','flat icons','ui icons','vector clipart','transparent background','commercial use','scalable vector','icon pack',theme+' icons','stock vector','graphic design','app icons','website icons','infographic icons','digital assets','royalty free','editable vector','professional icons','icon collection','symbol set','pictogram','design elements',theme.split(' ')[0],theme.split(' ').pop()])].slice(0,35);
+  const kwBox=document.getElementById('mKw');kwBox.innerHTML='';
+  kws.forEach(k=>{const p=document.createElement('span');p.className='kw';p.textContent=k;kwBox.appendChild(p);});
+}
+
+function buildDeliveryPlan(){
+  const theme=document.getElementById('theme').value.trim()||'vector icons';
+  const count=document.getElementById('count').value.trim()||'24';
+  const format=getChip('fmtChips')||'SVG';
+  const canvas=getChip('canvasChips')||'1024×1024px';
+  const grid=getChip('gridChips')||'4×4 grid';
+  const verA=document.getElementById('togVerA').classList.contains('on');
+  const verB=document.getElementById('togVerB').classList.contains('on');
+  const verC=document.getElementById('togVerC').classList.contains('on');
+  const lines=[];
+  lines.push(`ADOBE STOCK DELIVERY PLAN — ${theme.toUpperCase()}`);
+  lines.push('─'.repeat(50));
+  lines.push('');
+  lines.push('UPLOAD STRATEGY (based on Adobe Stock research 2025):');
+  lines.push('');
+  lines.push('PRIMARY UPLOAD (most important):');
+  if(verA) lines.push('  ✓ Version A — Transparent background PNG + SVG');
+  lines.push('    Format: SVG + EPS + PNG (transparent)');
+  lines.push(`    Canvas: ${canvas} per icon`);
+  lines.push(`    Layout: ${grid} sprite sheet + individual icons`);
+  lines.push('    Why: 60% of top-selling Adobe Stock vectors use transparent bg.');
+  lines.push('         Adobe official guideline: icons MUST have transparent background.');
+  lines.push('');
+  if(verB){
+    lines.push('SECONDARY UPLOAD (variation #1):');
+    lines.push('  ✓ Version B — Pure white #FFFFFF background');
+    lines.push('    Format: SVG + PNG');
+    lines.push('    Why: Cleanest thumbnail in Adobe Stock grid. Highest CTR.');
+    lines.push('');
+  }
+  if(verC){
+    lines.push('TERTIARY UPLOAD (variation #2):');
+    lines.push('  ✓ Version C — Light colored background version');
+    lines.push('    Format: PNG');
+    lines.push('    Why: Adobe allows up to 3 meaningful variations per asset.');
+    lines.push('');
+  }
+  lines.push('WHAT NOT TO UPLOAD AS PRIMARY:');
+  lines.push('  ✗ Dark navy or black background as main file');
+  lines.push('    (Limits buyer usage — they cannot place on light design)');
+  lines.push('    (Low versatility = lower sales volume)');
+  lines.push('');
+  lines.push('KEYWORD & METADATA:');
+  lines.push(`  Title format: "${theme} Vector Icon Set — ${count} [Style] Icons | SVG"`);
+  lines.push('  Include: "transparent background" in keywords (high-value tag)');
+  lines.push('  Include: "2025" in title after update');
+  lines.push('  Declare: AI-generated on upload (required)');
+  lines.push('');
+  lines.push('FILE CHECKLIST BEFORE UPLOAD:');
+  lines.push(`  ☐ ${count} individual icon files, named by concept`);
+  lines.push(`  ☐ 1 sprite sheet (${grid})`);
+  lines.push('  ☐ Minimum 500px per icon (Adobe requirement)');
+  lines.push('  ☐ SVG paths clean, no raster images embedded');
+  lines.push('  ☐ Text outlined as paths (no live text)');
+  lines.push('  ☐ Grouped and named layers in AI/EPS');
+  lines.push('  ☐ ZIP under 500KB for faster preview');
+  document.getElementById('deliveryBox').textContent=lines.join('\n');
+}
+
+function buildVariations(){
+  const base=document.getElementById('promptBox').textContent;
+  if(!base.trim()){buildPrompt();return;}
+  const VARS=[
+    {label:'MINIMAL / SIMPLE',note:'Simplify to essential silhouettes only. Remove all decorative detail. Maximum negative space. Ultra-clean flat shapes.'},
+    {label:'RICH DETAIL',note:'Add maximum detail — subtle inner shadows, highlight reflections, texture, depth and dimension within each icon.'},
+    {label:'DARK VERSION (limited use)',note:'Dark background variant for special use. Dark navy background with light colored icons. NOTE: Upload transparent version as primary for Adobe Stock.'},
+    {label:'3D ISOMETRIC',note:'Reinterpret same subjects in isometric 3D flat style. 45-degree projection, geometric depth, same color system but 3D perspective.'},
+  ];
+  const grid=document.getElementById('varGrid');grid.innerHTML='';
+  VARS.forEach((v,i)=>{
+    const varPrompt=v.note+'\n\n'+base;
+    const card=document.createElement('div');card.className='var-card';
+    card.innerHTML=`<div class="var-label">${String(i+1).padStart(2,'0')} — ${v.label}</div><div class="var-preview">${v.note}</div>`;
+    card.onclick=()=>{document.getElementById('promptBox').textContent=varPrompt;updatePromptStats(varPrompt);switchTab('prompt',document.querySelector('.tab'));toast(`Loaded: ${v.label}`);};
+    grid.appendChild(card);
+  });
+  switchTab('vars',document.querySelectorAll('.tab')[2]);
+}
+
+function addToHistory(prompt){
+  if(promptHistory[promptHistory.length-1]===prompt)return;
+  promptHistory.push(prompt);if(promptHistory.length>10)promptHistory.shift();
+  document.getElementById('sHist').textContent=promptHistory.length;renderHistory();
+}
+function renderHistory(){
+  const list=document.getElementById('histList');
+  if(!promptHistory.length){list.innerHTML='<div style="font-size:11px;color:var(--text3);padding:8px;font-family:\'IBM Plex Mono\',monospace">No prompts yet.</div>';return;}
+  list.innerHTML='';
+  [...promptHistory].reverse().forEach(p=>{
+    const el=document.createElement('div');el.className='hist-item';el.textContent=p;
+    el.onclick=()=>{document.getElementById('promptBox').textContent=p;updatePromptStats(p);switchTab('prompt',document.querySelector('.tab'));toast('Loaded from history');};
+    list.appendChild(el);
+  });
+}
+
+function copyPrompt(){const txt=document.getElementById('promptBox').textContent;if(!txt.trim()){buildPrompt();return;}navigator.clipboard.writeText(txt).then(()=>toast('Prompt copied!'));}
+function copyAllMeta(){
+  const t=document.getElementById('mTitle').textContent,d=document.getElementById('mDesc').textContent,c=document.getElementById('mCat').textContent,s=document.getElementById('mSeries').textContent;
+  const kws=Array.from(document.querySelectorAll('.kw')).map(k=>k.textContent).join(', ');
+  navigator.clipboard.writeText(`TITLE: ${t}\n\nDESCRIPTION: ${d}\n\nCATEGORY: ${c}\n\nSERIES: ${s}\n\nKEYWORDS: ${kws}\n\nAI FLAG: Generative AI — declare on upload`).then(()=>toast('Metadata copied!'));
+}
+function copyDelivery(){const txt=document.getElementById('deliveryBox').textContent;if(!txt.trim()){buildDeliveryPlan();}navigator.clipboard.writeText(document.getElementById('deliveryBox').textContent).then(()=>toast('Delivery plan copied!'));}
+
+function updateStats(){document.getElementById('sSubjects').textContent=subjects.length;}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+function randomizeAll(){
+  const themes=['Cute Japanese animals','Retro futuristic gadgets','Tropical sea creatures','Ancient mythology symbols','Yoga wellness poses','Global coffee culture','Medieval fantasy weapons','Minimalist weather icons','Botanical garden plants','Street photography tools'];
+  document.getElementById('theme').value=themes[Math.floor(Math.random()*themes.length)];
+  const scs=document.querySelectorAll('.style-card');scs.forEach(e=>e.classList.remove('on'));
+  const sc=scs[Math.floor(Math.random()*scs.length)];sc.classList.add('on');currentStyle=sc.dataset.val;
+  const pcs=document.querySelectorAll('#palChips .chip');pcs.forEach(e=>e.classList.remove('on'));
+  pcs[Math.floor(Math.random()*pcs.length)].classList.add('on');
+  const lightBgOptions=['transparent','white','off-white','light blue'];
+  const randomLight=lightBgOptions[Math.floor(Math.random()*lightBgOptions.length)];
+  const bgOpts=document.querySelectorAll('.bg-option');bgOpts.forEach(e=>e.classList.remove('on','on-gold','on-red'));
+  if(randomLight==='transparent') bgOpts[0].classList.add('on');
+  else if(randomLight==='white') bgOpts[1].classList.add('on');
+  else if(randomLight==='off-white') bgOpts[2].classList.add('on');
+  else bgOpts[3].classList.add('on');
+  currentBgVal=document.querySelector('.bg-option.on').dataset.bg;
+  subjects=[];document.querySelectorAll('.stag-item').forEach(e=>e.remove());
+  buildPrompt();toast('Randomized with light background!');
+}
+
+function clearAll(){
+  ['theme','modelName','styleDna','strokeSpec','accentColor','customPal','extra','negPrompt'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('count').value='24';
+  subjects=[];document.querySelectorAll('.stag-item').forEach(e=>e.remove());
+  document.getElementById('promptBox').textContent='';
+  document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('on'));
+  updateStats();updatePromptStats('');toast('Cleared');
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Design Model Generator — Isolated Artwork v4</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#050507;--bg2:#0d0d15;--bg3:#141420;--bg4:#1c1c2c;--bg5:#242438;
+  --wh:#ededff;--muted:#5a5a8a;--muted2:#2e2e48;
+  --ac:#c93fff;--ac3:rgba(201,63,255,.1);
+  --cy:#00ffdd;--cy3:rgba(0,255,221,.08);
+  --yw:#ffe600;--gn:#00ff88;--pk:#ff6eb4;--or:#ff8833;--rd:#ff4444;
+  --r:10px;--r-lg:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:var(--wh);}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 70% 50% at 50% -5%,rgba(201,63,255,.06) 0%,transparent 60%);}
+.wrap{max-width:1120px;margin:0 auto;padding:1.5rem;position:relative;z-index:1;}
+
+/* HEADER */
+.hdr{background:var(--bg2);border:1px solid var(--bg4);padding:1.25rem 1.75rem;
+  margin-bottom:1.25rem;border-radius:0 0 var(--r-lg) var(--r-lg);
+  border-top:2px solid var(--ac);}
+.hdr-inner{display:flex;align-items:center;gap:14px;}
+.hdr-icon{width:46px;height:46px;border-radius:var(--r);background:linear-gradient(135deg,var(--ac),var(--cy));
+  display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.hdr-t{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:.08em;}
+.hdr-t span{background:linear-gradient(135deg,var(--ac),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hdr-sub{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5;}
+.hdr-pills{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.hp{font-size:9.5px;font-weight:600;padding:3px 10px;border-radius:20px;border:1px solid var(--bg5);color:var(--muted);}
+.hp.hi{border-color:rgba(201,63,255,.3);color:var(--ac);}
+.hp.cy{border-color:rgba(0,255,221,.3);color:var(--cy);}
+.ver{margin-left:auto;background:linear-gradient(135deg,var(--ac),var(--cy));color:var(--bg);
+  font-size:9px;font-weight:700;padding:5px 13px;border-radius:20px;letter-spacing:.08em;flex-shrink:0;}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:420px 1fr;gap:14px;align-items:start;}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--r-lg);overflow:hidden;margin-bottom:12px;}
+.card-h{padding:9px 14px;border-bottom:1px solid var(--bg4);display:flex;align-items:center;justify-content:space-between;}
+.card-ht{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.1em;color:var(--ac);}
+.card-hs{font-size:9px;color:var(--muted);}
+.card-b{padding:13px 14px;}
+
+/* PLATFORM GRID */
+.plat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.platc{border:2px solid var(--bg4);border-radius:var(--r);cursor:pointer;overflow:hidden;
+  background:var(--bg3);transition:all .18s;text-align:center;padding:10px 8px;}
+.platc:hover{border-color:var(--cy);transform:translateY(-2px);}
+.platc.sel{border-color:var(--cy);background:var(--cy3);box-shadow:0 0 18px rgba(0,255,221,.15);}
+.plat-icon{font-size:22px;display:block;margin-bottom:5px;}
+.plat-t{font-size:10.5px;font-weight:700;color:var(--wh);margin-bottom:2px;}
+.plat-sub{font-size:8px;color:var(--muted);line-height:1.3;}
+.plat-note{font-size:8px;color:var(--cy);margin-top:4px;line-height:1.4;display:none;}
+.platc.sel .plat-note{display:block;}
+
+/* CATEGORY GRID */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.catc{border:2px solid var(--bg4);border-radius:var(--r);cursor:pointer;overflow:hidden;
+  background:var(--bg3);transition:all .18s;position:relative;}
+.catc:hover{border-color:var(--ac);transform:translateY(-2px);box-shadow:0 4px 20px rgba(201,63,255,.15);}
+.catc.sel{border-color:var(--ac);box-shadow:0 0 20px rgba(201,63,255,.2);}
+.cat-preview{height:80px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.cat-preview-icon{font-size:36px;position:relative;z-index:2;filter:drop-shadow(0 0 8px rgba(0,0,0,.5));}
+.cat-preview-glow{position:absolute;inset:0;opacity:.35;}
+.cat-sel-dot{position:absolute;top:6px;right:6px;width:16px;height:16px;border-radius:50%;
+  background:var(--ac);display:none;align-items:center;justify-content:center;
+  font-size:8px;color:var(--bg);font-weight:700;z-index:3;}
+.catc.sel .cat-sel-dot{display:flex;}
+.cat-info{padding:7px 9px 9px;}
+.cat-name{font-size:10px;font-weight:700;color:var(--wh);margin-bottom:2px;}
+.cat-sub{font-size:8.5px;color:var(--muted);line-height:1.3;}
+.cat-kwds{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap;}
+.cat-kwd{font-size:7.5px;padding:1px 6px;border-radius:8px;font-weight:600;}
+
+/* FORMAT GRID (5 product types) */
+.fmt-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.fmtc{border:1.5px solid var(--bg4);border-radius:var(--r);padding:10px 11px;
+  cursor:pointer;background:var(--bg3);transition:all .14s;}
+.fmtc:hover{border-color:var(--cy);}
+.fmtc.sel{border-color:var(--cy);background:var(--cy3);}
+.fmtc.full{grid-column:1/-1;}
+.fmt-top{display:flex;align-items:center;gap:6px;margin-bottom:4px;}
+.fmt-icon{font-size:16px;}
+.fmt-t{font-size:10.5px;font-weight:700;color:var(--wh);}
+.fmt-d{font-size:9px;color:var(--muted);line-height:1.3;}
+
+/* MODS */
+.mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.mod{border:1.5px solid var(--bg4);border-radius:var(--r);padding:8px 10px;cursor:pointer;
+  background:var(--bg3);transition:all .14s;display:flex;align-items:flex-start;gap:7px;}
+.mod:hover{border-color:var(--gn);}
+.mod.on{border-color:var(--gn);background:rgba(0,255,136,.06);}
+.mod input{accent-color:var(--gn);margin-top:2px;flex-shrink:0;}
+.mod-t{font-size:10px;font-weight:600;color:var(--wh);}
+.mod-d{font-size:9px;color:var(--muted);margin-top:1px;line-height:1.3;}
+
+/* LABELS + INPUTS */
+.lbl{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);display:block;margin-bottom:6px;margin-top:12px;}
+.lbl:first-child{margin-top:0;}
+textarea.inp,input.inp{width:100%;font-family:'Inter',sans-serif;font-size:12.5px;
+  padding:9px 12px;border:1.5px solid var(--bg4);border-radius:var(--r);
+  background:var(--bg3);color:var(--wh);outline:none;transition:border .15s;}
+textarea.inp{resize:vertical;min-height:70px;line-height:1.5;}
+textarea.inp:focus,input.inp:focus{border-color:var(--ac);}
+.inp::placeholder{color:var(--muted2);}
+
+/* QUICK TAGS */
+.qtrow{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;}
+.qt{font-size:9.5px;padding:3px 9px;border:1px solid var(--bg4);border-radius:20px;
+  cursor:pointer;background:var(--bg3);color:var(--muted);transition:all .1s;}
+.qt:hover{border-color:var(--ac);color:var(--ac);}
+
+/* COLOR DOTS */
+.cdrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.cdot{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;transition:all .15s;}
+.cdot.sel{border-color:var(--ac);box-shadow:0 0 10px rgba(201,63,255,.4);}
+
+/* PILLS */
+.pill-row{display:flex;gap:5px;flex-wrap:wrap;}
+.pill{font-size:10px;font-weight:600;padding:5px 12px;border:1.5px solid var(--bg4);
+  border-radius:20px;cursor:pointer;background:var(--bg3);color:var(--muted);transition:all .12s;}
+.pill.sel{background:var(--yw);color:var(--bg);border-color:var(--yw);}
+.pill.sel-cy{background:var(--cy);color:var(--bg);border-color:var(--cy);}
+
+/* PACK CARD */
+#packCard{display:none;}
+
+/* GEN BTN */
+.gen-btn{width:100%;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:.18em;
+  padding:14px;border-radius:var(--r);border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--ac),var(--cy));color:var(--bg);
+  box-shadow:0 4px 24px rgba(201,63,255,.25);transition:all .18s;margin-top:12px;
+  position:relative;overflow:hidden;}
+.gen-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.15),transparent);}
+.gen-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(201,63,255,.4);}
+.gen-btn:active{transform:scale(.99);}
+
+/* RIGHT COLUMN */
+.out-col{display:flex;flex-direction:column;gap:12px;}
+
+/* CATEGORY DETAIL */
+.cat-detail{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--r-lg);overflow:hidden;}
+.cd-hdr{padding:10px 14px;border-bottom:1px solid var(--bg4);display:flex;align-items:center;gap:10px;}
+.cd-icon{font-size:22px;}
+.cd-title{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.1em;color:var(--ac);}
+.cd-showcase{height:160px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.cd-showcase-bg{position:absolute;inset:0;}
+.cd-showcase-content{position:relative;z-index:2;text-align:center;}
+.cd-showcase-emoji{font-size:64px;display:block;filter:drop-shadow(0 0 16px rgba(0,0,0,.6));}
+.cd-showcase-label{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.12em;
+  color:rgba(255,255,255,.9);margin-top:6px;text-shadow:0 2px 8px rgba(0,0,0,.5);}
+.cd-showcase-kwd-row{display:flex;gap:5px;justify-content:center;margin-top:8px;flex-wrap:wrap;}
+.cd-kwd-badge{font-size:9px;font-weight:700;padding:3px 10px;border-radius:20px;
+  background:rgba(0,0,0,.4);color:rgba(255,255,255,.85);backdrop-filter:blur(4px);}
+.cd-body{padding:14px;}
+.cd-ref-lbl{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.cd-ref{font-size:10.5px;color:var(--muted);line-height:1.75;background:var(--bg3);
+  border:1px solid var(--bg4);border-left:2px solid var(--ac);
+  border-radius:0 var(--r) var(--r) 0;padding:10px 12px;}
+.cd-vars{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:10px;}
+.cd-var{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--r);
+  padding:8px;text-align:center;cursor:pointer;transition:all .12s;}
+.cd-var:hover{border-color:var(--ac);}
+.cd-var-i{font-size:18px;display:block;margin-bottom:3px;}
+.cd-var-t{font-size:9px;color:var(--muted);line-height:1.3;}
+
+/* PROMPT BOX */
+.prompt-box{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--r-lg);overflow:hidden;}
+.pb-hdr{padding:10px 14px;border-bottom:1px solid var(--bg4);display:flex;
+  align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.pb-t{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.1em;color:var(--ac);}
+.eng-tabs{display:flex;gap:3px;}
+.etb{font-size:10px;font-weight:600;padding:5px 12px;border:1px solid var(--bg4);
+  border-radius:6px;cursor:pointer;background:var(--bg3);color:var(--muted);transition:all .1s;}
+.etb.on{background:var(--ac);color:var(--bg);border-color:var(--ac);}
+.ptc{display:none;}.ptc.on{display:block;}
+.prompt-txt{font-family:'JetBrains Mono',monospace;font-size:10.5px;line-height:1.85;
+  color:#c0c0e0;white-space:pre-wrap;word-break:break-word;
+  padding:14px;max-height:480px;overflow-y:auto;background:var(--bg3);}
+.empty-p{text-align:center;padding:2.5rem 1rem;color:var(--muted2);background:var(--bg3);}
+.empty-p .ei{font-size:36px;opacity:.2;display:block;margin-bottom:10px;}
+.pb-foot{padding:10px 14px;border-top:1px solid var(--bg4);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.cp-btn{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.1em;
+  padding:8px 20px;border-radius:var(--r);border:none;cursor:pointer;
+  background:var(--ac);color:var(--bg);transition:all .12s;}
+.cp-btn:hover{opacity:.9;}
+.cp-btn.ok{background:var(--gn);}
+.save-btn{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.1em;
+  padding:8px 16px;border-radius:var(--r);border:1.5px solid var(--bg4);cursor:pointer;
+  background:var(--bg3);color:var(--muted);transition:all .12s;}
+.save-btn:hover{border-color:var(--yw);color:var(--yw);}
+.save-btn.saved{border-color:var(--yw);color:var(--yw);}
+.cp-hint{font-size:10px;color:var(--muted);flex:1;}
+
+/* SEO PANEL */
+.seo-box{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--r-lg);overflow:hidden;}
+.seo-hdr{padding:10px 14px;border-bottom:1px solid var(--bg4);display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.seo-t{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.1em;color:var(--cy);}
+.seo-plat-tabs{display:flex;gap:3px;}
+.stb{font-size:9.5px;font-weight:600;padding:4px 10px;border:1px solid var(--bg4);
+  border-radius:6px;cursor:pointer;background:var(--bg3);color:var(--muted);transition:all .1s;}
+.stb.on{background:var(--cy);color:var(--bg);border-color:var(--cy);}
+.seo-body{padding:14px;}
+.seo-gen-btn{width:100%;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.14em;
+  padding:10px;border-radius:var(--r);border:1.5px solid var(--cy);cursor:pointer;
+  background:var(--cy3);color:var(--cy);transition:all .14s;margin-bottom:12px;}
+.seo-gen-btn:hover{background:var(--cy);color:var(--bg);}
+.seo-section{margin-bottom:12px;}
+.seo-slbl{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;}
+.seo-copy-sm{font-size:9px;font-weight:600;padding:2px 8px;border:1px solid var(--bg4);border-radius:8px;cursor:pointer;background:var(--bg3);color:var(--muted);transition:all .1s;}
+.seo-copy-sm:hover{border-color:var(--cy);color:var(--cy);}
+.seo-tags{display:flex;flex-wrap:wrap;gap:4px;}
+.seo-tag{font-size:9.5px;padding:3px 10px;border:1px solid var(--bg4);border-radius:20px;
+  background:var(--bg3);color:var(--wh);cursor:pointer;transition:all .1s;}
+.seo-tag:hover{border-color:var(--cy);color:var(--cy);}
+.seo-tag.hi{border-color:rgba(0,255,221,.35);color:var(--cy);}
+.seo-raw{font-family:'JetBrains Mono',monospace;font-size:9.5px;background:var(--bg3);
+  border:1px solid var(--bg4);border-radius:var(--r);padding:10px;color:#c0c0e0;
+  line-height:1.65;white-space:pre-wrap;word-break:break-all;max-height:90px;overflow-y:auto;}
+.seo-stats{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+.seo-stat{font-size:9px;color:var(--muted);background:var(--bg3);border:1px solid var(--bg4);
+  padding:3px 9px;border-radius:8px;}
+.seo-stat span{color:var(--yw);font-weight:700;}
+.seo-empty{text-align:center;padding:1.5rem 1rem;color:var(--muted2);}
+
+/* HISTORY PANEL */
+.hist-box{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--r-lg);overflow:hidden;}
+.hist-hdr{padding:10px 14px;border-bottom:1px solid var(--bg4);display:flex;align-items:center;justify-content:space-between;}
+.hist-t{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:.1em;color:var(--or);}
+.hist-clear{font-size:9.5px;font-weight:600;padding:4px 10px;border:1px solid var(--bg4);border-radius:8px;cursor:pointer;background:var(--bg3);color:var(--muted);transition:all .1s;}
+.hist-clear:hover{border-color:var(--rd);color:var(--rd);}
+.hist-body{padding:10px 14px;max-height:320px;overflow-y:auto;}
+.hist-empty{text-align:center;padding:1.5rem 1rem;color:var(--muted2);font-size:11px;}
+.hist-item{border:1px solid var(--bg4);border-radius:var(--r);background:var(--bg3);
+  padding:9px 11px;margin-bottom:7px;cursor:pointer;transition:all .12s;position:relative;}
+.hist-item:hover{border-color:var(--or);background:rgba(255,136,51,.04);}
+.hist-item-top{display:flex;align-items:center;gap:7px;margin-bottom:4px;}
+.hist-eng{font-size:9px;font-weight:700;padding:2px 7px;border-radius:8px;
+  background:rgba(201,63,255,.15);color:var(--ac);border:1px solid rgba(201,63,255,.2);}
+.hist-eng.mj{background:rgba(0,255,221,.1);color:var(--cy);border-color:rgba(0,255,221,.2);}
+.hist-eng.sd{background:rgba(0,255,136,.1);color:var(--gn);border-color:rgba(0,255,136,.2);}
+.hist-cat{font-size:9.5px;font-weight:600;color:var(--wh);}
+.hist-fmt{font-size:9px;color:var(--muted);}
+.hist-ts{font-size:8.5px;color:var(--muted2);margin-left:auto;}
+.hist-desc{font-size:9.5px;color:var(--muted);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hist-del{position:absolute;top:7px;right:8px;font-size:11px;color:var(--muted2);
+  cursor:pointer;opacity:0;transition:opacity .1s;}
+.hist-item:hover .hist-del{opacity:1;}
+.hist-del:hover{color:var(--rd);}
+
+/* TIPS */
+.tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.tip{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--r);padding:10px 11px;}
+.tip-t{font-size:10px;font-weight:600;color:var(--cy);margin-bottom:4px;}
+.tip-b{font-size:9.5px;color:var(--muted);line-height:1.65;}
+code{background:var(--bg4);color:var(--cy);padding:1px 5px;border-radius:3px;
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-icon">✦</div>
+    <div style="flex:1;">
+      <div class="hdr-t">Design Model <span>Isolated Artwork</span> Generator</div>
+      <div class="hdr-sub">Prompt ultra-detail · PNG Isolated · Sticker Pack · Poster · T-shirt File · Clipart Bundle · Etsy · Redbubble · DTF</div>
+      <div class="hdr-pills">
+        <span class="hp hi">✂️ Isolated PNG</span>
+        <span class="hp hi">📦 Sticker Pack</span>
+        <span class="hp hi">🖼️ Poster / Wall Art</span>
+        <span class="hp hi">👕 T-shirt File</span>
+        <span class="hp hi">🗂️ Clipart Bundle</span>
+        <span class="hp cy">🛒 Etsy · 🫧 Redbubble · 🖨️ DTF</span>
+        <span class="hp">8000px · 600 DPI</span>
+        <span class="hp">🍌 NB2 · MJ · SD</span>
+      </div>
+    </div>
+    <div class="ver">v4 · ISOLATED ART</div>
+  </div>
+</div>
+
+<div class="layout">
+<!-- ══ LEFT ══ -->
+<div>
+
+  <!-- 00 PLATFORM -->
+  <div class="card">
+    <div class="card-h">
+      <div class="card-ht">00 — Platform Penjualan</div>
+      <div class="card-hs">Mempengaruhi format prompt & SEO</div>
+    </div>
+    <div class="card-b" style="padding-top:10px;">
+      <div class="plat-grid" id="platGrid"></div>
+    </div>
+  </div>
+
+  <!-- 01 CATEGORY -->
+  <div class="card">
+    <div class="card-h">
+      <div class="card-ht">01 — Pilih Kategori Model</div>
+      <div class="card-hs">Preview otomatis tampil →</div>
+    </div>
+    <div class="card-b">
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+  </div>
+
+  <!-- 02 PRODUCT TYPE -->
+  <div class="card">
+    <div class="card-h"><div class="card-ht">02 — Jenis Produk</div></div>
+    <div class="card-b">
+      <span class="lbl" style="margin-top:0;">Tipe File Output</span>
+      <div class="fmt-grid" id="fmtGrid"></div>
+      <span class="lbl">Resolusi File</span>
+      <div class="pill-row" id="resRow"></div>
+    </div>
+  </div>
+
+  <!-- 03 MODS -->
+  <div class="card">
+    <div class="card-h"><div class="card-ht">03 — Opsi Visual</div></div>
+    <div class="card-b">
+      <div class="mod-grid" id="modGrid"></div>
+    </div>
+  </div>
+
+  <!-- 04 DESCRIPTION -->
+  <div class="card">
+    <div class="card-h"><div class="card-ht">04 — Detail Spesifik</div></div>
+    <div class="card-b">
+      <span class="lbl" style="margin-top:0;">Deskripsi Karakter / Objek</span>
+      <textarea class="inp" id="descInput" placeholder="Deskripsikan karakter secara detail...&#10;Contoh: pink skull dengan bunny ears panjang, bintang kuning, bulan sabit hijau kanan kiri, bow tie neon rainbow di bawah, lightning bolt biru di sisi"></textarea>
+      <div class="qtrow" id="qtRow"></div>
+
+      <span class="lbl">Teks dalam Artwork (opsional)</span>
+      <input type="text" class="inp" id="textInArt" placeholder="Contoh: STAY WILD · BAD VIBES · 2077"/>
+
+      <span class="lbl">Palet Warna Spesifik (opsional)</span>
+      <input type="text" class="inp" id="colorPalette" placeholder="Contoh: hot pink #FF6EB4, neon yellow, electric cyan"/>
+
+      <span class="lbl">Warna Kaos / Media Tujuan</span>
+      <div class="cdrow" id="clrRow"></div>
+    </div>
+  </div>
+
+  <!-- 05 PACK OPTIONS (conditional) -->
+  <div class="card" id="packCard">
+    <div class="card-h"><div class="card-ht">05 — Opsi Stiker Pack</div></div>
+    <div class="card-b">
+      <span class="lbl" style="margin-top:0;">Jumlah Stiker</span>
+      <div class="pill-row" id="cntRow"></div>
+      <span class="lbl">Layout Sheet</span>
+      <div class="pill-row" id="lyRow"></div>
+    </div>
+  </div>
+
+  <button class="gen-btn" onclick="doGenerate()">✦ GENERATE PROMPT ✦</button>
+</div>
+
+<!-- ══ RIGHT ══ -->
+<div class="out-col">
+
+  <!-- CATEGORY DETAIL SHOWCASE -->
+  <div class="cat-detail">
+    <div class="cd-hdr">
+      <div class="cd-icon" id="cdIcon">✦</div>
+      <div class="cd-title" id="cdTitle">Pilih kategori untuk lihat preview & style reference</div>
+    </div>
+    <div class="cd-showcase" id="cdShowcase">
+      <div class="cd-showcase-bg" style="background:linear-gradient(135deg,#050507,#141420);"></div>
+      <div class="cd-showcase-content">
+        <span class="cd-showcase-emoji">✦</span>
+        <div class="cd-showcase-label">PILIH KATEGORI</div>
+      </div>
+    </div>
+    <div class="cd-body">
+      <div class="cd-ref-lbl">STYLE REFERENCE — AUTO NB2</div>
+      <div class="cd-ref" id="cdRef">Referensi style teknis untuk NB2 akan tampil di sini setelah pilih kategori.</div>
+      <div style="font-size:9px;font-weight:600;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin:10px 0 6px;">Klik variasi → tambah ke deskripsi</div>
+      <div class="cd-vars" id="cdVars"></div>
+    </div>
+  </div>
+
+  <!-- PROMPT OUTPUT -->
+  <div class="prompt-box">
+    <div class="pb-hdr">
+      <div class="pb-t">📋 PROMPT SIAP COPY</div>
+      <div class="eng-tabs">
+        <button class="etb on" onclick="swEng('nb2',this)">🍌 NB2</button>
+        <button class="etb" onclick="swEng('mj',this)">✦ MJ</button>
+        <button class="etb" onclick="swEng('sd',this)">◉ SD</button>
+      </div>
+    </div>
+    <div class="ptc on" id="pe-nb2">
+      <div class="empty-p"><span class="ei">🍌</span>Pilih kategori & klik Generate.</div>
+      <div class="prompt-txt" id="p-nb2" style="display:none;"></div>
+    </div>
+    <div class="ptc" id="pe-mj">
+      <div class="empty-p"><span class="ei">✦</span>Klik Generate untuk prompt MJ.</div>
+      <div class="prompt-txt" id="p-mj" style="display:none;"></div>
+    </div>
+    <div class="ptc" id="pe-sd">
+      <div class="empty-p"><span class="ei">◉</span>Klik Generate untuk prompt SD.</div>
+      <div class="prompt-txt" id="p-sd" style="display:none;"></div>
+    </div>
+    <div class="pb-foot">
+      <button class="cp-btn" id="cpBtn" onclick="copyPrompt()">COPY PROMPT</button>
+      <button class="save-btn" id="saveBtn" onclick="saveCurrentPrompt()">💾 SAVE</button>
+      <div class="cp-hint" id="cpHint">Generate → copy → paste ke NB2 / MJ / SD.</div>
+    </div>
+  </div>
+
+  <!-- SEO KEYWORD GENERATOR -->
+  <div class="seo-box">
+    <div class="seo-hdr">
+      <div class="seo-t">🔍 SEO KEYWORD GENERATOR</div>
+      <div class="seo-plat-tabs">
+        <button class="stb on" id="seoTab-etsy" onclick="setSeoTab('etsy',this)">🛒 Etsy</button>
+        <button class="stb" id="seoTab-redbubble" onclick="setSeoTab('redbubble',this)">🫧 RB</button>
+        <button class="stb" id="seoTab-dtf" onclick="setSeoTab('dtf',this)">🖨️ DTF</button>
+      </div>
+    </div>
+    <div class="seo-body">
+      <button class="seo-gen-btn" onclick="generateSEO()">⚡ GENERATE SEO KEYWORDS</button>
+      <div id="seoOutput">
+        <div class="seo-empty">Generate prompt dulu, lalu klik Generate SEO Keywords.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROMPT HISTORY -->
+  <div class="hist-box">
+    <div class="hist-hdr">
+      <div class="hist-t">🕐 PROMPT HISTORY</div>
+      <button class="hist-clear" onclick="clearHistory()">🗑 Clear All</button>
+    </div>
+    <div class="hist-body" id="histBody">
+      <div class="hist-empty">Belum ada prompt tersimpan. Klik 💾 Save setelah generate.</div>
+    </div>
+  </div>
+
+  <!-- TIPS -->
+  <div class="card">
+    <div class="card-h"><div class="card-ht">💰 Panduan Jual Design Model</div></div>
+    <div class="card-b">
+      <div class="tips-grid">
+        <div class="tip">
+          <div class="tip-t">🛒 Etsy — Digital Download</div>
+          <div class="tip-b">Upload min. <code>5 file PNG</code> per listing.<br>Harga: $2–5 single · $8–15 pack<br>Sertakan 1 PNG mockup preview.<br>Max <code>13 tags</code> di Etsy listing.</div>
+        </div>
+        <div class="tip">
+          <div class="tip-t">🫧 Redbubble Setup</div>
+          <div class="tip-b">Upload PNG <code>6500×6500px</code> min.<br>Aktifkan semua produk (sticker, poster, tee).<br>Title max 60 char · Tags: comma-separated.<br>Gunakan RB keyword tool untuk trending.</div>
+        </div>
+        <div class="tip">
+          <div class="tip-t">🖨️ DTF / Sablon Lokal</div>
+          <div class="tip-b">Format: PNG CMYK + alpha <code>300–600 DPI</code>.<br>Ukuran: A3 (29.7×42cm) atau A4.<br>White ink channel otomatis dari alpha.<br>Harga: Rp 25–75K per transfer.</div>
+        </div>
+        <div class="tip">
+          <div class="tip-t">📦 Bundle Strategy</div>
+          <div class="tip-b">Buat 5–10 variasi satu tema.<br>Bundle jadi 1 pack + preview collage.<br>Nama: "Dark Kawaii Pack Vol.1"<br>Harga bundle 2× lebih besar.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<script>
+// ═══════════════════════════════
+// STATE
+// ═══════════════════════════════
+var S={
+  platform:'etsy',
+  cat:'dark_kawaii',fmt:'isolated_png',res:'8000',
+  mods:new Set(['transparent_bg','thick_outline','isolated_only','no_instr']),
+  tgtColor:'#111',tgtColorName:'Black',
+  packCount:'6',packLayout:'2x3',
+  seoTab:'etsy',
+  lastPrompts:{nb2:'',mj:'',sd:''},
+};
+
+// ═══════════════════════════════
+// PLATFORM DATA
+// ═══════════════════════════════
+var PLATFORMS=[
+  {id:'etsy',icon:'🛒',t:'Etsy',sub:'Digital Download · USD',
+   note:'PNG transparent · ZIP bundle · max 13 SEO tags'},
+  {id:'redbubble',icon:'🫧',t:'Redbubble',sub:'Print-on-Demand · Global',
+   note:'High-res RGB · 6500px min · semua produk otomatis'},
+  {id:'dtf',icon:'🖨️',t:'DTF / Sablon',sub:'Transfer Press · IDR',
+   note:'CMYK + white ink · 300–600 DPI · A3/A4 sheet'},
+];
+
+// ═══════════════════════════════
+// CATEGORY DATA
+// ═══════════════════════════════
+var CATS=[
+  {
+    id:'dark_kawaii',i:'💀',t:'Dark Kawaii',sub:'Skull · gothic cute · neon',
+    grad:'linear-gradient(135deg,#1a0028 0%,#3d0050 40%,#ff1493 80%,#ff6eb4 100%)',
+    glowColor:'#ff6eb4',
+    keywords:['Hot Pink Neon','Dark Gothic','Bunny Skull','Lightning'],
+    kwColors:['#ff6eb4','#9b5de5','#ffdd00','#00e5ff'],
+    ref:'Kawaii dark: skull chibi dengan bunny ears panjang, hollow eye sockets cute. Warna dominan hot pink vibrant, aksen neon yellow/green/cyan. Surrounding: bulan sabit, lightning bolts, stars, bow tie neon, hearts. OUTLINE ultra tebal navy/hitam. Scalloped border outline. Background TRANSPARAN.',
+    core:'dark kawaii gothic cute character artwork, chibi skull face with cute bunny ears, hollow black eye sockets with tiny white glint, rounded bubbly skull shape, hot pink base color, yellow star patterns, crescent moon motifs, neon lightning bolts, multicolor decorative bow tie, scalloped dark outline border, surrounding icons (stars hearts lightning moons), ultra vibrant neon color palette, thick bold black outline',
+    neg:'realistic skull, scary horror, blurry, background color, watermark, instruction text, t-shirt, garment, clothing',
+    tags:['pink skull bunny neon stars','skull rainbow bow tie lightning','dark kawaii moon lightning bolts','ghost skull shimmer neon','devil skull cute pink','zombie bunny star pattern'],
+    seoBase:['dark kawaii','skull sticker','gothic cute','neon skull','kawaii gothic','skull clipart','pink skull','bunny skull','kawaii sticker','gothic sticker','neon sticker','halloween kawaii','skull art'],
+    vars:[{i:'💀',t:'Skull Bunny Classic'},{i:'👻',t:'Ghost Kawaii Neon'},{i:'🦇',t:'Bat Skull Gothic'},{i:'🌙',t:'Moon Skull Dark'},{i:'💜',t:'Devil Skull Cute'},{i:'🌈',t:'Rainbow Death Kawaii'}],
+  },
+  {
+    id:'kawaii_neon',i:'🌸',t:'Kawaii Neon',sub:'Chibi · angel · cyber cute',
+    grad:'linear-gradient(135deg,#000d1a 0%,#001a33 30%,#003366 60%,#00e5ff 85%,#ff6eb4 100%)',
+    glowColor:'#00e5ff',
+    keywords:['Angel Wings','Neon Glow','Circuit Tech','Sparkle'],
+    kwColors:['#00e5ff','#ff6eb4','#00ff88','#ffdd00'],
+    ref:'Karakter chibi imut dengan neon glow cyberpunk. Bear/bunny/cat dengan angel wings atau cyber accessories. Proporsi chibi: kepala besar, tubuh kecil, mata besar bersinar. Outline tebal hitam, neon glow effect, floating sparkles/diamonds. Holographic halo. Background TRANSPARAN.',
+    core:'ultra cute kawaii chibi character, adorable animal character (bear or bunny or cat), huge sparkling cute eyes, chubby chibi proportions, glowing angel wings or neon mechanical wings, holographic neon halo ring, floating sparkle diamonds and star elements, circuit board tech decoration, vibrant neon glow aura, happy winking expression, tech accessories (wristbands collar)',
+    neg:'realistic proportions, adult character, blurry, background, watermark, instruction text, garment, t-shirt, low quality',
+    tags:['neon angel bear wings halo','cyber bunny sparkle diamond','chibi cat holographic glow','star fox chibi neon','cloud bunny angel float','dragon chibi sparkle cute'],
+    seoBase:['kawaii neon','chibi sticker','angel kawaii','neon chibi','cute sticker','kawaii clipart','chibi art','neon angel','bunny sticker','bear kawaii','kawaii png','chibi png','cute character'],
+    vars:[{i:'🐻',t:'Angel Bear Neon'},{i:'🐰',t:'Cyber Bunny Glow'},{i:'🐱',t:'Chibi Cat Halo'},{i:'🐲',t:'Dragon Chibi Cute'},{i:'🦊',t:'Fox Spirit Neon'},{i:'🌟',t:'Star Fairy Chibi'}],
+  },
+  {
+    id:'cyber_warrior',i:'⚔️',t:'Cyber Warrior',sub:'Samurai · neon armor · katana',
+    grad:'linear-gradient(135deg,#000a14 0%,#001428 30%,#002244 55%,#00e5ff 80%,#ff6eb4 100%)',
+    glowColor:'#00e5ff',
+    keywords:['Cyber Armor','Neon Katana','Oni Mask','HUD Elements'],
+    kwColors:['#00e5ff','#ff6eb4','#9b5de5','#ffdd00'],
+    ref:'Samurai/warrior dengan armor cyberpunk ultra-detailed. Circuit lines di armor, katana neon elektrik, glowing eyes behind oni mask. Pose powerful. Color palette cyan+hot pink+dark purple. Detail intrikat. HUD elements di sekitar. Background TRANSPARAN.',
+    core:'cyberpunk warrior isolated character artwork, highly detailed mechanical samurai armor with glowing circuit lines, neon electrified katana blade, intense glowing eyes behind oni mask or cyber helmet, dramatic battle pose, shoulder armor pauldrons with neon trim, chest plate with holographic display, dark base with cyan and hot pink neon accents, surrounding HUD frame elements',
+    neg:'cute kawaii, blurry, undetailed flat, background, watermark, instruction text, garment, clothing, low quality',
+    tags:['cyber samurai neon katana cyan','oni mask warrior circuit glow','shogun mecha armor purple','ninja cyber shadow strike','ronin warrior neon slash','dragon warrior cyber armor'],
+    seoBase:['cyber warrior','samurai sticker','neon samurai','cyberpunk art','katana sticker','oni mask','warrior clipart','cyber samurai','samurai png','neon warrior','cyberpunk sticker','mecha art','samurai art'],
+    vars:[{i:'⚔️',t:'Neo Samurai Cyan'},{i:'👺',t:'Oni Mask Cyber'},{i:'🤖',t:'Mecha Warrior'},{i:'🥷',t:'Cyber Ninja Dark'},{i:'🐉',t:'Dragon Warrior'},{i:'⚡',t:'Electric Bushido'}],
+  },
+  {
+    id:'kawaii_witch',i:'🧙',t:'Kawaii Witch',sub:'Chibi witch · magic · stars',
+    grad:'linear-gradient(135deg,#0d0020 0%,#1a0040 35%,#4a0080 65%,#c77dff 85%,#7fffd4 100%)',
+    glowColor:'#c77dff',
+    keywords:['Witch Hat','Star Wand','Lace Dress','Potion Bottle'],
+    kwColors:['#c77dff','#7fffd4','#ff6eb4','#ffdd00'],
+    ref:'Kawaii chibi witch atau magical girl. Topi witch besar dengan bulan dan bintang, wand bintang, gaun kawaii dengan lace dan corset. Warna: lavender/purple dominan dengan neon accents (cyan, pink, yellow). Stars dan sparkles melayang. Cute expression. Background TRANSPARAN.',
+    core:'kawaii chibi witch girl character, oversized decorated witch hat with moon and star embellishment, star-tipped magic wand, cute frilly lace dress with corset detail, striped stockings, platform boots, big purple sparkling eyes, lavender and mint color palette, neon star and sparkle accents floating around, small cute familiar icons (cat bat potion bottle), neon outline glow',
+    neg:'realistic proportions, scary witch, blurry, background, watermark, instruction text, garment, t-shirt, adult',
+    tags:['chibi witch lavender hat stars','magic girl neon wand sparkle','kawaii witch moon crescent','star witch potion bottle cute','lolita witch stripes boots','chibi sorceress pastel magic'],
+    seoBase:['kawaii witch','witch sticker','magic girl','chibi witch','witch clipart','witch hat sticker','magical girl','witch png','kawaii magic','pastel witch','witch art','potion sticker','star wand'],
+    vars:[{i:'🧙',t:'Lavender Witch Cute'},{i:'⭐',t:'Star Magic Girl'},{i:'🌙',t:'Moon Witch Neon'},{i:'🐱',t:'Witch & Cat Familiar'},{i:'🧪',t:'Potion Witch Kawaii'},{i:'🌈',t:'Rainbow Sorceress'}],
+  },
+  {
+    id:'streetwear_art',i:'🔥',t:'Streetwear Art',sub:'Urban · warrior · bold graphic',
+    grad:'linear-gradient(135deg,#1a0000 0%,#330000 30%,#660000 55%,#ff4444 80%,#ffdd00 100%)',
+    glowColor:'#ff4444',
+    keywords:['Bold Graphic','Color Blocking','Urban Energy','Power Pose'],
+    kwColors:['#ff4444','#ffdd00','#00e5ff','#111'],
+    ref:'Urban graphic artwork premium: karakter kuat, bold, powerful. Color blocking: merah + hitam + gold + cyan. Frame geometric. Bisa warrior, hewan buas, mythical creature. Typography terintegrasi jika ada. Detail tinggi, contrast kuat. Background TRANSPARAN.',
+    core:'powerful bold urban streetwear character artwork, intense fierce character (cyber warrior or roaring tiger or dragon or eagle or wolf), dynamic dramatic pose, strong color blocking (red black gold electric cyan), geometric frame border elements, tech or circuit elements integrated, bold shadow work, intense expression, armor or battle gear details, urban street art energy',
+    neg:'cute kawaii, soft pastel, blurry, background, watermark, instruction text, t-shirt, garment, low quality, weak',
+    tags:['cyber warrior red gold frame','fierce dragon neon circuit','street wolf urban growl','eagle warrior spread wings','titan warrior cyber armor','bear berserker battle cry'],
+    seoBase:['streetwear art','urban sticker','bold graphic','street art','urban png','t-shirt design','streetwear clipart','tiger sticker','dragon sticker','wolf urban','bold sticker','urban art','street design'],
+    vars:[{i:'🐯',t:'Cyber Tiger Fierce'},{i:'🐉',t:'Dragon Fire Urban'},{i:'🦅',t:'Eagle Warrior Wings'},{i:'🐺',t:'Wolf Street Howl'},{i:'🦁',t:'Lion King Urban'},{i:'🐻',t:'Bear Berserker'}],
+  },
+  {
+    id:'retro_object',i:'📼',t:'Retro / Vintage',sub:'80s · cassette · nostalgia',
+    grad:'linear-gradient(135deg,#0a0a0a 0%,#1a1a1a 25%,#ff1493 55%,#00e5ff 80%,#ffdd00 100%)',
+    glowColor:'#ffdd00',
+    keywords:['80s Vibe','Neon Stripes','Cassette Tape','Pop Art'],
+    kwColors:['#ffdd00','#ff6eb4','#00e5ff','#00ff88'],
+    ref:'Objek nostalgia 80s/90s sebagai hero design terisolasi. Objek utama: cassette, boombox, arcade, vinyl. Diagonal stripes neon, geometric shapes, music notes. Warna rainbow neon. Slight distressed texture. Bold composition. Background TRANSPARAN.',
+    core:'retro 80s vintage object isolated artwork, central nostalgic hero object (cassette tape with colored stripes or boombox or arcade machine or vinyl record), bold diagonal neon color stripes radiating (hot pink cyan lime orange yellow), geometric background shapes behind object, music note accents and lightning bolts, slightly distressed vintage grain texture, energetic retro poster composition',
+    neg:'modern clean minimal, photorealistic, blurry, background, watermark, instruction text, garment, t-shirt, low quality',
+    tags:['cassette tape neon rainbow stripes','boombox colorful 80s vibrant','arcade cabinet neon retro','vinyl record vintage pop art','walkman 90s nostalgia bold','vhs tape classic hits'],
+    seoBase:['retro sticker','vintage sticker','80s art','cassette sticker','retro png','vintage clipart','80s sticker','nostalgia art','boombox sticker','retro design','80s clipart','vintage art','arcade sticker'],
+    vars:[{i:'📼',t:'Cassette Neon'},{i:'📻',t:'Boombox 80s'},{i:'🕹️',t:'Arcade Cabinet'},{i:'💿',t:'Vinyl Record'},{i:'📷',t:'Polaroid Camera'},{i:'🎮',t:'Pixel Controller'}],
+  },
+  {
+    id:'nature_premium',i:'🌿',t:'Nature Premium',sub:'Koi · wolf · tiger · botanical',
+    grad:'linear-gradient(135deg,#001a00 0%,#003300 35%,#005500 60%,#00ff88 85%,#7fffd4 100%)',
+    glowColor:'#00ff88',
+    keywords:['Ultra Detailed','Jewel Tones','Wildlife Art','Botanical Frame'],
+    kwColors:['#00ff88','#7fffd4','#ffdd00','#ff8833'],
+    ref:'Nature illustration premium. Subjek: satwa (koi, wolf, tiger, eagle) atau flora botanical. Ultra-detailed texture. Rich jewel tones atau earth palette. Ornamental botanical frame. Vintage natural history meets modern streetwear art. Background TRANSPARAN.',
+    core:'highly detailed premium nature illustration isolated artwork, dramatic wildlife or botanical subject, ultra-detailed texture on feathers or fur or scales, rich jewel-tone or earth palette colors, ornamental decorative botanical or mandala border frame, vintage natural history aesthetic meets modern premium art, dramatic lighting, secondary decorative elements (leaves flowers geometric), elegant powerful composition',
+    neg:'cartoon flat, kawaii cute, blurry, background, watermark, instruction text, garment, clothing, low quality',
+    tags:['koi fish mandala gold waves','wolf howling moon forest','tiger lotus flower detailed','eagle spread wings gold','owl sacred geometry moon','peacock feather mandala art'],
+    seoBase:['nature sticker','wildlife art','koi fish sticker','wolf sticker','tiger art','botanical clipart','nature png','wolf art','eagle sticker','botanical art','wildlife clipart','koi art','animal sticker'],
+    vars:[{i:'🐟',t:'Koi Fish Mandala'},{i:'🐺',t:'Wolf Moon Forest'},{i:'🐯',t:'Tiger Lotus Art'},{i:'🦅',t:'Eagle Spread Wings'},{i:'🦚',t:'Peacock Feather'},{i:'🦉',t:'Owl Sacred Geo'}],
+  },
+  {
+    id:'mascot',i:'🎭',t:'Mascot / Character',sub:'Original mascot · brand character',
+    grad:'linear-gradient(135deg,#1a0a00 0%,#331400 30%,#662800 55%,#ff8833 80%,#ffdd00 100%)',
+    glowColor:'#ff8833',
+    keywords:['Strong Silhouette','Brand Ready','Expressive Pose','Bold Outline'],
+    kwColors:['#ff8833','#ffdd00','#00e5ff','#00ff88'],
+    ref:'Mascot karakter orisinal dengan kepribadian kuat. Pose ekspresif dan memorable. Silhouette jelas terbaca kecil. Accessories mendefinisikan karakter. Style: cartoon premium meets brand character. Bold outline. Bisa hewan anthropomorphic, robot, monster, alien. Background TRANSPARAN.',
+    core:'original mascot character isolated artwork, strong expressive character with distinct personality, dynamic confident pose, bold clear silhouette readable at small sizes, unique accessories or props defining identity, expressive face with clear strong emotion, professional character design quality, well-defined color zones, thick bold outline for brand readability, balanced iconic proportions',
+    neg:'generic bland character, blurry, background, watermark, instruction text, garment, clothing, weak pose, unclear',
+    tags:['bear mascot chef hat apron','robot mascot friendly wave','cat mascot cool sunglasses','wolf mascot fierce stance','frog mascot skater cool','panda mascot warrior sword'],
+    seoBase:['mascot design','character sticker','mascot clipart','brand mascot','character art','mascot png','logo mascot','cartoon mascot','animal mascot','character clipart','mascot art','brand character','cute mascot'],
+    vars:[{i:'🐻',t:'Bear Mascot Bold'},{i:'🤖',t:'Robot Mascot Fun'},{i:'🐱',t:'Cat Mascot Cool'},{i:'🐺',t:'Wolf Mascot Fierce'},{i:'🐸',t:'Frog Mascot Skate'},{i:'🦖',t:'Dino Mascot Roar'}],
+  },
+  {
+    id:'abstract_geo',i:'🔷',t:'Abstract / Geometric',sub:'Mandala · sacred geometry · pattern',
+    grad:'linear-gradient(135deg,#000a1a 0%,#001433 30%,#002266 55%,#a855f7 80%,#00e5ff 100%)',
+    glowColor:'#a855f7',
+    keywords:['Sacred Geometry','Mandala','Perfect Symmetry','Mystical'],
+    kwColors:['#a855f7','#00e5ff','#ffdd00','#ff6eb4'],
+    ref:'Abstract geometric isolated artwork. Sacred geometry, mandala, optical illusion. Focal point kuat di tengah (mata, piramid, kristal, lotus). Warna vibrant neon atau monochrome elegan. Simetri sempurna. Detail sangat intrikat dan berlapis. Background TRANSPARAN.',
+    core:'abstract geometric isolated artwork, sacred geometry or mandala as centerpiece, intricate perfectly symmetrical patterns radiating from center point, detailed layered geometric shapes, central focal symbol (all-seeing eye or pyramid or crystal or lotus or infinity), vibrant neon or elegant monochrome color palette, mathematical precision, mystical cosmic energy feel, decorative outer ring or frame',
+    neg:'organic random, messy asymmetric, blurry, background, watermark, instruction text, garment, clothing, too simple',
+    tags:['all-seeing eye mandala neon','sacred geometry crystal glow','lotus mandala sacred gold','pyramid cosmic eye rays','celtic knot infinite symbol','hexagon honeycomb sacred geo'],
+    seoBase:['mandala sticker','sacred geometry','geometric art','mandala png','sacred geometry sticker','geometric clipart','mandala art','abstract sticker','geometric pattern','sacred mandala','eye mandala','crystal geometry','cosmic art'],
+    vars:[{i:'👁️',t:'All-Seeing Eye'},{i:'🔺',t:'Sacred Pyramid'},{i:'💎',t:'Crystal Mandala'},{i:'🌸',t:'Lotus Sacred Geo'},{i:'⬡',t:'Hexagon Pattern'},{i:'♾️',t:'Infinite Celtic Knot'}],
+  },
+  {
+    id:'pop_art',i:'🎨',t:'Pop Art / Illustration',sub:'Bold colors · comic · editorial',
+    grad:'linear-gradient(135deg,#1a0000 0%,#330011 30%,#ff0055 60%,#ffdd00 85%,#00e5ff 100%)',
+    glowColor:'#ff0055',
+    keywords:['Bold Colors','Comic Style','Halftone Dots','Editorial Art'],
+    kwColors:['#ff0055','#ffdd00','#00e5ff','#000'],
+    ref:'Pop art / comic illustration bold. Warna sangat saturated: merah, kuning, biru/cyan, hitam. Halftone dot patterns. Bold outlines hitam tebal. Flat colors tanpa gradasi halus. Roy Lichtenstein meets modern streetwear. Statement art yang kuat. Background TRANSPARAN.',
+    core:'bold pop art illustration isolated artwork, comic book style graphic, flat solid colors with minimal shading, thick black bold outlines, halftone dot pattern accents, primary color palette (bright red yellow blue black), strong graphic composition, speech bubble or action elements optional, editorial magazine illustration aesthetic, roy lichtenstein pop art meets modern streetwear',
+    neg:'realistic shading, soft gradient, blurry, background, watermark, instruction text, garment, t-shirt, pastel soft',
+    tags:['pop art woman comic bold','halftone dot pattern comic','speech bubble action bam','flat color robot pop art','comic explosion starburst','editorial bold face illustration'],
+    seoBase:['pop art sticker','comic art','bold illustration','pop art png','comic sticker','pop art clipart','halftone art','bold art','comic clipart','retro pop art','comic illustration','pop art design','editorial art'],
+    vars:[{i:'💥',t:'Comic Explosion'},{i:'💬',t:'Speech Bubble Art'},{i:'👄',t:'Pop Art Lips'},{i:'🤖',t:'Robot Pop Art'},{i:'⭐',t:'Star Starburst Bold'},{i:'🎯',t:'Target Graphic Bold'}],
+  },
+  {
+    id:'typography_art',i:'✍️',t:'Typography Art',sub:'Bold lettering · text as hero',
+    grad:'linear-gradient(135deg,#0a0a0a 0%,#1a1a1a 30%,#2a2a2a 55%,#ff8833 80%,#ffdd00 100%)',
+    glowColor:'#ff8833',
+    keywords:['Bold Lettering','Distressed','Text as Art','Strong Type'],
+    kwColors:['#ff8833','#ffdd00','#fff','#ff4444'],
+    ref:'Typography sebagai hero design. Text dengan artistic treatment: distressed vintage, neon glow outline, 3D block letter, brush script, gothic. Elemen dekoratif pendukung: skull kecil, bintang, mahkota, sayap. Komposisi: headline besar + subtext. Background TRANSPARAN.',
+    core:'bold expressive typographic artwork, powerful lettering as the main visual artwork, dramatic text treatment (distressed worn vintage or neon glow outline or 3D block letters or brush script or gothic blackletter), complementary decorative graphic elements surrounding (stars crown wings skull lightning), strong visual hierarchy, text integrated with decorative frame elements, impactful visual composition where typography IS the art',
+    neg:'illegible font, blurry, weak hierarchy, background, watermark, instruction text in image as production note, low quality',
+    tags:['STAY WILD distressed vintage','NO SLEEP neon glow outline','BORN TO LOSE gothic script','CHAOS vintage stamp bold','WILD FREE brush script art','NEVER SETTLE 3D block letters'],
+    seoBase:['typography sticker','lettering art','bold typography','text sticker','typography png','lettering sticker','distressed font','gothic lettering','vintage typography','bold lettering','typography clipart','text art','lettering png'],
+    vars:[{i:'🔠',t:'Distressed Vintage'},{i:'⚡',t:'Neon Glow Text'},{i:'📜',t:'Gothic Script'},{i:'🎸',t:'Rock Band Style'},{i:'🏙️',t:'Urban Street Type'},{i:'🌙',t:'Mystical Lettering'}],
+  },
+  {
+    id:'food_cute',i:'🍰',t:'Food / Sweet Kawaii',sub:'Cake · candy · dessert cute',
+    grad:'linear-gradient(135deg,#1a0028 0%,#ff69b4 40%,#ff1493 65%,#fff0f8 85%,#ffd6ed 100%)',
+    glowColor:'#ff69b4',
+    keywords:['Sweet Pastel','Cute Food','Cream & Frosting','Candy Colors'],
+    kwColors:['#ff69b4','#ffd6ed','#ffdd00','#00e5ff'],
+    ref:'Food/sweet kawaii: makanan dengan wajah cute, mata besar bersinar. Cake slice, donut, ice cream, macaron, candy dengan ekspresi imut. Warna pastel vibrant: pink, lavender, mint, cream. Decorative: stars, hearts, sparkles. Bold outline. Background TRANSPARAN.',
+    core:'cute kawaii food character with adorable face, big sparkling eyes on food item (cake slice or donut or ice cream or macaron or candy), sweet pastel color palette (pink lavender mint cream yellow), cute facial expression and tiny limbs, frosting drips or sprinkle decorations, surrounding candy or sweet themed elements, hearts and star accents, thick cute outline',
+    neg:'realistic food photo, blurry, background, watermark, instruction text, garment, t-shirt, adult design, scary',
+    tags:['cute cake slice happy face','donut kawaii sprinkles glow','ice cream scoop winking cute','macaron tower pastel sweet','candy star kawaii pink','strawberry face kawaii cute'],
+    seoBase:['food sticker','kawaii food','cute food sticker','cake sticker','food clipart','kawaii sticker','donut sticker','cute clipart','sweet sticker','food png','kawaii food clipart','dessert sticker','cute food png'],
+    vars:[{i:'🎂',t:'Kawaii Cake Cute'},{i:'🍩',t:'Donut Happy Face'},{i:'🍦',t:'Ice Cream Wink'},{i:'🧁',t:'Cupcake Star Eyes'},{i:'🍬',t:'Candy Kawaii Sweet'},{i:'🍓',t:'Strawberry Face Cute'}],
+  },
+];
+
+var FORMATS=[
+  {id:'isolated_png',icon:'✂️',t:'Isolated PNG Sticker',d:'Transparent bg · die-cut ready · single artwork'},
+  {id:'sticker_pack',icon:'📦',t:'Sticker Pack Bundle',d:'Multi stiker dalam 1 sheet · bundle listing'},
+  {id:'poster_wall_art',icon:'🖼️',t:'Poster / Wall Art',d:'Full composition · artistic bg · siap pajang'},
+  {id:'tshirt_design',icon:'👕',t:'T-shirt Design File',d:'Isolated · DTF/DTG ready · no garment'},
+  {id:'clipart_collection',icon:'🗂️',t:'Clipart Collection',d:'Set elemen tematik · PNG bundle · multi asset'},
+];
+
+var BG_COLORS=[
+  {c:'#111',n:'Black'},{c:'#222',n:'Dark'},{c:'#fff',n:'White'},
+  {c:'#374151',n:'Charcoal'},{c:'#1e3a5f',n:'Navy'},{c:'#1a4731',n:'Forest'},
+  {c:'#4c1d95',n:'Purple'},{c:'#7f1d1d',n:'Burgundy'},{c:'#fef3c7',n:'Cream'},
+];
+
+var MODS=[
+  {id:'transparent_bg',  t:'Transparent Background',   d:'PNG alpha — wajib stiker & DTF'},
+  {id:'thick_outline',   t:'Ultra Thick Black Outline', d:'Outline bold ala stiker premium'},
+  {id:'isolated_only',   t:'No Garment Whatsoever',     d:'Tanpa kaos, hoodie, garment'},
+  {id:'no_instr',        t:'No Instruction Text',       d:'AI tidak cetak instruksi di gambar'},
+  {id:'neon_glow',       t:'Neon Glow Effect',          d:'Cahaya neon di tepi karakter'},
+  {id:'ultra_vibrant',   t:'Ultra Vibrant Colors',      d:'Saturasi warna maksimum'},
+  {id:'die_cut_style',   t:'Die-Cut Stiker Style',      d:'Tampak stiker diecut siap cetak'},
+  {id:'high_contrast',   t:'High Contrast',             d:'Kontras tinggi untuk kaos gelap'},
+];
+
+// ═══════════════════════════════
+// RENDER — PLATFORM
+// ═══════════════════════════════
+function renderPlatforms(){
+  var g=document.getElementById('platGrid');g.innerHTML='';
+  PLATFORMS.forEach((p,i)=>{
+    var el=document.createElement('div');
+    el.className='platc'+(i===0?' sel':'');
+    el.onclick=()=>{
+      document.querySelectorAll('.platc').forEach(x=>x.classList.remove('sel'));
+      el.classList.add('sel');S.platform=p.id;
+      // sync SEO tab
+      S.seoTab=p.id;
+      document.querySelectorAll('.stb').forEach(x=>x.classList.remove('on'));
+      var stab=document.getElementById('seoTab-'+p.id);
+      if(stab)stab.classList.add('on');
+    };
+    el.innerHTML=`<span class="plat-icon">${p.icon}</span><div class="plat-t">${p.t}</div><div class="plat-sub">${p.sub}</div><div class="plat-note">${p.note}</div>`;
+    g.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════
+// RENDER — CATS
+// ═══════════════════════════════
+function renderCats(){
+  var g=document.getElementById('catGrid');g.innerHTML='';
+  CATS.forEach((c,i)=>{
+    var el=document.createElement('div');
+    el.className='catc'+(i===0?' sel':'');
+    el.onclick=()=>{
+      document.querySelectorAll('.catc').forEach(x=>x.classList.remove('sel'));
+      el.classList.add('sel');S.cat=c.id;
+      updateCatDetail(c);renderQtags(c);
+    };
+    var kwHtml=c.keywords.slice(0,3).map((k,ki)=>
+      `<span class="cat-kwd" style="background:${c.kwColors[ki]}22;color:${c.kwColors[ki]};border:1px solid ${c.kwColors[ki]}44;">${k}</span>`
+    ).join('');
+    el.innerHTML=`
+      <div class="cat-preview" style="background:${c.grad};">
+        <div class="cat-preview-glow" style="background:radial-gradient(circle at 50% 60%,${c.glowColor}55,transparent 70%);"></div>
+        <span class="cat-preview-icon">${c.i}</span>
+      </div>
+      <div class="cat-sel-dot">✓</div>
+      <div class="cat-info">
+        <div class="cat-name">${c.t}</div>
+        <div class="cat-sub">${c.sub}</div>
+        <div class="cat-kwds">${kwHtml}</div>
+      </div>`;
+    g.appendChild(el);
+  });
+  updateCatDetail(CATS[0]);renderQtags(CATS[0]);
+}
+
+function updateCatDetail(c){
+  document.getElementById('cdIcon').textContent=c.i;
+  document.getElementById('cdTitle').textContent=c.t+' — Style Reference';
+  var kwBadges=c.keywords.map((k,ki)=>
+    `<span class="cd-kwd-badge" style="border:1px solid ${c.kwColors[ki]}55;color:${c.kwColors[ki]};">${k}</span>`
+  ).join('');
+  document.getElementById('cdShowcase').innerHTML=`
+    <div class="cd-showcase-bg" style="background:${c.grad};"></div>
+    <div class="cd-showcase-bg" style="background:radial-gradient(circle at 50% 60%,${c.glowColor}44,transparent 65%);"></div>
+    <div class="cd-showcase-content">
+      <span class="cd-showcase-emoji">${c.i}</span>
+      <div class="cd-showcase-label">${c.t.toUpperCase()}</div>
+      <div class="cd-showcase-kwd-row">${kwBadges}</div>
+    </div>`;
+  document.getElementById('cdRef').textContent=c.ref;
+  var vars=document.getElementById('cdVars');vars.innerHTML='';
+  c.vars.forEach(v=>{
+    var el=document.createElement('div');el.className='cd-var';
+    el.onclick=()=>{
+      var inp=document.getElementById('descInput');
+      inp.value=inp.value?(inp.value+', '+v.t.toLowerCase()):v.t.toLowerCase();
+    };
+    el.innerHTML=`<span class="cd-var-i">${v.i}</span><div class="cd-var-t">${v.t}</div>`;
+    vars.appendChild(el);
+  });
+}
+
+function renderQtags(c){
+  var r=document.getElementById('qtRow');r.innerHTML='';
+  c.tags.forEach(t=>{
+    var el=document.createElement('span');el.className='qt';
+    el.onclick=()=>{
+      var inp=document.getElementById('descInput');
+      inp.value=inp.value?(inp.value+', '+t):t;
+    };
+    el.textContent=t;r.appendChild(el);
+  });
+}
+
+function renderFormats(){
+  var g=document.getElementById('fmtGrid');g.innerHTML='';
+  FORMATS.forEach((f,i)=>{
+    var el=document.createElement('div');
+    // 5th item spans full width
+    el.className='fmtc'+(i===0?' sel':'')+(i===4?' full':'');
+    el.onclick=()=>{
+      document.querySelectorAll('.fmtc').forEach(x=>x.classList.remove('sel'));
+      el.classList.add('sel');S.fmt=f.id;
+      document.getElementById('packCard').style.display=(f.id==='sticker_pack'||f.id==='clipart_collection')?'block':'none';
+    };
+    el.innerHTML=`<div class="fmt-top"><span class="fmt-icon">${f.icon}</span><span class="fmt-t">${f.t}</span></div><div class="fmt-d">${f.d}</div>`;
+    g.appendChild(el);
+  });
+}
+
+function renderRes(){
+  var r=document.getElementById('resRow');r.innerHTML='';
+  [{id:'3000',t:'3000px'},{id:'4800',t:'4800px'},{id:'6000',t:'6000px'},{id:'8000',t:'8000px ✓ 600DPI'}].forEach((res,i)=>{
+    var el=document.createElement('span');
+    el.className='pill'+(i===3?' sel':'');
+    el.onclick=()=>{document.querySelectorAll('#resRow .pill').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');S.res=res.id;};
+    el.textContent=res.t;r.appendChild(el);
+  });
+}
+
+function renderMods(){
+  var g=document.getElementById('modGrid');g.innerHTML='';
+  MODS.forEach(m=>{
+    var el=document.createElement('div');
+    el.className='mod'+(S.mods.has(m.id)?' on':'');
+    el.onclick=()=>{
+      el.classList.toggle('on');
+      S.mods.has(m.id)?S.mods.delete(m.id):S.mods.add(m.id);
+      el.querySelector('input').checked=S.mods.has(m.id);
+    };
+    el.innerHTML=`<input type="checkbox" ${S.mods.has(m.id)?'checked':''}><div><div class="mod-t">${m.t}</div><div class="mod-d">${m.d}</div></div>`;
+    g.appendChild(el);
+  });
+}
+
+function renderColors(){
+  var r=document.getElementById('clrRow');r.innerHTML='';
+  BG_COLORS.forEach((c,i)=>{
+    var el=document.createElement('div');
+    el.className='cdot'+(i===0?' sel':'');
+    el.style.background=c.c;
+    if(c.c==='#fff')el.style.border='2.5px solid #444';
+    el.title=c.n;
+    el.onclick=()=>{
+      document.querySelectorAll('.cdot').forEach(x=>x.classList.remove('sel'));
+      el.classList.add('sel');S.tgtColor=c.c;S.tgtColorName=c.n;
+    };
+    r.appendChild(el);
+  });
+}
+
+function renderPackOpts(){
+  var cr=document.getElementById('cntRow');cr.innerHTML='';
+  ['4','6','8','10','12'].forEach((n,i)=>{
+    var el=document.createElement('span');
+    el.className='pill'+(i===1?' sel':'');
+    el.onclick=()=>{document.querySelectorAll('#cntRow .pill').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');S.packCount=n;};
+    el.textContent=n+' item';cr.appendChild(el);
+  });
+  var lr=document.getElementById('lyRow');lr.innerHTML='';
+  [{id:'2x3',t:'2×3'},{id:'3x2',t:'3×2'},{id:'2x4',t:'2×4'},{id:'3x3',t:'3×3'},{id:'4x2',t:'4×2'}].forEach((l,i)=>{
+    var el=document.createElement('span');
+    el.className='pill sel-cy'+(i===0?' sel':'');
+    el.onclick=()=>{document.querySelectorAll('#lyRow .pill').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');S.packLayout=l.id;};
+    el.textContent=l.t+' grid';lr.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════
+// PROMPT BUILDERS
+// ═══════════════════════════════
+function getCat(){return CATS.find(x=>x.id===S.cat)||CATS[0];}
+function getDesc(){return document.getElementById('descInput').value.trim();}
+function getTextInArt(){return document.getElementById('textInArt').value.trim();}
+function getColors(){return document.getElementById('colorPalette').value.trim();}
+function getFmtLabel(){return FORMATS.find(x=>x.id===S.fmt)?.t||'Isolated PNG Sticker';}
+function getPlatLabel(){return PLATFORMS.find(x=>x.id===S.platform)?.t||'Etsy';}
+function getModsText(){
+  return Array.from(S.mods).map(id=>{var m=MODS.find(x=>x.id===id);return m?'  · '+m.t:null;}).filter(Boolean).join('\n');
+}
+
+function getPlatBlock(){
+  var blocks={
+    etsy:`PLATFORM: Etsy Digital Download
+  · File: PNG transparent 8000×8000px (atau sesuai resolusi dipilih)
+  · Deliver sebagai ZIP: PNG + preview mockup
+  · Nama file: deskriptif tanpa spasi (misal: dark-kawaii-skull-sticker-png)
+  · Siapkan 5 file listing image (product preview, mockup, detail close-up)`,
+    redbubble:`PLATFORM: Redbubble Print-on-Demand
+  · Upload PNG RGB (bukan CMYK) minimal 6500×6500px
+  · Aktifkan: sticker, poster, tote bag, t-shirt, phone case, mug
+  · Background transparan untuk sticker product
+  · Artwork harus aman di semua warna produk`,
+    dtf:`PLATFORM: DTF / Sablon Lokal Indonesia
+  · Format: PNG CMYK + alpha channel, 300–600 DPI
+  · Ukuran cetak: A3 (29.7×42cm) atau A4, sesuai area dada kaos
+  · White ink layer otomatis dari transparency channel
+  · Warna: rich, saturated, tahan laundry — gunakan CMYK vibrant`,
+  };
+  return blocks[S.platform]||blocks.etsy;
+}
+
+function getFmtBlock(){
+  var c=getCat();
+  var blocks={
+    isolated_png:`FORMAT: Isolated PNG Sticker — Single Artwork
+  · Background: SEPENUHNYA TRANSPARAN — pure transparent PNG
+  · Outline: Ultra tebal bold hitam/gelap mengikuti seluruh tepi
+  · TIDAK ADA kaos, hoodie, atau garment apapun
+  · Artwork berdiri sendiri terisolasi seperti stiker diecut
+  · Tepi bersih dan tajam — siap cutting plotter atau printer stiker`,
+    sticker_pack:`FORMAT: Sticker Pack Bundle (${S.packCount} stiker, layout ${S.packLayout})
+  · ${S.packCount} stiker berbeda dalam 1 sheet layout ${S.packLayout}
+  · Background sheet: TRANSPARAN — setiap stiker punya outline sendiri
+  · Variasi pose/ekspresi/warna — satu tema konsisten
+  · Spacing merata, stiker tidak saling bertumpuk
+  · Siap jual sebagai bundle / pack`,
+    poster_wall_art:`FORMAT: Poster / Wall Art
+  · Background: artistic dan atmospheric sesuai estetik ${c.t}
+  · Full artistic composition — bukan isolated/transparent
+  · TIDAK ADA kaos atau garment — murni poster artwork
+  · Siap print sebagai poster, wall art, art print
+  · Ukuran: square atau portrait (A2/A3 ratio)`,
+    tshirt_design:`FORMAT: T-shirt Design File — Print Ready
+  · Background: SEPENUHNYA TRANSPARAN — pure transparent PNG
+  · Outline bold/tebal untuk visibility di kaos
+  · TIDAK ADA kaos, hoodie, atau garment di gambar
+  · Artwork isolated — desainer yang akan place di mockup kaos
+  · Optimized untuk ${S.tgtColorName} garment, DTF/DTG/screen print`,
+    clipart_collection:`FORMAT: Clipart Collection Bundle (${S.packCount} elemen, ${S.packLayout})
+  · ${S.packCount} elemen tematik berbeda dalam 1 komposisi sheet
+  · Setiap elemen: isolated, transparent bg, outline sendiri
+  · Variasi ukuran dan tipe elemen dalam satu tema
+  · Siap jual sebagai clipart bundle / asset pack
+  · Setiap elemen bisa dipotong dan digunakan terpisah`,
+  };
+  return blocks[S.fmt]||blocks.isolated_png;
+}
+
+function buildNB2(){
+  var cat=getCat();var desc=getDesc();var txt=getTextInArt();var col=getColors();
+  var textSection=txt?`
+━━ TEKS DALAM ARTWORK ━━
+Integrasikan teks ini: "${txt}"
+  · Ejaan HARUS TEPAT seperti di atas
+  · Font dekoratif sesuai gaya ${cat.t}
+  · Teks menjadi bagian integral desain
+  · JANGAN cetak teks instruksi apapun`:'';
+  var colSection=col?`\n  · Palet warna diminta: ${col}`:'';
+  return`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ISOLATED ARTWORK — ${cat.t.toUpperCase()}
+${getFmtLabel()} · ${getPlatLabel()} · Tanpa Kaos
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Kategori       : ${cat.t} (${cat.sub})
+Jenis Produk   : ${getFmtLabel()}
+Platform       : ${getPlatLabel()}
+Resolusi       : ${S.res}×${S.res} pixels @ 600 DPI (square)
+Media Tujuan   : kaos/media warna ${S.tgtColorName}
+
+━━ ATURAN KRITIS — WAJIB DIIKUTI ━━
+ATURAN 1: JANGAN cetak teks instruksi, catatan produksi, atau
+  directive prompt apapun sebagai teks yang terlihat di gambar.
+ATURAN 2: INI BUKAN MOCKUP KAOS. JANGAN gambar kaos, hoodie,
+  sweater, jaket, atau garment apapun. Ini PURE isolated artwork.
+ATURAN 3: ${S.mods.has('transparent_bg')?'Background SEPENUHNYA TRANSPARAN — tidak ada warna background':'Background artistik sesuai format yang dipilih'}
+ATURAN 4: Tepi desain BERSIH dan TAJAM — tidak blur di tepian
+ATURAN 5: Tanpa watermark. Tanpa AI generation artifact.
+
+━━ PLATFORM & FORMAT ━━
+${getPlatBlock()}
+
+━━ FORMAT & KOMPOSISI ━━
+${getFmtBlock()}
+
+━━ DESKRIPSI DESAIN ━━
+${desc||'Buat '+cat.t+' artwork yang vibrant, premium, dan menarik'}${colSection}
+${textSection}
+
+━━ STYLE REFERENCE — ${cat.t.toUpperCase()} ━━
+${cat.core}
+
+━━ OPSI VISUAL AKTIF ━━
+${getModsText()||'  · Standard print-ready quality'}
+
+━━ SPESIFIKASI TEKNIS ━━
+  · Canvas: ${S.res}×${S.res} pixels, square, 600 DPI
+  · ${S.mods.has('transparent_bg')?'Background: TRANSPARAN penuh (PNG alpha channel)':'Background: artistik sesuai format'}
+  · Kualitas: ultra-detailed, professional digital art, print-ready
+  · Gunakan Gemini world knowledge untuk ${cat.t} artwork yang
+    akurat secara estetik, konsisten, dan memiliki kualitas premium
+
+━━ NEGATIVE PROMPT ━━
+${cat.neg}
+DILARANG: kaos, hoodie, sweater, jaket, atau garment apapun.
+DILARANG: teks instruksi, catatan produksi, directive prompt.
+${S.mods.has('transparent_bg')?'DILARANG: warna background — harus fully transparent.':''}`;
+}
+
+function buildMJ(){
+  var cat=getCat();var desc=getDesc();var txt=getTextInArt();var col=getColors();
+  var coreShort=cat.core.split(',').slice(0,6).join(',');
+  var extras=[];
+  if(S.mods.has('thick_outline'))extras.push('ultra thick black outline');
+  if(S.mods.has('neon_glow'))extras.push('neon glow effects');
+  if(S.mods.has('ultra_vibrant'))extras.push('ultra vibrant saturated colors');
+  if(S.mods.has('die_cut_style'))extras.push('die-cut sticker style');
+  var txtStr=txt?`, text "${txt}" integrated in design`:'';
+  var colStr=col?`, ${col}`:'';
+  var bgStr=S.fmt==='poster_wall_art'?'artistic atmospheric background':'transparent background isolated sticker art';
+  return`${cat.t.toLowerCase()} isolated artwork${txtStr}${colStr}, ${desc?desc+', ':''}${coreShort}${extras.length?', '+extras.join(', '):''}, no t-shirt no garment no clothing, ${bgStr}, thick bold outline, print-ready for ${getPlatLabel()}, ultra detailed professional illustration, ${S.res}px --ar 1:1 --v 7 --stylize 850 --q 2 --style raw --no background garment shirt hoodie watermark "instruction text"
+
+Negative: ${cat.neg}, t-shirt, hoodie, garment, apparel, background`;
+}
+
+function buildSD(){
+  var cat=getCat();var desc=getDesc();var txt=getTextInArt();
+  var coreShort=cat.core.split(',').slice(0,7).join(',');
+  var txtStr=txt?`, text "${txt}"`:'';
+  return`${cat.t.toLowerCase()} isolated artwork${txtStr}, ${desc?desc+', ':''}${coreShort}, no t-shirt no garment no clothing, ${S.fmt==='poster_wall_art'?'artistic background':'transparent background sticker art thick outline'}, isolated pure design no background, ultra detailed, masterpiece, best quality, professional illustration, ${S.res}px, print-ready, 600dpi
+
+Negative: t-shirt, hoodie, garment, clothing, apparel${S.fmt!=='poster_wall_art'?', background color, white background':''}, watermark, ${cat.neg}, instruction text in image`;
+}
+
+// ═══════════════════════════════
+// GENERATE
+// ═══════════════════════════════
+function doGenerate(){
+  S.lastPrompts.nb2=buildNB2();
+  S.lastPrompts.mj=buildMJ();
+  S.lastPrompts.sd=buildSD();
+  function show(id,txt){
+    document.getElementById('p-'+id).textContent=txt;
+    document.getElementById('p-'+id).style.display='block';
+    var empty=document.querySelector('#pe-'+id+' .empty-p');
+    if(empty)empty.style.display='none';
+  }
+  show('nb2',S.lastPrompts.nb2);
+  show('mj',S.lastPrompts.mj);
+  show('sd',S.lastPrompts.sd);
+  document.getElementById('cpHint').textContent='✅ Prompt siap! Copy → paste ke NB2 / MJ / SD.';
+  var sb=document.getElementById('saveBtn');sb.textContent='💾 SAVE';sb.classList.remove('saved');
+  document.querySelector('.prompt-box').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function swEng(id,btn){
+  document.querySelectorAll('.ptc').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.etb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('pe-'+id).classList.add('on');btn.classList.add('on');
+}
+
+function copyPrompt(){
+  var el=document.querySelector('.ptc.on .prompt-txt');
+  if(!el||el.style.display==='none'){alert('Generate dulu!');return;}
+  navigator.clipboard.writeText(el.textContent).then(()=>{
+    var btn=document.getElementById('cpBtn');
+    btn.textContent='✓ COPIED!';btn.classList.add('ok');
+    document.getElementById('cpHint').textContent='Paste ke NB2 sekarang!';
+    setTimeout(()=>{btn.textContent='COPY PROMPT';btn.classList.remove('ok');},2500);
+  });
+}
+
+// ═══════════════════════════════
+// PROMPT HISTORY
+// ═══════════════════════════════
+var HIST_KEY='dmv4_history';
+
+function getHistory(){
+  try{return JSON.parse(localStorage.getItem(HIST_KEY)||'[]');}
+  catch(e){return[];}
+}
+
+function saveCurrentPrompt(){
+  var el=document.querySelector('.ptc.on .prompt-txt');
+  if(!el||el.style.display==='none'){alert('Generate dulu!');return;}
+  var activeEng=document.querySelector('.etb.on');
+  var eng=activeEng?activeEng.textContent.trim():'NB2';
+  var engId=eng.includes('NB2')?'nb2':eng.includes('MJ')?'mj':'sd';
+  var hist=getHistory();
+  hist.unshift({
+    id:Date.now(),
+    ts:new Date().toLocaleString('id-ID',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}),
+    cat:getCat().t,
+    fmt:getFmtLabel(),
+    platform:getPlatLabel(),
+    engine:engId,
+    prompt:el.textContent,
+    desc:(getDesc()||getCat().t).slice(0,60),
+  });
+  hist=hist.slice(0,20);
+  localStorage.setItem(HIST_KEY,JSON.stringify(hist));
+  var sb=document.getElementById('saveBtn');
+  sb.textContent='✓ SAVED!';sb.classList.add('saved');
+  setTimeout(()=>{sb.textContent='💾 SAVE';sb.classList.remove('saved');},2000);
+  renderHistory();
+}
+
+function deleteHistItem(id,e){
+  e.stopPropagation();
+  var hist=getHistory().filter(x=>x.id!==id);
+  localStorage.setItem(HIST_KEY,JSON.stringify(hist));
+  renderHistory();
+}
+
+function clearHistory(){
+  if(!confirm('Hapus semua history?'))return;
+  localStorage.removeItem(HIST_KEY);
+  renderHistory();
+}
+
+function restoreHistItem(item){
+  // restore prompt to output
+  function show(id,txt){
+    document.getElementById('p-'+id).textContent=txt;
+    document.getElementById('p-'+id).style.display='block';
+    var empty=document.querySelector('#pe-'+id+' .empty-p');
+    if(empty)empty.style.display='none';
+  }
+  show(item.engine,item.prompt);
+  swEng(item.engine,document.querySelector('.etb[onclick*="\''+item.engine+'\'"]'));
+  document.querySelector('.prompt-box').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function renderHistory(){
+  var body=document.getElementById('histBody');
+  var hist=getHistory();
+  if(!hist.length){
+    body.innerHTML='<div class="hist-empty">Belum ada prompt tersimpan. Klik 💾 Save setelah generate.</div>';
+    return;
+  }
+  body.innerHTML='';
+  hist.forEach(item=>{
+    var engClass=item.engine==='mj'?'mj':item.engine==='sd'?'sd':'';
+    var engLabel=item.engine==='nb2'?'🍌 NB2':item.engine==='mj'?'✦ MJ':'◉ SD';
+    var el=document.createElement('div');
+    el.className='hist-item';
+    el.onclick=()=>restoreHistItem(item);
+    el.innerHTML=`
+      <div class="hist-item-top">
+        <span class="hist-eng ${engClass}">${engLabel}</span>
+        <span class="hist-cat">${item.cat}</span>
+        <span class="hist-fmt">· ${item.fmt}</span>
+        <span class="hist-ts">${item.ts}</span>
+      </div>
+      <div class="hist-desc">${item.platform} · ${item.desc||'—'}</div>
+      <span class="hist-del" onclick="deleteHistItem(${item.id},event)">✕</span>`;
+    body.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════
+// SEO KEYWORD GENERATOR
+// ═══════════════════════════════
+function setSeoTab(id,btn){
+  S.seoTab=id;
+  document.querySelectorAll('.stb').forEach(x=>x.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+function generateSEO(){
+  var cat=getCat();
+  var desc=getDesc();
+  var tab=S.seoTab;
+
+  // Build keyword pool
+  var base=cat.seoBase.slice();
+  var descWords=desc.toLowerCase().replace(/[^a-z0-9\s]/g,' ').split(/\s+/).filter(w=>w.length>3);
+  var fmtKwds={
+    isolated_png:['png sticker','transparent png','sticker file','digital sticker','clipart png','instant download','digital download'],
+    sticker_pack:['sticker pack','sticker bundle','sticker sheet','sticker set','sticker collection','bundle sticker','pack sticker'],
+    poster_wall_art:['wall art','poster art','art print','printable poster','wall decor','digital poster','art print download'],
+    tshirt_design:['tshirt design','shirt design','dtf design','dtg file','tshirt svg','shirt art','print file','iron on design'],
+    clipart_collection:['clipart bundle','clipart set','clipart collection','graphic bundle','digital clipart','png bundle','asset pack'],
+  };
+  var platKwds={
+    etsy:['instant download','digital download','commercial use','printable','etsy shop','digital file'],
+    redbubble:['redbubble art','print on demand','unique design','original art','illustrated'],
+    dtf:['sablon kaos','desain kaos','transfer print','dtf ready','print kaos','desain baju'],
+  };
+  var allKwds=[...base,...(fmtKwds[S.fmt]||[]),...(platKwds[tab]||[]),...descWords.slice(0,5)];
+  // Deduplicate and clean
+  var seen=new Set();
+  allKwds=allKwds.filter(k=>{var clean=k.trim().toLowerCase();if(seen.has(clean))return false;seen.add(clean);return clean.length>1;});
+
+  var out=document.getElementById('seoOutput');
+
+  if(tab==='etsy'){
+    var tags13=allKwds.slice(0,13);
+    var title=`${cat.t} ${getFmtLabel().replace('/ ','')} PNG - ${desc?desc.split(' ').slice(0,4).join(' ')+' ':''}Transparent Background Digital Download`;
+    out.innerHTML=`
+      <div class="seo-section">
+        <div class="seo-slbl">Etsy Listing Title <button class="seo-copy-sm" onclick="copyText('${escH(title.slice(0,140))}',this)">Copy</button></div>
+        <div class="seo-raw">${escH(title.slice(0,140))}</div>
+        <div class="seo-stats"><div class="seo-stat">Chars: <span>${title.length>140?140:title.length}/140</span></div></div>
+      </div>
+      <div class="seo-section">
+        <div class="seo-slbl">Etsy Tags (max 13) <button class="seo-copy-sm" onclick="copyText('${escH(tags13.join(', '))}',this)">Copy All</button></div>
+        <div class="seo-tags" id="etsy-tags">${tags13.map(t=>`<span class="seo-tag hi">${escH(t)}</span>`).join('')}</div>
+        <div class="seo-stats">
+          <div class="seo-stat">Tags: <span>${tags13.length}/13</span></div>
+          <div class="seo-stat">Format: <span>comma-separated</span></div>
+        </div>
+        <div class="seo-raw" style="margin-top:8px;">${escH(tags13.join(', '))}</div>
+      </div>
+      <div class="seo-section">
+        <div class="seo-slbl">Additional Keyword Ideas</div>
+        <div class="seo-tags">${allKwds.slice(13,26).map(t=>`<span class="seo-tag">${escH(t)}</span>`).join('')}</div>
+      </div>`;
+  } else if(tab==='redbubble'){
+    var rbTags=allKwds.slice(0,15);
+    var rbTitle=`${cat.t} ${desc?'- '+desc.split(' ').slice(0,5).join(' ')+' ':''}- ${getFmtLabel()}`;
+    out.innerHTML=`
+      <div class="seo-section">
+        <div class="seo-slbl">Redbubble Title <button class="seo-copy-sm" onclick="copyText('${escH(rbTitle.slice(0,60))}',this)">Copy</button></div>
+        <div class="seo-raw">${escH(rbTitle.slice(0,60))}</div>
+        <div class="seo-stats"><div class="seo-stat">Chars: <span>${rbTitle.length>60?60:rbTitle.length}/60</span></div></div>
+      </div>
+      <div class="seo-section">
+        <div class="seo-slbl">Redbubble Tags <button class="seo-copy-sm" onclick="copyText('${escH(rbTags.join(', '))}',this)">Copy All</button></div>
+        <div class="seo-tags">${rbTags.map(t=>`<span class="seo-tag hi">${escH(t)}</span>`).join('')}</div>
+        <div class="seo-raw" style="margin-top:8px;">${escH(rbTags.join(', '))}</div>
+      </div>
+      <div class="seo-section">
+        <div class="seo-slbl">More Tag Ideas</div>
+        <div class="seo-tags">${allKwds.slice(15,28).map(t=>`<span class="seo-tag">${escH(t)}</span>`).join('')}</div>
+      </div>`;
+  } else {
+    // DTF / Lokal
+    var dtfBase=['desain kaos','sablon kaos','desain dtf','gambar kaos','motif kaos',cat.t.toLowerCase(),'kaos custom','desain baju'];
+    var dtfTags=[...dtfBase,...base.slice(0,6)];
+    var dtfTitle=`Desain ${cat.t} ${desc?'- '+desc.split(' ').slice(0,4).join(' ')+' ':''}- File DTF Siap Print`;
+    out.innerHTML=`
+      <div class="seo-section">
+        <div class="seo-slbl">Judul Produk (Tokopedia/Shopee) <button class="seo-copy-sm" onclick="copyText('${escH(dtfTitle.slice(0,100))}',this)">Copy</button></div>
+        <div class="seo-raw">${escH(dtfTitle.slice(0,100))}</div>
+      </div>
+      <div class="seo-section">
+        <div class="seo-slbl">Kata Kunci DTF / Sablon <button class="seo-copy-sm" onclick="copyText('${escH(dtfTags.join(', '))}',this)">Copy</button></div>
+        <div class="seo-tags">${dtfTags.map(t=>`<span class="seo-tag hi">${escH(t)}</span>`).join('')}</div>
+        <div class="seo-raw" style="margin-top:8px;">${escH(dtfTags.join(', '))}</div>
+      </div>
+      <div class="seo-section">
+        <div class="seo-slbl">Spesifikasi DTF Otomatis</div>
+        <div class="seo-raw">Resolusi: ${S.res}px @ 600 DPI\nFormat: PNG CMYK + Alpha\nUkuran Cetak: A3 / A4 Transfer Sheet\nBackground: Transparent (white ink auto)\nWarna Media: ${S.tgtColorName} garment</div>
+      </div>`;
+  }
+}
+
+function escH(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function copyText(txt,btn){
+  navigator.clipboard.writeText(txt).then(()=>{
+    var orig=btn.textContent;btn.textContent='✓';
+    setTimeout(()=>{btn.textContent=orig;},1800);
+  });
+}
+
+// ═══════════════════════════════
+// INIT
+// ═══════════════════════════════
+renderPlatforms();
+renderCats();
+renderFormats();
+renderRes();
+renderMods();
+renderColors();
+renderPackOpts();
+renderHistory();
+</script>
+</body>
+</html>

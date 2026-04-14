@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Model Kit Infographic Generator — Ultra Detail v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f8f8fa;--bg2:#fff;--bg3:#f4f4f6;--bg4:#ececf0;
+  --dk:#1a1a2e;--dk2:#2d2d44;
+  --ac:#c0392b;--ac2:#e74c3c;--ac3:rgba(192,57,43,.08);
+  --bl:#1565c0;--or:#e65100;--gn:#2e7d32;--yw:#f57f17;
+  --muted:#666;--muted2:#999;--border:#e0e0e8;
+  --r:8px;--r-lg:12px;
+  --shadow:0 2px 12px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);min-height:100vh;color:var(--dk);font-size:13px;}
+.wrap{max-width:1040px;margin:0 auto;padding:1.5rem;}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,var(--dk) 0%,#2d1a1a 60%,#1a1a2e 100%);
+  border-radius:var(--r-lg);padding:1.25rem 1.75rem;margin-bottom:1.25rem;
+  display:flex;align-items:center;gap:14px;box-shadow:0 4px 20px rgba(26,26,46,.25);}
+.hdr-icon{width:44px;height:44px;border-radius:var(--r);background:linear-gradient(135deg,var(--ac),#8b1a1a);
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.hdr-t{font-size:16px;font-weight:700;color:#fff;letter-spacing:-.2px;}
+.hdr-sub{font-size:11px;color:rgba(255,255,255,.5);margin-top:3px;}
+.hdr-badge{margin-left:auto;background:var(--ac);color:#fff;font-size:10px;font-weight:700;
+  padding:4px 12px;border-radius:20px;letter-spacing:.06em;flex-shrink:0;}
+
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:360px 1fr;gap:14px;align-items:start;}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);
+  overflow:hidden;margin-bottom:12px;box-shadow:var(--shadow);}
+.card-h{padding:9px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg3);}
+.card-ht{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--dk);}
+.card-hs{font-size:9.5px;color:var(--muted);}
+.card-b{padding:13px 14px;}
+
+/* CAT TABS */
+.cat-tabs{display:flex;gap:3px;background:var(--bg3);border-radius:var(--r);padding:3px;flex-wrap:wrap;}
+.ctb{font-size:10.5px;font-weight:500;padding:6px 10px;border:none;border-radius:6px;cursor:pointer;
+  background:transparent;color:var(--muted);transition:all .14s;white-space:nowrap;flex:1;text-align:center;}
+.ctb.on{background:var(--bg2);color:var(--dk);font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,.1);}
+
+/* SUBJECT GRID */
+.subj-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;}
+.subjc{border:1.5px solid var(--border);border-radius:var(--r);padding:9px 10px;cursor:pointer;
+  background:var(--bg2);transition:all .15s;display:flex;align-items:flex-start;gap:8px;}
+.subjc:hover{border-color:var(--ac);background:var(--ac3);}
+.subjc.sel{border-color:var(--ac);background:var(--ac3);box-shadow:0 0 0 2px rgba(192,57,43,.15);}
+.subjc-i{font-size:20px;flex-shrink:0;margin-top:1px;}
+.subjc-t{font-size:10.5px;font-weight:600;color:var(--dk);}
+.subjc-d{font-size:9px;color:var(--muted);margin-top:2px;line-height:1.3;}
+
+/* FORM INPUTS */
+.lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);display:block;margin-bottom:5px;margin-top:12px;}
+.lbl:first-child{margin-top:0;}
+input.inp,select.inp,textarea.inp{
+  width:100%;font-family:'Inter',sans-serif;font-size:12.5px;
+  padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--r);
+  background:var(--bg2);color:var(--dk);outline:none;transition:border .15s;}
+input.inp:focus,select.inp:focus,textarea.inp:focus{border-color:var(--ac);}
+textarea.inp{resize:vertical;min-height:60px;line-height:1.5;}
+.inp::placeholder{color:var(--muted2);}
+select.inp{cursor:pointer;}
+
+/* 2-COL INPUTS */
+.inp2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.inp3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+
+/* TOGGLE CHIPS */
+.chip-row{display:flex;flex-wrap:wrap;gap:5px;}
+.chip{font-size:10px;font-weight:600;padding:4px 10px;border:1.5px solid var(--border);
+  border-radius:20px;cursor:pointer;background:var(--bg2);color:var(--muted);transition:all .12s;}
+.chip.on{background:var(--dk);color:#fff;border-color:var(--dk);}
+.chip.on-ac{background:var(--ac);color:#fff;border-color:var(--ac);}
+
+/* ZONE TOGGLES */
+.zone-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.zone-item{border:1.5px solid var(--border);border-radius:var(--r);padding:8px 10px;
+  cursor:pointer;background:var(--bg2);transition:all .14s;display:flex;align-items:flex-start;gap:7px;}
+.zone-item.on{border-color:var(--bl);background:rgba(21,101,192,.06);}
+.zone-item input{accent-color:var(--bl);margin-top:1px;flex-shrink:0;}
+.zone-item-t{font-size:10px;font-weight:600;color:var(--dk);}
+.zone-item-d{font-size:9px;color:var(--muted);margin-top:1px;line-height:1.3;}
+
+/* SCALE CHIPS */
+.scale-row{display:flex;gap:5px;flex-wrap:wrap;}
+.sc{font-size:10.5px;font-weight:600;padding:5px 12px;border:1.5px solid var(--border);
+  border-radius:20px;cursor:pointer;background:var(--bg2);color:var(--muted);transition:all .12s;}
+.sc.sel{background:var(--dk);color:#fff;border-color:var(--dk);}
+
+/* GEN BUTTON */
+.gen-btn{width:100%;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;
+  padding:12px;border-radius:var(--r);border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--dk),var(--dk2));color:#fff;
+  box-shadow:0 4px 16px rgba(26,26,46,.25);transition:all .18s;margin-top:12px;
+  letter-spacing:.02em;}
+.gen-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,26,46,.35);}
+.gen-btn:active{transform:scale(.99);}
+
+/* RIGHT PANEL */
+.out-col{display:flex;flex-direction:column;gap:12px;}
+
+/* PREVIEW PANEL — shows selected config */
+.preview-panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);
+  overflow:hidden;box-shadow:var(--shadow);}
+.pp-hdr{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg3);
+  display:flex;align-items:center;gap:8px;}
+.pp-t{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dk);}
+.pp-body{padding:14px;}
+.pp-subj-display{font-size:18px;font-weight:700;color:var(--dk);margin-bottom:4px;}
+.pp-config-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.pp-badge{font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;
+  background:var(--bg3);color:var(--muted);border:1px solid var(--border);}
+.pp-badge.ac{background:var(--ac3);color:var(--ac);border-color:rgba(192,57,43,.2);}
+.pp-zone-list{margin-top:10px;}
+.pp-zone-row{display:flex;align-items:center;gap:6px;padding:4px 0;
+  border-bottom:1px solid var(--border);font-size:10.5px;}
+.pp-zone-row:last-child{border-bottom:none;}
+.pp-zone-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.pp-zone-name{font-weight:600;color:var(--dk);width:60px;flex-shrink:0;}
+.pp-zone-desc{color:var(--muted);}
+
+/* PROMPT OUTPUT */
+.prompt-box{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);
+  overflow:hidden;box-shadow:var(--shadow);}
+.pb-hdr{padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg3);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.pb-t{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dk);}
+.pb-meta{font-size:9.5px;font-family:'JetBrains Mono',monospace;color:var(--muted);}
+.pb-body{padding:0;}
+.prompt-txt{font-family:'JetBrains Mono',monospace;font-size:10.5px;line-height:1.85;
+  color:#333;white-space:pre-wrap;word-break:break-word;
+  padding:14px;max-height:520px;overflow-y:auto;background:var(--bg3);}
+.empty-p{text-align:center;padding:3rem 1rem;color:var(--muted);background:var(--bg3);}
+.empty-p .ei{font-size:36px;opacity:.2;display:block;margin-bottom:10px;}
+.pb-foot{padding:10px 14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.cp-btn{font-size:12px;font-weight:600;padding:7px 18px;border-radius:var(--r);border:none;
+  cursor:pointer;background:var(--dk);color:#fff;transition:all .12s;}
+.cp-btn:hover{background:var(--dk2);}
+.cp-btn.ok{background:var(--gn);}
+.cp-hint{font-size:10px;color:var(--muted);}
+
+/* SCORE / COMPLEXITY INDICATOR */
+.complexity{display:flex;align-items:center;gap:8px;padding:10px 14px;
+  border-bottom:1px solid var(--border);background:var(--bg3);}
+.cx-lbl{font-size:9.5px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
+.cx-bar{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.cx-fill{height:100%;border-radius:3px;transition:width .3s;}
+.cx-val{font-size:10px;font-weight:700;color:var(--dk);min-width:40px;text-align:right;}
+
+/* TIPS STRIP */
+.tips-strip{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r-lg);padding:12px 14px;box-shadow:var(--shadow);}
+.tips-t{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--dk);margin-bottom:8px;}
+.tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.tip{background:var(--bg3);border-radius:var(--r);padding:9px 10px;}
+.tip-t{font-size:10px;font-weight:600;color:var(--dk);margin-bottom:3px;}
+.tip-b{font-size:9.5px;color:var(--muted);line-height:1.6;}
+code{background:var(--bg4);color:var(--ac);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:9.5px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-icon">🔧</div>
+  <div style="flex:1;">
+    <div class="hdr-t">Model Kit Infographic Generator — Ultra Detail v2</div>
+    <div class="hdr-sub">Prompt ultra-detail untuk infografis teknis model kit · semua kategori · engine AUG A1 v5 · NB2 optimized</div>
+  </div>
+  <div class="hdr-badge">v2 · AUG ENGINE</div>
+</div>
+
+<div class="layout">
+<!-- ══ LEFT PANEL ══ -->
+<div>
+
+<!-- 01 CATEGORY & SUBJECT -->
+<div class="card">
+  <div class="card-h">
+    <div class="card-ht">01 — Kategori & Subjek Model</div>
+  </div>
+  <div class="card-b">
+    <div class="cat-tabs" id="catTabs"></div>
+    <div style="margin-top:10px;"><div class="subj-grid" id="subjGrid"></div></div>
+    <span class="lbl">Atau ketik subjek spesifik</span>
+    <input type="text" class="inp" id="subjCustom" placeholder="Contoh: Steyr AUG A3 SF, M4A1 SOPMOD, Glock 17 Gen5..."/>
+  </div>
+</div>
+
+<!-- 02 IDENTITY -->
+<div class="card">
+  <div class="card-h"><div class="card-ht">02 — Identitas Model Kit</div></div>
+  <div class="card-b">
+    <span class="lbl" style="margin-top:0;">Nama Lengkap Model</span>
+    <input type="text" class="inp" id="modelFullName" placeholder="Contoh: Steyr AUG A1 | Armee Universal Gewehr | 508mm Barrel"/>
+
+    <span class="lbl">Kit Reference</span>
+    <div class="inp2">
+      <input type="text" class="inp" id="kitRef" placeholder="Pro-Series Master Kit"/>
+      <input type="text" class="inp" id="kitNo" placeholder="Kit No: SG1-6"/>
+    </div>
+
+    <span class="lbl">Skala</span>
+    <div class="scale-row" id="scaleRow"></div>
+
+    <span class="lbl">Ukuran Canvas Output</span>
+    <div class="inp2">
+      <select class="inp" id="canvasSize">
+        <option value="1920x1080">1920×1080 (16:9 Landscape)</option>
+        <option value="2560x1440">2560×1440 (16:9 QHD)</option>
+        <option value="3840x2160">3840×2160 (4K UHD)</option>
+        <option value="2480x3508">2480×3508 (A4 Portrait)</option>
+        <option value="3508x2480">3508×2480 (A4 Landscape)</option>
+        <option value="4961x3508">4961×3508 (A3 Landscape)</option>
+      </select>
+      <input type="text" class="inp" id="canvasDPI" placeholder="DPI: 300" value="300"/>
+    </div>
+  </div>
+</div>
+
+<!-- 03 PARTS SPECIFICATION -->
+<div class="card">
+  <div class="card-h"><div class="card-ht">03 — Spesifikasi Part & Assembly</div></div>
+  <div class="card-b">
+    <span class="lbl" style="margin-top:0;">Assembly Groups (Assembly utama yang akan di-explode)</span>
+    <textarea class="inp" id="assemblyGroups" placeholder="Contoh:&#10;BARREL ASSEMBLY — flash hider, barrel, gas port, front sight&#10;GAS SYSTEM — gas block, piston, piston spring, gas tube&#10;BOLT CARRIER GROUP — BCG body, bolt head, firing pin, extractor&#10;TRIGGER GROUP — trigger pack, grip, safety selector&#10;STOCK ASSEMBLY — polymer stock, buffer, buffer spring, cheekweld"></textarea>
+
+    <span class="lbl">Total Jumlah Part (estimasi)</span>
+    <div class="chip-row" id="partCountRow"></div>
+
+    <span class="lbl">Warna Material Utama</span>
+    <div class="inp2">
+      <input type="text" class="inp" id="color1" placeholder="Color 1: Olive Drab #4a5e3a"/>
+      <input type="text" class="inp" id="color2" placeholder="Color 2: Flat Black #1a1a1a"/>
+    </div>
+    <div class="inp2" style="margin-top:6px;">
+      <input type="text" class="inp" id="color3" placeholder="Color 3: Gunmetal #4a4a52"/>
+      <input type="text" class="inp" id="color4" placeholder="Color 4: Dark Earth #7a5c3a"/>
+    </div>
+
+    <span class="lbl">Material Sprue</span>
+    <div class="inp2">
+      <input type="text" class="inp" id="sprueA" placeholder="Sprue A: Light gray ABS"/>
+      <input type="text" class="inp" id="sprueB" placeholder="Sprue B: OD Green polymer"/>
+    </div>
+  </div>
+</div>
+
+<!-- 04 ZONES TO INCLUDE -->
+<div class="card">
+  <div class="card-h"><div class="card-ht">04 — Zona yang Ditampilkan</div></div>
+  <div class="card-b">
+    <div class="zone-grid" id="zoneGrid"></div>
+  </div>
+</div>
+
+<!-- 05 TECHNICAL SPECS -->
+<div class="card">
+  <div class="card-h"><div class="card-ht">05 — Spesifikasi Teknis Senjata/Model</div></div>
+  <div class="card-b">
+    <span class="lbl" style="margin-top:0;">Dimensi Real (opsional)</span>
+    <div class="inp3">
+      <input type="text" class="inp" id="specLength" placeholder="Panjang: 790mm"/>
+      <input type="text" class="inp" id="specHeight" placeholder="Tinggi: 180mm"/>
+      <input type="text" class="inp" id="specWeight" placeholder="Berat: 3.6kg"/>
+    </div>
+
+    <span class="lbl">Kaliber / Amunisi</span>
+    <input type="text" class="inp" id="specCaliber" placeholder="Contoh: 5.56×45mm NATO"/>
+
+    <span class="lbl">Sistem Operasi</span>
+    <div class="chip-row" id="opSystemRow"></div>
+
+    <span class="lbl">Konfigurasi</span>
+    <div class="chip-row" id="configRow"></div>
+
+    <span class="lbl">Weathering Zones</span>
+    <textarea class="inp" id="weatheringZones" placeholder="W1 — Barrel tip: heat stain (Tamiya Smoke + Black)&#10;W2 — Receiver top: paint wear (Silver dry brush)&#10;W3 — Grip/Stock: mud splatter (AK Mud product)"></textarea>
+  </div>
+</div>
+
+<!-- 06 ACCURACY & EXTRAS -->
+<div class="card">
+  <div class="card-h"><div class="card-ht">06 — Akurasi & Extras</div></div>
+  <div class="card-b">
+    <span class="lbl" style="margin-top:0;">Catatan Akurasi Kritis</span>
+    <textarea class="inp" id="accuracyNotes" placeholder="Contoh:&#10;- Bullpup: magazine BEHIND trigger, not in front&#10;- 508mm barrel is longer than standard 407mm&#10;- Short-stroke piston system (NOT direct impingement)&#10;- AUG-specific BCG shape (NOT AR-15 style)"></textarea>
+
+    <span class="lbl">Aksesori / Attachment</span>
+    <input type="text" class="inp" id="accessories" placeholder="Contoh: 1.5× scope, translucent magazine, foldable foregrip, sling swivels"/>
+
+    <span class="lbl">Marking / Decal Options</span>
+    <input type="text" class="inp" id="markings" placeholder="Contoh: Austrian Army Bundesheer, US Army Special Forces"/>
+
+    <span class="lbl">Bahasa Output</span>
+    <div class="chip-row">
+      <span class="chip on" id="langEN" onclick="setLang('en',this)">English Only</span>
+      <span class="chip" id="langID" onclick="setLang('id',this)">Bahasa Indonesia</span>
+      <span class="chip" id="langBI" onclick="setLang('both',this)">Bilingual</span>
+    </div>
+  </div>
+</div>
+
+<button class="gen-btn" onclick="doGenerate()">⚙ GENERATE ULTRA-DETAIL PROMPT</button>
+</div>
+
+<!-- ══ RIGHT PANEL ══ -->
+<div class="out-col">
+
+  <!-- LIVE CONFIG PREVIEW -->
+  <div class="preview-panel">
+    <div class="pp-hdr"><div class="pp-t">📋 Konfigurasi Saat Ini</div></div>
+    <div class="pp-body">
+      <div class="pp-subj-display" id="ppSubj">Belum ada subjek dipilih</div>
+      <div style="font-size:10.5px;color:var(--muted);" id="ppName">—</div>
+      <div class="pp-config-row" id="ppBadges"></div>
+      <div class="pp-zone-list" id="ppZones"></div>
+    </div>
+  </div>
+
+  <!-- COMPLEXITY METER -->
+  <div class="card" style="margin-bottom:0;">
+    <div class="complexity">
+      <div class="cx-lbl">Kompleksitas Prompt</div>
+      <div class="cx-bar"><div class="cx-fill" id="cxFill" style="width:0%;background:var(--gn);"></div></div>
+      <div class="cx-val" id="cxVal">—</div>
+    </div>
+  </div>
+
+  <!-- PROMPT OUTPUT -->
+  <div class="prompt-box">
+    <div class="pb-hdr">
+      <div class="pb-t">📄 Prompt Ultra-Detail — NB2 / Gemini</div>
+      <div class="pb-meta" id="pbMeta">—</div>
+    </div>
+    <div class="empty-p" id="emptyPrompt">
+      <span class="ei">🔧</span>
+      Lengkapi konfigurasi di sebelah kiri lalu klik Generate.
+    </div>
+    <div class="prompt-txt" id="promptTxt" style="display:none;"></div>
+    <div class="pb-foot">
+      <button class="cp-btn" id="cpBtn" onclick="copyPrompt()">Copy Prompt</button>
+      <div class="cp-hint" id="cpHint">Generate dulu → copy → paste ke NB2 (Gemini).</div>
+    </div>
+  </div>
+
+  <!-- TIPS -->
+  <div class="tips-strip">
+    <div class="tips-t">💡 Tips Penggunaan</div>
+    <div class="tips-grid">
+      <div class="tip">
+        <div class="tip-t">🍌 Tips NB2 Terbaik</div>
+        <div class="tip-b">Untuk hasil paling akurat, upload foto referensi model asli bersama prompt. NB2 bisa analisis gambar + teks sekaligus. Tambahkan <code>Use Gemini world knowledge</code> agar AI tahu bentuk asli senjata.</div>
+      </div>
+      <div class="tip">
+        <div class="tip-t">🎯 Akurasi Bagian</div>
+        <div class="tip-b">Isi kolom "Catatan Akurasi Kritis" sedetail mungkin — ini yang paling mempengaruhi hasil. Sebutkan hal-hal yang AI sering salah: proporsi, konfigurasi, sistem operasi.</div>
+      </div>
+      <div class="tip">
+        <div class="tip-t">📐 Zona yang Efektif</div>
+        <div class="tip-b">Aktifkan semua 5 zona untuk hasil paling lengkap seperti AUG A1 v5. Untuk model lebih simpel, nonaktifkan Zone 5 (cross-section) dan Zone 2 (sprue) jika tidak diperlukan.</div>
+      </div>
+      <div class="tip">
+        <div class="tip-t">🔁 Iterasi Prompt</div>
+        <div class="tip-b">Jika hasil kurang akurat: tambahkan <code>RULE: [detail spesifik]</code> di bagian akurasi. Bisa generate berkali-kali dengan perbedaan kecil — NB2 akan menghasilkan variasi berbeda.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+var S={
+  cat:'firearms_rifle',subj:'',scale:'1:24',lang:'en',
+  zones:new Set(['z1_exploded','z2_sprue','z3_spec','z4_hobby','z5_inset']),
+  opSystem:'short_stroke',config:'bullpup',partCount:'30-40',
+};
+
+// ═══════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════
+var CATS=[
+  {id:'firearms_rifle',    t:'🔫 Rifle/Carbine'},
+  {id:'firearms_pistol',   t:'🔫 Pistol/Handgun'},
+  {id:'firearms_sniper',   t:'🎯 Sniper Rifle'},
+  {id:'firearms_smg',      t:'⚡ SMG/PDW'},
+  {id:'firearms_shotgun',  t:'💥 Shotgun/LMG'},
+  {id:'vehicle_tank',      t:'🚀 Tank/Armor'},
+  {id:'vehicle_aircraft',  t:'✈️ Aircraft/Helo'},
+  {id:'vehicle_ship',      t:'⚓ Ship/Submarine'},
+  {id:'mecha_gundam',      t:'🤖 Gundam/Mecha'},
+  {id:'mecha_sci',         t:'🌌 Sci-Fi Mech'},
+  {id:'civilian_car',      t:'🚗 Car/Motorcycle'},
+  {id:'diorama',           t:'🏞️ Diorama Scene'},
+];
+
+var SUBJECTS={
+  firearms_rifle:[
+    {i:'🔫',t:'Steyr AUG A1/A2/A3',d:'5.56mm bullpup assault rifle'},
+    {i:'🔫',t:'M4A1 / M16A4',d:'5.56mm NATO assault rifle'},
+    {i:'🔫',t:'HK416 / HK433',d:'5.56mm piston-driven rifle'},
+    {i:'🔫',t:'AK-47 / AKM / AK-74',d:'7.62/5.45mm assault rifle'},
+    {i:'🔫',t:'SCAR-L / SCAR-H',d:'FN SCAR modular rifle'},
+    {i:'🔫',t:'Tavor TAR-21',d:'5.56mm Israeli bullpup'},
+  ],
+  firearms_pistol:[
+    {i:'🔫',t:'Glock 17 / Glock 19',d:'9mm polymer striker pistol'},
+    {i:'🔫',t:'SIG Sauer P320 / P226',d:'9mm modular pistol'},
+    {i:'🔫',t:'Beretta M9 / 92FS',d:'9mm DA/SA semi-auto'},
+    {i:'🔫',t:'Colt M1911A1',d:'.45 ACP iconic pistol'},
+    {i:'🔫',t:'HK USP / P30',d:'9mm polymer pistol'},
+    {i:'🔫',t:'Desert Eagle .50 AE',d:'.50 AE gas-operated pistol'},
+  ],
+  firearms_sniper:[
+    {i:'🎯',t:'Barrett M82A1',d:'.50 BMG semi-auto anti-materiel'},
+    {i:'🎯',t:'Accuracy International AXMC',d:'338 Lapua / .308 bolt-action'},
+    {i:'🎯',t:'CheyTac M200 Intervention',d:'.408 CheyTac bolt-action'},
+    {i:'🎯',t:'Dragunov SVD',d:'7.62×54mmR semi-auto sniper'},
+    {i:'🎯',t:'Remington 700 / PSR',d:'.308 bolt-action precision'},
+    {i:'🎯',t:'Heckler & Koch PSG-1',d:'7.62mm NATO precision sniper'},
+  ],
+  firearms_smg:[
+    {i:'⚡',t:'MP5 / MP5K / MP5SD',d:'9mm roller-delayed blowback'},
+    {i:'⚡',t:'UMP-45 / UMP-9',d:'HK UMP polymer SMG'},
+    {i:'⚡',t:'P90 / PS90',d:'FN P90 bullpup PDW'},
+    {i:'⚡',t:'Kriss Vector',d:'45 ACP angular SMG'},
+    {i:'⚡',t:'MP7A1 / MP7A2',d:'4.6×30mm compact PDW'},
+    {i:'⚡',t:'Uzi / Micro Uzi',d:'9mm iconic blowback SMG'},
+  ],
+  firearms_shotgun:[
+    {i:'💥',t:'Mossberg 500 / 590',d:'12 gauge pump-action'},
+    {i:'💥',t:'Remington 870',d:'12 gauge pump-action classic'},
+    {i:'💥',t:'SPAS-12',d:'12 gauge semi/pump hybrid'},
+    {i:'💥',t:'M249 SAW / M249 Para',d:'5.56mm belt-fed LMG'},
+    {i:'💥',t:'PKM / PKP Pecheneg',d:'7.62×54mm belt-fed GPMG'},
+    {i:'💥',t:'M60 / M240B',d:'7.62mm NATO medium MG'},
+  ],
+  vehicle_tank:[
+    {i:'🚀',t:'M1A2 Abrams',d:'120mm smoothbore MBT'},
+    {i:'🚀',t:'Leopard 2A7',d:'120mm German NATO MBT'},
+    {i:'🚀',t:'T-90M Proryv',d:'125mm Russian MBT'},
+    {i:'🚀',t:'Challenger 2',d:'120mm British rifled MBT'},
+    {i:'🚀',t:'Bradley IFV M2A3',d:'25mm infantry fighting vehicle'},
+    {i:'🚀',t:'BTR-80 / BTR-82A',d:'14.5mm 8×8 APC'},
+  ],
+  vehicle_aircraft:[
+    {i:'✈️',t:'F-16 Fighting Falcon',d:'Multi-role fighter jet'},
+    {i:'✈️',t:'F-35A Lightning II',d:'5th gen stealth multi-role'},
+    {i:'✈️',t:'AH-64 Apache',d:'Attack helicopter, 30mm'},
+    {i:'✈️',t:'UH-60 Black Hawk',d:'Multi-mission utility helicopter'},
+    {i:'✈️',t:'Su-27 / Su-35',d:'Russian air superiority fighter'},
+    {i:'✈️',t:'A-10 Thunderbolt II',d:'30mm CAS attack aircraft'},
+  ],
+  vehicle_ship:[
+    {i:'⚓',t:'USS Nimitz CVN-68',d:'Nuclear carrier, full air wing'},
+    {i:'⚓',t:'Type 45 Destroyer',d:'Royal Navy air defense DDG'},
+    {i:'⚓',t:'Virginia Class SSN',d:'Attack submarine, nuclear'},
+    {i:'⚓',t:'Arleigh Burke DDG',d:'Aegis guided missile destroyer'},
+    {i:'⚓',t:'PLA Type 055 Cruiser',d:'PLAN heavy missile cruiser'},
+    {i:'⚓',t:'HMS Queen Elizabeth',d:'STOVL aircraft carrier'},
+  ],
+  mecha_gundam:[
+    {i:'🤖',t:'RX-78-2 Gundam',d:'Classic 1:144 HG/1:100 MG'},
+    {i:'🤖',t:'Strike Freedom Gundam',d:'ZGMF-X20A DRAGOON system'},
+    {i:'🤖',t:'Barbatos Lupus Rex',d:'Iron-Blooded Orphans'},
+    {i:'🤖',t:'00 Raiser / 00 Qan[T]',d:'00 Gundam twin drive'},
+    {i:'🤖',t:'Sinanju / Nu Gundam',d:'Sazabi / Nu iconic rivalry'},
+    {i:'🤖',t:'Zaku II / Gouf',d:'Zeon classic mobile suits'},
+  ],
+  mecha_sci:[
+    {i:'🌌',t:'Evangelion Unit-01',d:'NERV bio-mechanical EVA'},
+    {i:'🌌',t:'Optimus Prime / Megatron',d:'Transformers G1 iconic'},
+    {i:'🌌',t:'RoboCop ED-209',d:'Enforcement Droid classic'},
+    {i:'🌌',t:'AT-AT Walker',d:'Star Wars All Terrain Armored'},
+    {i:'🌌',t:'Terminator T-800',d:'Endoskeleton chrome mech'},
+    {i:'🌌',t:'Pacific Rim Gipsy Danger',d:'Jaeger Mark-3 mech'},
+  ],
+  civilian_car:[
+    {i:'🚗',t:'Porsche 911 GT3 RS',d:'Rear-engine sports classic'},
+    {i:'🚗',t:'Ferrari F40 / F50',d:'Mid-engine supercar icon'},
+    {i:'🚗',t:'Lamborghini Huracán',d:'V10 mid-engine supercar'},
+    {i:'🚗',t:'Ducati Panigale V4',d:'Italian superbike 1103cc'},
+    {i:'🚗',t:'Kawasaki Ninja H2',d:'Supercharged 998cc'},
+    {i:'🚗',t:'Toyota GR Supra A90',d:'3.0L inline-6 sports coupe'},
+  ],
+  diorama:[
+    {i:'🏞️',t:'WWII Beach Landing',d:'D-Day Normandy diorama'},
+    {i:'🏞️',t:'Modern Urban Combat',d:'Street warfare scene'},
+    {i:'🏞️',t:'Garage Workshop',d:'Mechanics diorama'},
+    {i:'🏞️',t:'Spaceport Hangar',d:'Sci-fi maintenance bay'},
+    {i:'🏞️',t:'Japanese Shrine',d:'Traditional garden scene'},
+    {i:'🏞️',t:'Military Checkpoint',d:'Desert FOB diorama'},
+  ],
+};
+
+// Zone definitions — these are the 5 zones from AUG A1 v5
+var ZONES=[
+  {id:'z1_exploded', t:'Zone 1 — Exploded Parts View',   d:'Main diagram: all parts floating, numbered callouts', color:'#c0392b'},
+  {id:'z2_sprue',    t:'Zone 2 — Sprue / Runner Layout', d:'Plastic injection runner frames (Sprue A & B)', color:'#8b5a2b'},
+  {id:'z3_spec',     t:'Zone 3 — Collector Spec Panel',  d:'Summary table: scale, materials, accessories, decals', color:'#1565c0'},
+  {id:'z4_hobby',    t:'Zone 4 — Hobby Detail Panel',    d:'Paint swatches, weathering zones, marking options', color:'#2e7d32'},
+  {id:'z5_inset',    t:'Zone 5 — Cross-Section Inset',   d:'Magnified internal cutaway with labeled components', color:'#6a1b9a'},
+];
+
+// Arrow color system (same as AUG A1 v5)
+var ARROWS=[
+  {color:'RED',     type:'solid',   meaning:'Main armament / feed flow path'},
+  {color:'BLUE',    type:'dashed',  meaning:'Optic / sight acquisition path'},
+  {color:'ORANGE',  type:'dashed',  meaning:'Gas operation cycle / mechanical flow'},
+  {color:'GREEN',   type:'solid',   meaning:'Recoil / buffer spring path'},
+  {color:'YELLOW',  type:'bracket', meaning:'Polymer surface / camouflage highlight zones'},
+];
+
+var SCALES=['1:12','1:16','1:24','1:35','1:48','1:72','1:100','1:144','1:350','1:700'];
+var OP_SYSTEMS=['short_stroke','long_stroke','gas_impingement','blowback','bolt_action','pump_action','recoil','electric','manual'];
+var CONFIGS=['bullpup','conventional','semi_auto','full_auto','bolt_action','pump','break_action','modular'];
+var PART_COUNTS=['10-20','20-30','30-40','40-60','60-80','80-100','100+'];
+
+// ═══════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════
+function renderCatTabs(){
+  var r=document.getElementById('catTabs');r.innerHTML='';
+  CATS.forEach((c,i)=>{
+    var el=document.createElement('button');
+    el.className='ctb'+(i===0?' on':'');
+    el.onclick=()=>{
+      document.querySelectorAll('.ctb').forEach(x=>x.classList.remove('on'));
+      el.classList.add('on');S.cat=c.id;renderSubjects();
+    };
+    el.textContent=c.t;r.appendChild(el);
+  });
+}
+
+function renderSubjects(){
+  var g=document.getElementById('subjGrid');g.innerHTML='';
+  var list=SUBJECTS[S.cat]||[];
+  list.forEach((s,i)=>{
+    var el=document.createElement('div');
+    el.className='subjc'+(i===0?' sel':'');
+    el.onclick=()=>{
+      document.querySelectorAll('.subjc').forEach(x=>x.classList.remove('sel'));
+      el.classList.add('sel');S.subj=s.t;
+      document.getElementById('subjCustom').value='';
+      autoFillModel(s.t);
+      updatePreview();
+    };
+    el.innerHTML=`<div class="subjc-i">${s.i}</div><div><div class="subjc-t">${s.t}</div><div class="subjc-d">${s.d}</div></div>`;
+    g.appendChild(el);
+  });
+  // Select first by default
+  if(list.length>0)S.subj=list[0].t;
+  updatePreview();
+}
+
+function renderZones(){
+  var g=document.getElementById('zoneGrid');g.innerHTML='';
+  ZONES.forEach(z=>{
+    var el=document.createElement('div');
+    el.className='zone-item'+(S.zones.has(z.id)?' on':'');
+    el.onclick=()=>{
+      el.classList.toggle('on');var cb=el.querySelector('input');
+      S.zones.has(z.id)?S.zones.delete(z.id):S.zones.add(z.id);
+      cb.checked=S.zones.has(z.id);updatePreview();
+    };
+    el.innerHTML=`<input type="checkbox" ${S.zones.has(z.id)?'checked':''}><div><div class="zone-item-t" style="color:${z.color}">${z.t}</div><div class="zone-item-d">${z.d}</div></div>`;
+    g.appendChild(el);
+  });
+}
+
+function renderScales(){
+  var r=document.getElementById('scaleRow');r.innerHTML='';
+  SCALES.forEach((s,i)=>{
+    var el=document.createElement('span');
+    el.className='sc'+(s==='1:24'?' sel':'');
+    el.onclick=()=>{document.querySelectorAll('.sc').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');S.scale=s;updatePreview();};
+    el.textContent=s;r.appendChild(el);
+  });
+}
+
+function renderPartCounts(){
+  var r=document.getElementById('partCountRow');r.innerHTML='';
+  PART_COUNTS.forEach(p=>{
+    var el=document.createElement('span');
+    el.className='chip'+(p==='30-40'?' on':'');
+    el.onclick=()=>{document.querySelectorAll('#partCountRow .chip').forEach(x=>x.classList.remove('on','on-ac'));el.classList.add('on');S.partCount=p;};
+    el.textContent=p+' parts';r.appendChild(el);
+  });
+}
+
+function renderOpSystems(){
+  var r=document.getElementById('opSystemRow');r.innerHTML='';
+  var labels={short_stroke:'Short-stroke piston',long_stroke:'Long-stroke piston',gas_impingement:'Direct impingement',blowback:'Blowback',bolt_action:'Bolt-action',pump_action:'Pump-action',recoil:'Recoil-operated',electric:'Electric (AEG)',manual:'Manual'};
+  OP_SYSTEMS.forEach(o=>{
+    var el=document.createElement('span');
+    el.className='chip'+(o==='short_stroke'?' on':'');
+    el.onclick=()=>{document.querySelectorAll('#opSystemRow .chip').forEach(x=>x.classList.remove('on'));el.classList.add('on');S.opSystem=o;};
+    el.textContent=labels[o]||o;r.appendChild(el);
+  });
+}
+
+function renderConfigs(){
+  var r=document.getElementById('configRow');r.innerHTML='';
+  var labels={bullpup:'Bullpup',conventional:'Conventional',semi_auto:'Semi-auto',full_auto:'Full-auto',bolt_action:'Bolt-action',pump:'Pump-action',break_action:'Break-action',modular:'Modular'};
+  CONFIGS.forEach(c=>{
+    var el=document.createElement('span');
+    el.className='chip'+(c==='bullpup'?' on-ac on':'');
+    el.onclick=()=>{document.querySelectorAll('#configRow .chip').forEach(x=>x.classList.remove('on','on-ac'));el.classList.add('on-ac','on');S.config=c;};
+    el.textContent=labels[c]||c;r.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════════════
+// LIVE PREVIEW UPDATE
+// ═══════════════════════════════════════
+function updatePreview(){
+  var subj=document.getElementById('subjCustom').value.trim()||S.subj||'—';
+  document.getElementById('ppSubj').textContent=subj;
+  var name=document.getElementById('modelFullName').value.trim();
+  document.getElementById('ppName').textContent=name||'(isi nama lengkap model)';
+
+  var badges=document.getElementById('ppBadges');
+  badges.innerHTML='';
+  [{label:'Scale: '+S.scale,ac:true},{label:document.getElementById('canvasSize').value||'1920×1080'},{label:S.partCount+' parts'},{label:S.lang==='en'?'English':S.lang==='id'?'Bahasa':'Bilingual',ac:true}].forEach(b=>{
+    var sp=document.createElement('span');sp.className='pp-badge'+(b.ac?' ac':'');sp.textContent=b.label;badges.appendChild(sp);
+  });
+
+  var zl=document.getElementById('ppZones');zl.innerHTML='';
+  ZONES.forEach(z=>{
+    var row=document.createElement('div');row.className='pp-zone-row';
+    var active=S.zones.has(z.id);
+    row.innerHTML=`<div class="pp-zone-dot" style="background:${active?z.color:'#ccc'};"></div><div class="pp-zone-name" style="color:${active?z.color:'#999'}">${z.id.split('_')[0].toUpperCase()}</div><div class="pp-zone-desc" style="color:${active?'var(--dk)':'#ccc'}">${z.d}</div>`;
+    zl.appendChild(row);
+  });
+
+  // Complexity meter
+  var cx=calcComplexity();
+  var fill=document.getElementById('cxFill');
+  var val=document.getElementById('cxVal');
+  fill.style.width=cx+'%';
+  fill.style.background=cx<40?'var(--gn)':cx<70?'var(--or)':'var(--ac)';
+  val.textContent=cx+'% — '+(cx<40?'Simple':cx<70?'Detailed':'Ultra-Detail');
+}
+
+function calcComplexity(){
+  var score=20;
+  score+=S.zones.size*12;
+  var ag=document.getElementById('assemblyGroups').value;
+  if(ag.length>100)score+=15;if(ag.length>300)score+=10;
+  var an=document.getElementById('accuracyNotes').value;
+  if(an.length>50)score+=10;if(an.length>200)score+=5;
+  score+=Math.min(20,parseInt(S.partCount)||0);
+  if(document.getElementById('weatheringZones').value)score+=5;
+  if(document.getElementById('accessories').value)score+=5;
+  return Math.min(100,score);
+}
+
+// ═══════════════════════════════════════
+// PROMPT BUILDER — AUG v5 ENGINE
+// ═══════════════════════════════════════
+function buildPrompt(){
+  var subj=document.getElementById('subjCustom').value.trim()||S.subj||'[Model Subject]';
+  var fullName=document.getElementById('modelFullName').value.trim()||subj;
+  var kitRef=document.getElementById('kitRef').value.trim()||'Pro-Series Master Kit';
+  var kitNo=document.getElementById('kitNo').value.trim()||'Kit No: SG1-1';
+  var canvas=document.getElementById('canvasSize').value||'1920x1080';
+  var dpi=document.getElementById('canvasDPI').value.trim()||'300';
+  var canvasW=canvas.split('x')[0],canvasH=canvas.split('x')[1];
+  var assemblyGroups=document.getElementById('assemblyGroups').value.trim();
+  var color1=document.getElementById('color1').value.trim();
+  var color2=document.getElementById('color2').value.trim();
+  var color3=document.getElementById('color3').value.trim();
+  var color4=document.getElementById('color4').value.trim();
+  var sprueA=document.getElementById('sprueA').value.trim()||'Light gray ABS plastic runner';
+  var sprueB=document.getElementById('sprueB').value.trim()||'Secondary material runner';
+  var specLength=document.getElementById('specLength').value.trim();
+  var specHeight=document.getElementById('specHeight').value.trim();
+  var specWeight=document.getElementById('specWeight').value.trim();
+  var specCaliber=document.getElementById('specCaliber').value.trim();
+  var weathering=document.getElementById('weatheringZones').value.trim();
+  var accuracyNotes=document.getElementById('accuracyNotes').value.trim();
+  var accessories=document.getElementById('accessories').value.trim();
+  var markings=document.getElementById('markings').value.trim();
+  var langNote=S.lang==='en'?'English only — all text correctly spelled, legible, sans-serif technical font (DIN or Helvetica Neue style)':S.lang==='id'?'Bahasa Indonesia — semua teks dieja dengan benar, terbaca, font teknis sans-serif':'Bilingual (English + Bahasa Indonesia) — all text correctly spelled in both languages';
+
+  // DIMENSION SECTION
+  var dimSection='';
+  if(specLength||specHeight||specWeight){
+    dimSection=`
+Real Dimensions  :${specLength?' Length: '+specLength:''}${specHeight?' | Height: '+specHeight:''}${specWeight?' | Weight: '+specWeight:''}`;
+  }
+  var caliberSection=specCaliber?'\nCaliber / Ammo   : '+specCaliber:'';
+
+  // COLORS SECTION
+  var colorLines=[];
+  if(color1)colorLines.push('  · '+color1);
+  if(color2)colorLines.push('  · '+color2);
+  if(color3)colorLines.push('  · '+color3);
+  if(color4)colorLines.push('  · '+color4);
+  var colorSection=colorLines.length?colorLines.join('\n'):'  · [define your color palette with hex codes]';
+
+  // ASSEMBLY GROUPS
+  var asmSection=assemblyGroups||'[Define your assembly groups — barrel, receiver, trigger group, stock, accessories, etc.]';
+
+  // ACCURACY NOTES
+  var accSection=accuracyNotes?`\n━━ CRITICAL ACCURACY RULES ━━\nIMPORTANT: Apply all of the following accuracy requirements:\n`+accuracyNotes.split('\n').map(l=>'  '+l).join('\n'):'';
+
+  // WEATHERING
+  var wxSection=weathering?`\nWEATHERING ZONES:\n`+weathering.split('\n').map(l=>'  '+l).join('\n'):'  W1 — Barrel tip: carbon / heat stain\n  W2 — Receiver: paint wear, scratches\n  W3 — Grip/Stock: mud splatter, wear';
+
+  // ACCESSORIES
+  var accList=accessories?accessories:'1× Primary scope, 1× Magazine, 1× Foregrip (if applicable)';
+
+  // MARKINGS
+  var markSection=markings?markings:'Manufacturer markings, serial number, safety markings';
+
+  // CANVAS INFO
+  var canvasLabel=canvas==='1920x1080'?'landscape 16:9':canvas==='2560x1440'?'QHD landscape':canvas==='3840x2160'?'4K UHD landscape':canvas==='2480x3508'?'A4 Portrait':canvas==='3508x2480'?'A4 Landscape':canvas==='4961x3508'?'A3 Landscape':canvas;
+
+  // SPEC PANEL ROWS (Zone 3)
+  var specRows=`  Scale Ratio              | ${S.scale}
+  Model Length             | [calculated from ${S.scale} scale]${specLength?' | real: '+specLength:''}
+  Model Height             | [calculated]${specHeight?' | real: '+specHeight:''}
+  Model Weight             | [estimate]${specWeight?' | real: '+specWeight:''}
+  Caliber (real weapon)    | ${specCaliber||'[enter caliber]'}
+  Material (gray parts)    | ABS Plastic
+  Material (stock/grip)    | [primary polymer color material]
+  Material (barrel)        | Die-cast Zinc / Steel rod
+  Material (pins/screws)   | Metal Parts
+  Panel Lines              | Engraved — recessed
+  Grade / Series           | Pro-Series
+  Kit No.                  | ${kitNo}
+  Accessories              | ${accList}
+  Marking Options          | ${markSection}
+  Color Callouts           | ${[color1,color2,color3,color4].filter(Boolean).join(' | ')||'[define colors]'}
+  Weathering Zones         | ${weathering.split('\n')[0]||'Barrel: heat stain | Stock: scratches | Scope: lens glare'}`;
+
+  // BUILD ZONES
+  var zone1=S.zones.has('z1_exploded')?`
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ZONE 1 — MAIN EXPLODED VIEW
+(Center-left area, occupying ~55% of total canvas width)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Show the ${subj} in a full technical exploded parts diagram.
+ALL assemblies must be separated and FULLY FLOATING in space,
+connected by thin dashed explosion lines back to assembled position.
+Use Gemini world knowledge of the real ${subj} for exact part
+shapes, proportions, and mechanical relationships.
+
+PART COUNT: Approximately ${S.partCount} individually separated parts, each numbered.
+
+ASSEMBLY GROUPS AND PARTS:
+${asmSection}
+
+ASSEMBLY GROUP RULES:
+  · Each major group gets ONE color-coded rounded-rectangle callout box
+  · ALL parts must be numbered with circled numbers ①②③...
+  · EVERY part must have a visible gap from adjacent parts
+  · ZERO unlabeled parts — no matter how small
+  · Callout leader lines must not cross each other
+  · Minimum 10 callout boxes, maximum 16 group boxes
+
+OPERATION SYSTEM: ${S.opSystem.replace(/_/g,' ')}
+CONFIGURATION: ${S.config.replace(/_/g,' ')}
+${accSection}
+`:'';
+
+  var zone1_arrows=S.zones.has('z1_exploded')?`
+━━ COLOR-CODED DIRECTIONAL ARROW SYSTEM (apply in Zone 1) ━━
+
+RED solid arrows (▶)
+  → Main armament / feed flow path (magazine → chamber → barrel → muzzle)
+
+BLUE dashed arrows (--▶)
+  → Optic / sight acquisition path (objective → reticle → bore axis)
+
+ORANGE dashed arrows (--▶)
+  → Gas operation / mechanical cycle (gas port → piston → bolt carrier)
+
+GREEN solid arrows (▶)
+  → Recoil / buffer path (bolt carrier → buffer → buffer spring → stock)
+
+YELLOW highlight brackets ([ ])
+  → Polymer surface zones and camouflage highlight areas
+  → Also: weathering zone markers (W1, W2, W3)
+`:'';
+
+  var zone2=S.zones.has('z2_sprue')?`
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ZONE 2 — SPRUE / RUNNER LAYOUT
+(Bottom-left corner, ~20% of canvas area)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Show exactly 2 flat plastic injection runner frames side by side:
+
+SPRUE A — ${sprueA}
+  · Rectangular outer frame with cross-supports
+  · Parts attached via thin gates (sprue attachment stubs visible)
+  · Parts shown at correct ${S.scale} scale relative to each other
+  · Main structural and external body parts
+  · Label: "SPRUE A" in clean sans-serif below frame
+
+SPRUE B — ${sprueB}
+  · Smaller frame than Sprue A
+  · Smaller accessories, grip parts, polymer components
+  · Gate attachment points visible as small nubs
+  · Label: "SPRUE B" in clean sans-serif below frame
+
+Both sprues shown slightly overlapping in bottom-left, laid flat.
+Cast subtle top-lit shadow under each frame.
+`:'';
+
+  var zone3=S.zones.has('z3_spec')?`
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ZONE 3 — COLLECTOR SPEC PANEL
+(Top-right corner box, white/off-white background, ~20% of canvas)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Panel title (bold, dark): "SUMMARY OF REQUIRED COLLECTOR SPECS"
+Thin border around entire panel. Two-column key:value list format.
+Font must be large enough to read at ${canvasW}px — minimum 11pt equivalent.
+
+Content rows (left label | right value):
+${specRows}
+`:'';
+
+  var zone4=S.zones.has('z4_hobby')?`
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ZONE 4 — HOBBY DETAIL PANEL
+(Mid-right area, directly below Zone 3 spec panel)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Panel title (bold): "Hobby-specific details"
+Same white panel background and border as Zone 3.
+
+SCALE & CALIBER:
+  · Scale: ${S.scale}
+  ${specCaliber?'· Caliber: '+specCaliber:'· [caliber if applicable]'}
+
+CAMOUFLAGE / PAINT COLOR GUIDE — 4 rectangular swatches side by side:
+${colorLines.join('\n')||'  [define your paint colors with hex codes]'}
+  Each swatch: color fill block + hex code + paint name label below
+
+WEATHERING ZONES DIAGRAM:
+  Show silhouette of ${subj} (side view) with 3 color-coded overlay zones:
+${wxSection}
+
+MARKING OPTIONS:
+  ${markSection}
+
+PANEL LINE TECHNIQUE:
+  · "Wash recommended: Tamiya Panel Line Accent (Black or Brown)"
+  · "Apply with fine brush into recessed lines, wipe with enamel thinner"
+
+${accessories?'ACCESSORIES DETAIL:\n  · '+accList:''}
+`:'';
+
+  var zone5=S.zones.has('z5_inset')?`
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ZONE 5 — INSET CROSS-SECTION DIAGRAM
+(Bottom-right corner — make this 30% LARGER than typical inset)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Title: "INSET CROSS-SECTION: Internal Frame & Action Detail"
+Magnification lupe/circle icon at top-right corner of this box.
+
+Show a magnified cutaway side-view of the ${subj} receiver internals
+with the following components individually labeled as distinct parts:
+
+  A. Main Carrier / Action Body — in battery (fully forward)
+     → label: "[action body] — in battery"
+
+  B. Firing Pin — shown as a DISTINCT THIN ROD with visible gap
+     → must NOT merge visually with carrier body
+     → label: "Firing pin — spring-loaded | separated"
+
+  C. Recoil Spring — shown in compressed state
+     → 8–10 coils visible
+     → label: "Recoil spring — compressed"
+
+  D. Trigger Sear — shown in engagement position
+     → label: "Trigger sear — engagement position"
+
+  E. Gas Piston — shown at rest/forward position
+     → label: "Gas piston — at rest"
+
+  F. Hammer / Striker — cocked position
+     → label: "Hammer — cocked"
+
+Color-code using arrow system:
+  · RED tint → main carrier body
+  · ORANGE tint → gas piston and cylinder
+  · GREEN tint → recoil spring
+  · Outline only → trigger sear, firing pin (for clarity)
+`:'';
+
+  var legendBar=`
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TECHNICAL LEGEND / KEY BAR
+(Horizontal strip at very bottom of canvas, full width)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Title (small, centered): "TECHNICAL LEGEND / KEY"
+5 legend items in single horizontal row:
+
+  ▶ RED      — Main armament: feed flow from magazine to muzzle
+  --▶ BLUE   — Optic acquisition path: scope to bore axis
+  --▶ ORANGE — Gas operation: gas port → gas block → carrier
+  ▶ GREEN    — Recoil path: buffer spring compression in stock
+  [ ] YELLOW — Polymer metaphors: surface highlight + camo zones
+`;
+
+  var calloutSpec=S.zones.has('z1_exploded')?`
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CALLOUT BOX STYLE SPECIFICATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Each major assembly group gets ONE color-coded rounded-rectangle callout box.
+Individual parts get circled number callouts ①②③...
+
+Primary callout box format:
+  · Rounded rectangle, filled with group color at 90% opacity
+  · White text: GROUP NAME in bold caps
+  · Thin leader line from box to part center
+  · Sub-specs in smaller white text below group name
+
+Rules:
+  · Minimum 10 callout boxes, maximum 16 group boxes
+  · ZERO overlapping boxes — arrange to avoid all overlaps
+  · Every box must have its leader line traceable to exactly one part
+  · No two leader lines may cross each other
+  · Callout box names contain ONLY the assembly name — no "GROUP N —" prefix
+  · Never print zone labels (ZONE 1, ZONE 2 etc.) as visible text
+`:'';
+
+  // Build final prompt
+  var prompt=`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ULTRA-DETAILED SCALE MODEL TECHNICAL INFOGRAPHIC
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Subject       : ${fullName}
+Kit Reference : ${kitRef} | ${kitNo} | Scale: ${S.scale}
+Style         : Professional Exploded Parts Diagram Infographic
+Background    : Soft light gray gradient (#e8e8e8 top → #f5f5f5 bottom), top-lit, zero shadow on background itself
+Canvas        : ${canvasW}×${canvasH} pixels, ${canvasLabel}, ${dpi} DPI print-ready
+Label Language: ${langNote}
+${dimSection}${caliberSection}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CRITICAL LAYOUT RULES — READ FIRST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+RULE 1: Do NOT print zone label headers ("ZONE 1", "ZONE 2", etc.) anywhere on the canvas.
+  Zones are invisible layout guides only — must NOT appear as visible text.
+
+RULE 2: ALL parts in the exploded view must be FULLY FLOATING and physically separated
+  from each other with a visible gap. No part may appear attached or touching the main body.
+
+RULE 3: EVERY separated part — no matter how small — must have a circled number callout
+  (①②③...⑳㉑...). Zero unlabeled parts allowed.
+
+RULE 4: ALL text must be correctly spelled. Zero typos permitted.
+
+RULE 5: Each part appears EXACTLY ONCE in the entire image. No duplicates.
+
+RULE 6: Callout box names contain ONLY the assembly name — NO "GROUP N —" prefix.
+  Correct: "BARREL ASSEMBLY"  Wrong: "GROUP 1 — BARREL ASSEMBLY"
+
+RULE 7: Paint swatches must use the exact hex colors as specified. No approximations.
+
+RULE 8: Firing pin (or equivalent thin internal component) must appear as a DISTINCT
+  separate thin rod with visible gap from carrier body — never merged.
+
+RULE 9: All small accessories (sling swivels, dust covers, pins) must be individually
+  labeled even if they appear far from the main assembly.
+
+RULE 10: No watermark. No cartoon style. No toy aesthetic. No blurry or pixelated rendering.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TITLE BOX — top-left corner, bracketed engineering style
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+[ ${fullName} ]
+${kitRef} | ${kitNo}
+
+COLOR PALETTE:
+${colorSection}
+${zone1}${zone1_arrows}${calloutSpec}${zone2}${zone3}${zone4}${zone5}${legendBar}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ACCURACY & QUALITY REQUIREMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+WEAPON / MODEL ACCURACY:
+  · Use Gemini world knowledge of the REAL ${subj}
+  · Every part must be anatomically and mechanically correct in shape and proportion
+  · Operation system: ${S.opSystem.replace(/_/g,' ')} — all gas system parts must reflect this accurately
+  · Configuration: ${S.config.replace(/_/g,' ')} — layout must be anatomically correct for this config
+  · All parts proportionally correct relative to each other at ${S.scale} scale
+
+OUTPUT QUALITY:
+  · No watermark of any kind
+  · No cartoon, no anime, no low-poly, no toy aesthetic
+  · No blurry or pixelated rendering
+  · No overlapping callout text
+  · All text: ${S.lang==='en'?'English only':'Bahasa Indonesia only'}, correctly spelled, legible at ${canvasW}×${canvasH}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+NEGATIVE PROMPT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Negative: cartoon, anime, low-poly, toy aesthetic, blurry, pixelated,
+watermark, overlapping text, wrong proportions, missing numbered callouts,
+missing sprue runners${S.zones.has('z2_sprue')?' (Zone 2 required)':''},
+missing inset cross-section${S.zones.has('z5_inset')?' (Zone 5 required)':''},
+zone header text visible on canvas (RULE 1 violation),
+parts still attached to main body (RULE 2 violation),
+any typos, firing pin merged with carrier body (RULE 8 violation),
+callout boxes with "GROUP N —" prefix (RULE 6 violation),
+any part appearing more than once (RULE 5 violation)`;
+
+  return prompt;
+}
+
+// ═══════════════════════════════════════
+// LANG
+// ═══════════════════════════════════════
+function setLang(l,el){
+  S.lang=l;
+  document.querySelectorAll('#langEN,#langID,#langBI').forEach(x=>x.classList.remove('on'));
+  el.classList.add('on');
+  updatePreview();
+}
+
+// ═══════════════════════════════════════
+// GENERATE
+// ═══════════════════════════════════════
+function doGenerate(){
+  var prompt=buildPrompt();
+  document.getElementById('promptTxt').textContent=prompt;
+  document.getElementById('promptTxt').style.display='block';
+  document.getElementById('emptyPrompt').style.display='none';
+  var lines=prompt.split('\n').length;
+  var chars=prompt.length;
+  document.getElementById('pbMeta').textContent=lines+' lines · '+chars.toLocaleString()+' chars · NB2/Gemini optimized';
+  document.getElementById('cpHint').textContent='✅ Prompt siap! Copy → paste ke NB2 / Gemini.';
+  document.querySelector('.prompt-box').scrollIntoView({behavior:'smooth',block:'start'});
+  updatePreview();
+}
+
+function copyPrompt(){
+  var txt=document.getElementById('promptTxt').textContent;
+  if(!txt){alert('Generate dulu!');return;}
+  navigator.clipboard.writeText(txt).then(()=>{
+    var btn=document.getElementById('cpBtn');
+    btn.textContent='✓ Copied!';btn.classList.add('ok');
+    document.getElementById('cpHint').textContent='Paste ke NB2 sekarang!';
+    setTimeout(()=>{btn.textContent='Copy Prompt';btn.classList.remove('ok');},2500);
+  });
+}
+
+// ═══════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// MODEL DATABASE — auto-fill semua field per subjek
+// Setiap entry berisi data spesifik model yang berbeda
+// ═══════════════════════════════════════════════════════
+var MODEL_DATA={
+  'Steyr AUG A1':{
+    fullName:'Steyr AUG A1 | Armee Universal Gewehr | 508 mm Barrel Variant',
+    kitRef:'Pro-Series Master Kit',kitNo:'Kit No: SG1-6',
+    length:'790 mm',height:'180 mm',weight:'3.6 kg',caliber:'5.56×45mm NATO',
+    c1:'Olive Drab #4a5e3a',c2:'Flat Black #1a1a1a',c3:'Gunmetal Gray #4a4a52',c4:'Dark Earth #7a5c3a',
+    sprueA:'Light gray ABS plastic runner',sprueB:'Olive Drab #4a5e3a green polymer runner',
+    opSys:'short_stroke',config:'bullpup',parts:'30-40',
+    weathering:'W1 — Barrel tip zone → Carbon / heat stain — Tamiya Smoke + Black\nW2 — Receiver top zone → Paint wear, scratches — Silver dry brush\nW3 — Grip/Stock zone → Mud splatter, wear — AK Mud product',
+    accuracy:'- Bullpup: magazine BEHIND trigger (not in front) — non-negotiable\n- 508mm barrel is LONGER than standard AUG 407mm — show proportionally\n- Short-stroke piston system (NOT direct impingement)\n- AUG-specific BCG shape (NOT AR-15 style)\n- Integrated scope housing in receiver top (NOT generic Picatinny mount)',
+    accessories:'1× 1.5× Fixed Power Scope, 1× Translucent 30-round magazine, 1× Foldable foregrip, Sling swivels',
+    markings:'Austrian Army Bundesheer, US Army Special Forces',
+    assembly:`BARREL ASSEMBLY [RED] — ① Flash Hider (6-prong birdcage, M22×1 LH, show thread detail), ② 508mm Barrel (rifled chrome-lined, label: 508mm/5.56×45mm/1:9 twist, show bore cutaway at muzzle), ③ Gas Port (Ø1.8mm drilled hole at 7" from muzzle), ④ Front Sight Base (folding flip-up, show hinge pin separately)
+
+GAS SYSTEM [ORANGE] — ⑤ Gas Block & Piston Housing (aluminum rectangular profile), ⑥ Short-Stroke Gas Piston (flat head + rod, label: 7.5mm travel), ⑦ Piston Spring (coil, 12 coils visible), ⑧ Gas Tube (thin aluminum, connects gas block to BCG)
+
+UPPER RECEIVER / OPTIC [BLUE] — ⑨ Integral Optic Housing / AUG Scope Rail (MIL-STD-1913, forged into receiver top), ⑩ 1.5× Fixed Scope (show: objective lens / body / rubber eyecup as distinct sub-parts, label: 1.5× fixed / illuminated reticle / green tint), ⑪ Scope Mount Interface / Base Ring (show mounting screws + locking ring), ⑫ Charging Handle (left-side reciprocating, show spring-loaded detent pin)
+
+BOLT CARRIER GROUP [ORANGE-AMBER] — ⑬ Bolt Carrier Body (label: Part BCG-AUG-01 / Chrome-lined interior), ⑭ Rotating Bolt Head (show all 7 lugs, label: 7-lug / Stellite coated), ⑮ Firing Pin (DISTINCT THIN ROD — must have visible gap from bolt body, label: spring-loaded firing pin), ⑯ Firing Pin Return Spring, ⑰ Extractor (hooked profile clearly shown), ⑱ Extractor Spring + Plunger, ⑲ Bolt Cam Pin (curved, show slot in carrier), ⑳ Recoil Buffer Body (extending rearward)
+
+TRIGGER GROUP [YELLOW] — ㉑ Trigger Pack Assembly (show internal sub-callouts: trigger curved polymer / sear notched steel / disconnector / hammer / trigger return spring), ㉒ Pistol Grip (integral bullpup polymer, label: ambidextrous), ㉓ Magazine Release Lever (ambidextrous paddle), ㉔ Safety Selector (rotary thumb, 3-position, label: Safe / Semi / Full)
+
+FOREGRIP ASSEMBLY [YELLOW] — ㉕ Foldable Foregrip Body (vertical grip polymer, show folded ghost outline nearby), ㉖ Foregrip Pivot Pin (cylindrical, shown adjacent), ㉗ Foregrip Lock Detent + Spring
+
+FEED SYSTEM [RED] — ㉘ Translucent 30-Round Magazine (polymer clear body, show 5.56mm rounds stacked inside, label: 30 rds / 5.56×45mm), ㉙ Magazine Body Shell, ㉚ Magazine Follower (orange polymer, at top of mag), ㉛ Magazine Spring (coil, exploded below follower)
+
+STOCK ASSEMBLY [GREEN] — ㉜ Bullpup Polymer Stock (OD Green base + multi-tone camo, label: Polymer bullpup stock / OD Green + camo), ㉝ Recoil Buffer Tube (shown in stock cutaway section), ㉞ Buffer Spring (heavy coil, 22 coils visible), ㉟ Cheek Piece / Cheekweld Pad (removable rubber, shown detached), ㊱ Rubber Buttpad (ribbed surface texture), ㊲ Stock Side Access Panel (small rectangular cover)
+
+ACCESSORIES — ㊳ Front Sling Swivel, ㊴ Rear Sling Swivel, ㊵ Dust Cover (ejection port), ㊶ Cleaning Rod`,
+  },
+
+  'HK416 / HK433':{
+    fullName:'HK416 A5 | Heckler & Koch | 14.5" Piston-Driven Carbine',
+    kitRef:'Pro-Series Master Kit',kitNo:'Kit No: HK416-1',
+    length:'1027 mm (stock extended)',height:'220 mm',weight:'3.7 kg',caliber:'5.56×45mm NATO',
+    c1:'RAL 8000 Green-Brown #5a4e38',c2:'Flat Black #1a1a1a',c3:'Gunmetal Gray #4a4a52',c4:'FDE Tan #8b6f4e',
+    sprueA:'RAL 8000 Green-Brown ABS plastic runner — upper/lower receiver panels, stock',sprueB:'Black polymer runner — handguard, grip, trigger housing, small components',
+    opSys:'short_stroke',config:'conventional',parts:'40-60',
+    weathering:'W1 — Barrel / gas tube zone → Carbon fouling — Tamiya Smoke + Flat Black\nW2 — Upper receiver / charging handle → Paint wear — Silver dry brush on edges\nW3 — Handguard / grip surfaces → Tactical wear — AK Streaking Grime product',
+    accuracy:'- HK416 uses SHORT-STROKE GAS PISTON (NOT direct impingement — this is the key difference from M4)\n- HK416 has proprietary piston-driven upper receiver — shape differs from AR-15/M4\n- M-LOK free-float handguard (NOT quad-rail or KeyMod)\n- Ambidextrous controls: charging handle, mag release, safety selector on BOTH sides\n- Barrel is cold-hammer forged with chrome-lining — show rifling detail at muzzle\n- Op-rod connects piston to BCG externally (visible above barrel in cutaway)',
+    accessories:'1× ACOG 4× scope or Aimpoint CompM5, 1× 30-round STANAG magazine, 1× Vertical foregrip, 1× AN/PEQ-15 laser device, QD sling swivels',
+    markings:'German Bundeswehr KSK Special Forces, US SOCOM / Delta Force, Norwegian Forsvarets Spesialkommando',
+    assembly:`BARREL ASSEMBLY [RED] — ① Flash Hider (A2 birdcage, 1/2×28 RH thread, show thread detail), ② 14.5" Cold Hammer-Forged Barrel (chrome-lined, label: 369mm/5.56×45mm/1:7 twist, show rifling cutaway at muzzle), ③ Gas Port (Ø1.9mm at 7" from muzzle), ④ Gas Block (low-profile, pinned to barrel), ⑤ Front Sight / BUIS (folding backup iron sight, optional)
+
+GAS SYSTEM [ORANGE] — ⑥ Piston Housing / Gas Regulator (HK proprietary, 2-position adjustable, label: adjustable gas regulator), ⑦ Short-Stroke Piston Head + Rod (flat face, label: 10mm travel), ⑧ Piston Return Spring (10 coils visible), ⑨ Op-Rod / Push Rod (visible above barrel, connects piston to BCG — key visual difference from direct impingement)
+
+UPPER RECEIVER [BLUE] — ⑩ Upper Receiver Body (HK416 proprietary profile — NOT AR-15 shape, label: HK proprietary upper), ⑪ MIL-STD-1913 Picatinny Top Rail (full-length integrated), ⑫ M-LOK Free-Float Handguard (13.5", show M-LOK slots on all sides), ⑬ Barrel Nut (HK proprietary hex profile), ⑭ Charging Handle (ambidextrous extended latch, both sides), ⑮ Forward Assist (right side button), ⑯ Ejection Port / Dust Cover
+
+BOLT CARRIER GROUP [ORANGE-AMBER] — ⑰ Bolt Carrier Body (HK proprietary profile, chrome-lined interior, label: HK416 BCG — NOT AR-15 compatible), ⑱ Rotating Bolt Head (7-lug Stellite coated), ⑲ Firing Pin (DISTINCT THIN ROD with clearly visible gap from bolt body — must NOT merge), ⑳ Firing Pin Retaining Pin (small cross-pin), ㉑ Extractor (spring-loaded claw, hook profile), ㉒ Extractor Spring + Insert, ㉓ Cam Pin (curved, rides in carrier cam track)
+
+LOWER RECEIVER / TRIGGER GROUP [YELLOW] — ㉔ Lower Receiver Body (HK416 pattern, show ambidextrous paddle mag release), ㉕ Enhanced Trigger (curved face, HK16 pattern), ㉖ Hammer (M16-compatible profile, Nickel Boron), ㉗ Disconnector (single-hook), ㉘ Trigger + Hammer Cross-Pin Set (2 pins), ㉙ Trigger Spring + Hammer Spring, ㉚ Ambidextrous Safety Selector (2-position: Safe/Semi, or 4-position for HK433)
+
+STOCK & GRIP [GREEN] — ㉛ HK416 Telescoping / Folding Stock Body (6-position collapsible), ㉜ Stock Adjustment Latch Lever, ㉝ Buffer Tube (milspec carbine length), ㉞ Carbine Buffer (H2 weight), ㉟ Recoil Spring (carbine-length), ㊱ Pistol Grip (HK rubberized ergonomic, non-slip texture)
+
+FEED SYSTEM [RED] — ㊲ 30-Round STANAG Magazine (polymer, standard STANAG geometry — NOT bullpup curved mag), ㊳ Magazine Follower (anti-tilt orange tip), ㊴ Magazine Spring (dual-feed coil), ㊵ Magazine Baseplate
+
+ACCESSORIES — ㊶ Ambidextrous Magazine Release Paddle (HK-style), ㊷ Bolt Catch / Release Lever, ㊸ QD Front Sling Swivel (×2 sides), ㊹ QD Rear Sling Swivel, ㊺ Ejection Port Cover Spring + Pin`,
+  },
+
+  'M4A1 / M16A4':{
+    fullName:'M4A1 SOPMOD Block II | 14.5" Direct Impingement Carbine | US SOCOM',
+    kitRef:'Pro-Series Master Kit',kitNo:'Kit No: M4A1-2',
+    length:'838 mm (stock extended)',height:'210 mm',weight:'2.88 kg',caliber:'5.56×45mm NATO',
+    c1:'Flat Dark Earth FDE #8b6f4e',c2:'Flat Black #1a1a1a',c3:'Gunmetal Gray #4a4a52',c4:'OD Green #4a5e3a',
+    sprueA:'FDE Tan ABS runner — upper/lower receivers, stock, accessories',sprueB:'Black polymer runner — handguard, furniture, trigger components',
+    opSys:'gas_impingement',config:'conventional',parts:'40-60',
+    weathering:'W1 — Barrel / FSB zone → Carbon fouling — Tamiya Smoke + Flat Black\nW2 — BCG / charging handle → Heavy carbon + wear — Silver dry brush\nW3 — Stock / grip → Field dirt + wear — AK Streaking Grime + pigments',
+    accuracy:'- M4A1 uses DIRECT IMPINGEMENT gas system — NO external piston rod above barrel\n- Gas tube runs from gas block directly into carrier key on BCG (DI system)\n- Gas key on BCG must be visible with staked screws — label "gas key — staked"\n- Daniel Defense MK18 RIS II or SOCOM CQBR upper for SOPMOD Block II config\n- CRANE / SOPMOD 6-position stock with battery storage compartment\n- M203 grenade launcher may be mounted under barrel (optional accessory)',
+    accessories:'1× ACOG TA31 4× scope + RMR offset, 1× 30-round Magpul PMAG, 1× AN/PEQ-15 ATPIAL, 1× SureFire M952V light, Harris bipod, QD sling',
+    markings:'US Army 75th Ranger Regiment, US SOCOM / Delta Force / DEVGRU, USMC Force Recon',
+    assembly:`BARREL ASSEMBLY [RED] — ① Flash Hider (A2 birdcage, 1/2×28 thread), ② 14.5" Government-Profile Barrel (chrome-lined, label: 369mm/5.56×45mm/1:7 twist), ③ Front Sight Base / Gas Block (A2 FSB with bayonet lug, or low-profile gas block), ④ Carbine-Length Gas Tube (direct impingement — runs FULL LENGTH from gas block through handguard to upper receiver, label: DI gas tube — no piston rod)
+
+UPPER RECEIVER [BLUE] — ⑤ M4 Flat-Top Upper Receiver (milspec forging, M4-profile), ⑥ MIL-STD-1913 Picatinny Top Rail (integrated), ⑦ Daniel Defense RIS II Handguard (12" free-float, Picatinny on all 4 sides), ⑧ Barrel Nut (standard M4 milspec pattern), ⑨ Charging Handle (ambidextrous extended latch), ⑩ Forward Assist (right side), ⑪ Ejection Port / Dust Cover (right side, spring-loaded)
+
+BOLT CARRIER GROUP [ORANGE-AMBER] — ⑫ M16 Full-Auto BCG Body (milspec, chrome-lined, label: M16 BCG — direct impingement), ⑬ Gas Key (show 2 staked screws, label: gas key — screws properly staked — DI connection point), ⑭ Rotating Bolt Head (7-lug, staked), ⑮ Firing Pin (DISTINCT THIN ROD — must show as separate part with visible gap from BCG body), ⑯ Firing Pin Retaining Pin, ⑰ Extractor (spring-loaded), ⑱ Extractor Spring + O-ring insert, ⑲ Cam Pin (D-shaped)
+
+LOWER RECEIVER / TRIGGER [YELLOW] — ⑳ M4 Lower Receiver (milspec forging, SOPMOD config), ㉑ Geissele SSF or Milspec Trigger (curved face), ㉒ Hammer (M16-profile), ㉓ Disconnector, ㉔ Trigger + Hammer Pin Set, ㉕ Ambidextrous Safety Selector, ㉖ Bolt Catch / Release, ㉗ Magazine Release Button
+
+STOCK & BUFFER [GREEN] — ㉘ CRANE / SOPMOD Collapsible Stock (6-position, battery compartment in stock), ㉙ Milspec Buffer Tube (6-position diameter), ㉚ H2 Carbine Buffer (heavy), ㉛ Carbine Recoil Spring (3-strand), ㉜ Magpul MOE+ Pistol Grip
+
+FEED SYSTEM [RED] — ㉝ Magpul PMAG 30-Round (ribbed polymer, dust cover flap, show rounds inside), ㉞ Anti-Tilt Follower (orange tip), ㉟ Magazine Spring (dual-feed coil), ㊱ PMAG Baseplate
+
+ACCESSORIES — ㊲ AN/PEQ-15 ATPIAL Laser Device, ㊳ SureFire M952V Weaponlight (×300 lumen), ㊴ ACOG TA31 Scope body, ㊵ RMR Offset Sight Mount, ㊶ QD Front Sling Swivel, ㊷ QD Rear Sling Swivel`,
+  },
+
+  'AK-47 / AKM / AK-74':{
+    fullName:'AKM | Avtomat Kalashnikova Modernizirovanny | 7.62×39mm',
+    kitRef:'Pro-Series Master Kit',kitNo:'Kit No: AKM-1',
+    length:'880 mm',height:'195 mm',weight:'3.1 kg',caliber:'7.62×39mm Soviet',
+    c1:'Bakelite Brown #5c3a1e',c2:'Blued Steel Black #1a1a22',c3:'Pale Birch Wood #c8a464',c4:'OD Green Furniture #4a5e3a',
+    sprueA:'Gray ABS plastic runner — receiver panels, dust cover, trunnions',sprueB:'Bakelite / brown polymer runner — grip, magazine body, handguard, stock',
+    opSys:'long_stroke',config:'conventional',parts:'30-40',
+    weathering:'W1 — Barrel / gas tube → Heavy carbon fouling — Tamiya Flat Black + Smoke\nW2 — Receiver sides → Bluing wear — Silver chipping fluid method on all edges\nW3 — Wood stock / forend → Wood grain weathering — Raw Umber oil wash + scratches',
+    accuracy:'- AKM uses LONG-STROKE gas piston — piston rod is PERMANENTLY ATTACHED to bolt carrier as one unit\n- Show piston+carrier as integral piece (NOT separate like HK416 short-stroke)\n- Stamped steel receiver (AKM) — show thin sheet metal profile, NOT milled block\n- Slant muzzle compensator (AKM-specific) — NOT birdcage flash hider\n- Magazine is CURVED banana shape for 7.62×39mm — NOT straight STANAG\n- Safety lever is right-side external large lever covering ejection port when safe',
+    accessories:'1× 30-round banana magazine (curved, 7.62×39mm), 1× Spike bayonet with scabbard, 1× AK-pattern 2-point sling, 1× Under-barrel cleaning rod',
+    markings:'Soviet Army arsenal factory stamps, Russian FSB / Spetsnaz unit markings, Cold War era proof marks',
+    assembly:`BARREL ASSEMBLY [RED] — ① Slant Muzzle Compensator (AKM-specific angled cut — NOT birdcage, label: AKM slant comp), ② 415mm Chrome-Lined Barrel (label: 415mm/7.62×39mm/1:9.45 twist, show rifling cutaway at muzzle), ③ Front Sight Post (hooded, adjustable elevation, pinned block), ④ Front Sight / Gas Block (combined unit — bayonet lug attached, label: gas block / bayonet lug integrated), ⑤ Under-Barrel Cleaning Rod (removable, stored in channel under barrel)
+
+GAS SYSTEM [ORANGE] — ⑥ Gas Tube (curved tube connecting gas block to piston cylinder above barrel), ⑦ Gas Cylinder / Piston Housing (above barrel, aluminum tube), ⑧ Gas Piston + Bolt Carrier (INTEGRAL ONE-PIECE — piston permanently welded/staked to carrier, label: long-stroke — piston integral with carrier), ⑨ Gas Port (Ø2.6mm, fixed — no regulator on AKM)
+
+UPPER DUST COVER [BLUE] — ⑩ Stamped Steel Dust Cover / Top Cover (sheet metal, hinged at rear, label: stamped — not milled), ⑪ Rear Sight Leaf (tangent-type, graduated 100–800m), ⑫ Rear Sight Block (dovetail-mounted press-fit), ⑬ Charging Handle (right side, integral to carrier — non-folding)
+
+RECEIVER GROUP [BLUE] — ⑭ Stamped AKM Receiver Body (show press-formed ribbing and thin wall profile), ⑮ Front Trunnion (barrel is pressed and pinned into this), ⑯ Rear Trunnion (stock attachment tang), ⑰ Pistol Grip Nut + Bolt (screw-retained), ⑱ Axis Pins ×2 (trigger/hammer pin and disconnector pin)
+
+BOLT CARRIER GROUP [ORANGE-AMBER] — (this IS the same as gas piston — labeled as one unit) ⑲ Rotating Bolt Head (2-lug AK pattern, offset from carrier axis), ⑳ Firing Pin (DISTINCT cylindrical rod inside carrier — must show separate from carrier with visible gap), ㉑ Extractor (spring-steel hook), ㉒ Extractor Spring
+
+TRIGGER GROUP [YELLOW] — ㉓ Trigger (curved AK profile, disconnector notch visible), ㉔ Hammer (AK pattern, wider than AR hammer), ㉕ Disconnector (single-hook AKM), ㉖ Trigger Spring (double-leg wire spring), ㉗ Safety / Fire Selector Lever (right side, large external lever, 3-position: Safety covers ejection port / Full-Auto / Semi)
+
+STOCK & FURNITURE [GREEN] — ㉘ Fixed Laminated Wood Stock (or polymer, show wood grain texture), ㉙ Upper Handguard / Gas Tube Cover (wood or polymer, clips onto gas tube), ㉚ Lower Handguard (wood, dual-sided heat shield), ㉛ Pistol Grip (AK-pattern bakelite or polymer, checkered)
+
+FEED SYSTEM [RED] — ㉜ 30-Round Banana Magazine (curved 7.62×39mm geometry — curved because of tapered cartridge case, show rounds stacked inside), ㉝ Magazine Body (steel or bakelite), ㉞ Magazine Follower (stamped steel), ㉟ Magazine Spring (coil), ㊱ Magazine Baseplate (removable, show retaining button)
+
+ACCESSORIES — ㊲ AKM Bayonet (blade + crossguard + grip), ㊳ Bayonet Scabbard (with wire-cutter feature), ㊴ AK Sling (leather or canvas 2-point), ㊵ Cleaning Kit Container (stored in stock or separate pouch)`,
+  },
+
+  'Glock 17 / Glock 19':{
+    fullName:'Glock 17 Gen5 MOS | 9mm Striker-Fired Service Pistol',
+    kitRef:'Pro-Series Master Kit',kitNo:'Kit No: G17G5-1',
+    length:'202 mm',height:'138 mm',weight:'625 g (unloaded)',caliber:'9×19mm Parabellum',
+    c1:'Glock nDLC Black #2a2a2a',c2:'Silver Gray #9a9a9a',c3:'Polymer Frame Gray #5a5a5a',c4:'OD Green Frame (optional) #4a5e3a',
+    sprueA:'Black nylon polymer runner — slide components, frame panels, trigger housing',sprueB:'Silver/gray metal runner — barrel, guide rod, small metal parts',
+    opSys:'blowback',config:'semi_auto',parts:'20-30',
+    weathering:'W1 — Slide top / barrel hood → Holster wear — Silver dry brush on all high edges\nW2 — Frame rail area → Finish wear — Subtle silver on contact rails\nW3 — Barrel exterior near chamber → Carbon / fouling — Tamiya Smoke',
+    accuracy:'- Glock uses STRIKER-FIRED mechanism — NO external hammer visible anywhere\n- DO NOT draw a hammer — the striker (firing pin) is internal only\n- Safe Action trigger: trigger safety lever is a sub-part of the trigger itself\n- Polymer frame with steel slide — show clear material contrast\n- Gen5 specific: NO finger grooves on grip, flared magwell, ambidextrous slide stop\n- MOS (Modular Optic System) slide cut for red dot mounting\n- Glock Marksman Barrel (GMB) has polygonal rifling — show in cutaway',
+    accessories:'1× 17-round magazine, 1× Glock tool, 1× Backstrap (3 sizes), 1× MOS adapter plate for red dot',
+    markings:'Glock serial number, Austrian proof house stamp, US "GLOCK INC SMYRNA GA" import marking, caliber stamp on barrel',
+    assembly:`SLIDE ASSEMBLY [BLUE] — ① Slide Body (steel, nDLC coated, MOS optic cut on top, label: MOS slide — optic ready), ② Glock Marksman Barrel (GMB, 114mm polygonal rifling — show in muzzle cutaway, label: polygonal rifling — no lands or grooves), ③ Recoil Spring Assembly (dual captive spring on polymer guide rod, one-piece captive unit), ④ Front Sight (polymer tenon-mount, dovetail), ⑤ Rear Sight (adjustable, dovetail), ⑥ Slide Stop Lever (Gen5 ambidextrous, left AND right side)
+
+STRIKER GROUP [ORANGE-AMBER] — ⑦ Striker / Firing Pin (DISTINCT CYLINDRICAL ROD — must appear as completely separate from slide, label: striker — NOT a hammer), ⑧ Striker Spring (coil, pre-loaded), ⑨ Striker Channel Liner (polymer tube in slide bore), ⑩ Striker Safety Plunger (drop-safety component), ⑪ Striker Safety Spring, ⑫ Spring-Loaded Bearing (rear of slide)
+
+EXTRACTOR GROUP — ⑬ Extractor (loaded chamber indicator, spring-loaded, shows as bump when round chambered), ⑭ Extractor Depressor Plunger, ⑮ Extractor Depressor Spring
+
+FRAME ASSEMBLY [YELLOW] — ⑯ Polymer Frame Body (Gen5 — no finger grooves, flared magwell, accessory rail), ⑰ Trigger with Integrated Safety Lever (show the small trigger safety tab on the trigger face — sub-part), ⑱ Trigger Bar (sheet metal, connects trigger to connector), ⑲ Connector (angled steel piece, determines trigger pull weight), ⑳ Trigger Housing with Ejector (one-piece polymer, ejector is integral), ㉑ Trigger Spring (Gen5 coil-type), ㉒ Locking Block (cross-axis, retains barrel in frame)
+
+FRAME PINS — ㉓ Locking Block Pin (rear), ㉔ Trigger Mechanism Housing Pin (front), ㉕ Slide Stop Spring
+
+MAGAZINE ASSEMBLY [RED] — ㉖ Magazine Tube (17-round, steel-reinforced polymer body, show witness holes for round count), ㉗ Magazine Follower (anti-tilt, orange polymer), ㉘ Magazine Spring (dual-column coil), ㉙ Magazine Baseplate (polymer, removable squeeze-release), ㉚ Baseplug (inside baseplate, retains spring)
+
+ACCESSORIES — ㉛ Magazine Release Button (reversible left/right Gen5), ㉜ Slide Catch Lever (ambidextrous Gen5 — both sides), ㉝ MOS Adapter Plate (for optic mounting), ㉞ Backstrap (small / medium / large — 3 sizes)`,
+  },
+
+  'Barrett M82A1':{
+    fullName:'Barrett M82A1 | .50 BMG Anti-Materiel Rifle | 29" Barrel',
+    kitRef:'Pro-Series Master Kit',kitNo:'Kit No: M82A1-1',
+    length:'1448 mm',height:'280 mm',weight:'14.0 kg',caliber:'.50 BMG (12.7×99mm NATO)',
+    c1:'Flat Dark Earth FDE #8b6f4e',c2:'Flat Black #1a1a1a',c3:'Gunmetal Gray #4a4a52',c4:'OD Green #4a5e3a',
+    sprueA:'FDE ABS runner — upper/lower receiver, stock skeleton, scope rings',sprueB:'Black polymer runner — grip, bipod, rail accessories',
+    opSys:'recoil',config:'semi_auto',parts:'40-60',
+    weathering:'W1 — Muzzle brake baffles → Heavy blast carbon — Flat Black + Brown wash\nW2 — Receiver / barrel jacket → Long-range field use — AK Streaking Grime\nW3 — Bipod legs / stock → Desert dust + mud — Pigment wash',
+    accuracy:'- Barrett M82A1 is SHORT-RECOIL OPERATED — the barrel itself recoils rearward ~25mm on firing\n- Show barrel rail / guide track inside upper receiver where barrel slides\n- Rotating bolt has only 3 lugs (NOT 7 like AR-pattern)\n- Massive double-baffle muzzle brake is the most distinctive visual feature — show both baffles\n- Semi-auto only (M82A2 bullpup has full-auto — M82A1 does NOT)\n- 10-round box magazine feeds from bottom center of receiver\n- Integral folding bipod mounted to barrel, NOT receiver',
+    accessories:'1× Leupold Mark 4 16× scope (large), 1× 10-round .50 BMG magazine (large), 1× Harris folding bipod, 1× Rear monopod under buttstock, 1× Carrying handle (folding)',
+    markings:'USMC Scout Sniper unit markings, US Army sniper unit decals, NATO interoperability markings',
+    assembly:`BARREL & MUZZLE [RED] — ① Double-Baffle Muzzle Brake (massive 2-chamber design, gas exit ports on top and both sides, label: 2-baffle Barrett muzzle brake), ② Muzzle Brake Lock Ring (threaded retention collar), ③ 29" Fluted Barrel (show longitudinal flutes for weight reduction, rifling cutaway at muzzle, label: 737mm / .50 BMG / 1:15 twist), ④ Barrel Recoil Rail (show guide track on barrel that slides inside upper receiver)
+
+RECOIL SYSTEM [ORANGE] — ⑤ Barrel Recoil Spring (heavy-duty coil behind barrel in upper receiver), ⑥ Barrel Guide Rails ×2 (show barrel slides forward/rearward on these), ⑦ Recoil Absorber / Buffer Pad (at rear of barrel travel path)
+
+UPPER RECEIVER [BLUE] — ⑧ Upper Receiver Body (alloy, encloses barrel guide system, show barrel entry at front), ⑨ Full-Length Picatinny Top Rail (20 MOA cant for extended range), ⑩ 34mm Scope Ring (front, show mounting bolts), ⑪ 34mm Scope Ring (rear, show mounting bolts), ⑫ Carrying Handle (folding, show hinge), ⑬ Ejection Port (right side, large diameter for .50 BMG case)
+
+BOLT GROUP [ORANGE-AMBER] — ⑭ Rotating Bolt Body (3-lug Barrett pattern, very large diameter — show 3 lugs clearly), ⑮ Bolt Head (3 radial lugs labeled), ⑯ Firing Pin (DISTINCT LARGE-DIAMETER ROD with clearly visible gap from bolt body), ⑰ Firing Pin Spring (heavy), ⑱ Extractor (heavy duty spring-loaded), ⑲ Ejector (fixed blade type)
+
+LOWER RECEIVER / TRIGGER [YELLOW] — ⑳ Lower Receiver (alloy, joins upper via 2 cross-pins), ㉑ Trigger Group (trigger, sear, disconnector as unit), ㉒ Pistol Grip (rubberized, overmolded), ㉓ Safety Selector (right side tang, 2-position), ㉔ Magazine Release (front of trigger guard)
+
+BIPOD ASSEMBLY [GREEN] — ㉕ Bipod Swivel Base (360° cant), ㉖ Left Bipod Leg (notched height-adjustable, folds forward), ㉗ Right Bipod Leg (notched height-adjustable, folds forward), ㉘ Bipod Mounting Stud / QD Adapter (attaches to barrel block)
+
+STOCK ASSEMBLY [GREEN] — ㉙ Skeletal Aluminum Stock Frame (open framework design), ㉚ Adjustable Cheekweld Riser (height-adjustable), ㉛ Rubber Buttpad (thick recoil-absorbing, ribbed surface), ㉜ Rear Monopod (under buttstock, height-adjustable, folds up), ㉝ Buffer Tube (inside stock frame)
+
+FEED SYSTEM [RED] — ㉞ 10-Round .50 BMG Box Magazine (large single-stack, show cartridges inside), ㉟ Magazine Follower (heavy-duty steel), ㊱ Magazine Spring (heavy coil), ㊲ Magazine Baseplate
+
+ACCESSORIES — ㊳ Leupold Mark 4 16× Scope body, ㊴ Scope Objective Lens Bell, ㊵ Scope Eyepiece, ㊶ QD Front Sling Swivel (×2 locations), ㊷ QD Rear Sling Swivel`,
+  },
+
+  'M1A2 Abrams':{
+    fullName:'M1A2 SEP v3 Abrams | 120mm MBT | US Army',
+    kitRef:'Armor Pro-Series Kit',kitNo:'Kit No: M1A2-3',
+    length:'9830 mm (gun forward)',height:'2440 mm',weight:'62500 kg',caliber:'120mm M256 Smoothbore',
+    c1:'NATO Green #4a5e3a',c2:'NATO Black #1a1a1a',c3:'NATO Brown #5a3a1e',c4:'Sand / Tan #c8a464',
+    sprueA:'OD Green ABS runner — hull panels, turret halves, ERA block housings',sprueB:'Black rubber runner — track links, rubber roadwheel tires, track pads',
+    opSys:'manual',config:'conventional',parts:'80-100',
+    weathering:'W1 — Gun barrel → Carbon blast zone — Flat Black + Brown wash at muzzle\nW2 — Hull sides / ERA blocks → Road grime + mud — AK Mud effects + Pigment\nW3 — Track links → Bare metal, rust — Silver chipping + Brown + Orange wash',
+    accuracy:'- M1A2 SEP v3 has Trophy APS (Active Protection System) on both turret sides — show radar arrays + launchers\n- 120mm M256 is smoothbore (NO rifling) — show smooth bore interior in cutaway\n- CITV (Commander Independent Thermal Viewer) on right turret roof — distinctive dome\n- Gunner Primary Sight (GPS) embedded in gun mantlet area — label correctly\n- Depleted Uranium (DU) Chobham armor in glacis and turret — not visible, note in specs\n- All 7 road wheels per side are rubber-tired, with torsion bar suspension',
+    accessories:'1× 120mm M256 gun barrel, 1× M2HB .50 cal (commander), 1× M240 coaxial MG, 1× Trophy APS radar (×2), 1× CITV dome, PE photo-etch parts',
+    markings:'US Army 1st Armored Division (Big Red One), US Army 3rd Infantry Division (Rock of the Marne), USMC tank markings',
+    assembly:`GUN & MANTLET [RED] — ① 120mm M256 Smoothbore Gun Barrel (long, show smooth bore in muzzle cutaway — NO rifling, label: 120mm M256 smoothbore), ② Thermal Sleeve (canvas-wrapped barrel jacket, reduces heat mirage), ③ Muzzle Reference Sensor (small box at muzzle end, label: MRS — boresight reference), ④ Gun Mantlet (armored gun shield, front turret face, shows gun elevation arc), ⑤ Coaxial M240 Machine Gun (7.62mm, right of main gun), ⑥ Gunner Primary Sight / FLIR (GPS housing, left of mantlet)
+
+TURRET ASSEMBLY [BLUE] — ⑦ Turret Body (composite Chobham armor, flat panel surfaces), ⑧ Commander's Hatch (right side, with 6 vision blocks), ⑨ Loader's Hatch (left side), ⑩ CITV Dome (Commander Independent Thermal Viewer, right turret roof, label: CITV — commander's independent sight), ⑪ Commander's RWS / M2HB .50 cal (Remote Weapon Station or ring mount), ⑫ Turret Bustle Rack (expanded metal frame, rear of turret), ⑬ Trophy APS Radar Panel (left side turret, show rectangular flat array), ⑭ Trophy APS Radar Panel (right side turret), ⑮ Trophy Interceptor Launchers (×2 per side, 4 total)
+
+HULL UPPER DECK [ORANGE] — ⑯ Front Glacis Plate (60° slope composite armor, labeled as DU), ⑰ Driver's Hatch (front left hull, with periscopes ×3), ⑱ Engine Deck Grilles (rear, turbine exhaust louvres), ⑲ Bustle Stowage Boxes (left and right hull sides), ⑳ Fuel Filler Access Caps (×2, rear deck)
+
+SUSPENSION [ORANGE-AMBER] — ㉑ Road Wheel ×7 (per side, 14 total, rubber-tired, show hub detail), ㉒ Drive Sprocket (rear, show tooth profile and track engagement), ㉓ Idler Wheel (front, with track tension adjuster bolt), ㉔ Track Return Roller ×2 (per side, 4 total), ㉕ Torsion Bar ×7 per side (internal, show in hull cutaway), ㉖ Shock Absorber ×3 per side (front/mid/rear bogies)
+
+TRACK ASSEMBLY [GREEN] — ㉗ T-158 Track Link (single-pin, rubber-padded, show one link detail), ㉘ Rubber Track Pad (chevron pattern wear surface), ㉙ End Connector (steel link connector), ㉚ Track Pin (through-pin), ㉛ Track Pin Retainer Clip (C-clip or cotter pin)
+
+HULL LOWER / ARMOR [YELLOW] — ㉜ Lower Hull Body (belly armor, show angle profile), ㉝ Hull Skirt Panels ×4 per side (rubber ballistic, hinged), ㉞ Hull Rear Plate (engine access), ㉟ Tow Pintle (rear center)
+
+ACCESSORIES — ㊱ Spare Track Links (chained to hull front, ×2), ㊲ External Fuel Drum (hull rear, optional), ㊳ Antenna ×2 (rear hull, whip type), ㊴ Smoke Grenade Launchers (×6 per side, hull mounted), ㊵ Hull Lifting Eyes ×4 (corners)`,
+  },
+
+  'RX-78-2 Gundam':{
+    fullName:'RX-78-2 Gundam | Master Grade 1:100 | Ver. 3.0 | Earth Federation Forces',
+    kitRef:'Bandai Master Grade Kit',kitNo:'Kit No: MG-RX78-V3',
+    length:'18000 mm (real scale)',height:'18000 mm',weight:'60.0 t',caliber:'60mm Vulcan Pod (head-mounted)',
+    c1:'Pure White #f5f5f5',c2:'Navy Blue #1a3a6e',c3:'Crimson Red #c0392b',c4:'Chrome Yellow #f0c000',
+    sprueA:'White ABS runner — head helmet, chest plate, limb outer armor panels',sprueB:'Navy Blue / Red runner — inner frame parts, joints, color accent pieces, weapons',
+    opSys:'electric',config:'modular',parts:'100+',
+    weathering:'W1 — Joints / inner frame → Metallic oil-stain — Gunmetal dry brush + oil wash\nW2 — White armor panels → Battle damage chips — Chipping fluid method (silver base)\nW3 — Feet / lower legs → Combat terrain mud — Tamiya Weathering Master Set B',
+    accuracy:'- RX-78-2 MG Ver.3.0 has full inner FRAME SKELETON under outer armor panels — show skeleton separately\n- Head has Twin Vulcan Cannons (60mm, both cheeks), mono-eye camera (red), and V-Fin antenna\n- Core Block system: Core Fighter jet integrates into torso as cockpit — show docking\n- Beam sabers stored in backpack binders (2 sabers, handles stored, effect parts separate)\n- Shield is left-arm mounted via shield adapter, right arm for beam rifle\n- The G-Fighter can dock with Gundam for G-Armor configuration (Ver.3.0 feature)',
+    accessories:'1× RX-78 Beam Rifle + E-Pac, 1× Beam Sabers ×2 (handles + clear effects), 1× Shield, 1× Hyper Bazooka, 1× Pilot figure Amuro Ray, 1× Action base connector',
+    markings:'Earth Federation Forces (EFF) insignia, White Base ship assignment markings, RX-78-2 serial number plates, V-Fin yellow decals',
+    assembly:`HEAD UNIT [BLUE] — ① Helmet Crown (white, upper head armor), ② Mono-Eye Camera (clear red, show LED provision channel, label: mono-eye camera — clear part), ③ V-Fin Antenna (chrome yellow forked fin — distinctive feature), ④ Chin Guard (white, lower face), ⑤ Face Mask (white, horizontal ventilation slits), ⑥ Left Vulcan Gun Barrel (60mm, left cheek), ⑦ Right Vulcan Gun Barrel (60mm, right cheek), ⑧ Head Internal Frame (gray, polycap at neck joint)
+
+TORSO [BLUE] — ⑨ Chest Plate / Breast Armor (white, Core Block docking port in center), ⑩ Core Block Integration Hatch (opens to reveal Core Fighter cockpit module), ⑪ Core Fighter / Core Block (mini jet integrated as cockpit), ⑫ Abdominal Armor Segments (white, segmented flex joints), ⑬ Shoulder Armor Sockets ×2 (polycap ball joints), ⑭ Backpack Connector Points (show locking tabs)
+
+ARMS [RED] — ⑮ Left Shoulder Pauldron (red with white trim), ⑯ Right Shoulder Pauldron (red with white trim), ⑰ Upper Arm Cylinder (white, show polycap joint), ⑱ Forearm Armor Left (white), ⑲ Forearm Armor Right (white), ⑳ Hand Unit ×2 (poseable fingers or weapon-hold variant), ㉑ Shield Mount Adapter (left forearm attachment)
+
+LEGS [GREEN] — ㉒ Thigh Armor ×2 (white, upper leg), ㉓ Knee Armor ×2 (red accent), ㉔ Lower Leg / Shin Armor ×2 (white, large volume), ㉕ Ankle Armor ×2 (white), ㉖ Foot ×2 (white upper + red toe), ㉗ Leg Inner Frame ×2 (gray skeleton, show all polycap joints at hip/knee/ankle)
+
+BACKPACK / THRUSTER [ORANGE] — ㉘ Backpack Body (white center unit), ㉙ Left Beam Saber Binder (red, folds out), ㉚ Right Beam Saber Binder (red, folds out), ㉛ Beam Saber Handles ×2 (stored in binders, gray), ㉜ Main Thruster Nozzles ×2 (gray, rear), ㉝ Sub-Thruster Nozzles ×4 (corners of backpack), ㉞ Backpack Mounting Arm (connects to torso rear)
+
+WEAPONS [RED] — ㉟ RX-78 Beam Rifle (primary weapon, gray, show barrel + sensor), ㊱ E-Pac Energy Pack (magazine in rifle grip, removable, show contacts), ㊲ Shield (left arm, large — white + blue + red tricolor, show face detail), ㊳ Hyper Bazooka (optional heavy weapon, shoulder-fired), ㊴ Beam Saber Effect Parts ×2 (clear yellow-pink beam blades)
+
+INNER FRAME [YELLOW] — ㊵ Torso Inner Frame (gray structural skeleton), ㊶ Hip Block / Waist Frame (central articulation), ㊷ Shoulder Polycap Joint ×2, ㊸ Elbow Polycap Joint ×2, ㊹ Knee Polycap Joint ×2
+
+ACCESSORIES — ㊺ Pilot Figure (Amuro Ray in white normal suit), ㊻ Action Base Connector, ㊼ Clear Beam Effect Parts (saber beams, beam rifle muzzle flash)`,
+  },
+};
+
+// ═══════════════════════════════════════
+// AUTO-FILL FUNCTION — triggered on subject click
+// Matches subject name to MODEL_DATA and fills ALL form fields
+// ═══════════════════════════════════════
+function autoFillModel(subjName){
+  // Find best match — check if subjName contains any key, or key contains subjName word
+  var key=Object.keys(MODEL_DATA).find(k=>{
+    var kFirst=k.split('/')[0].trim().toLowerCase();
+    var sFirst=subjName.split('/')[0].trim().toLowerCase();
+    return subjName.toLowerCase().includes(kFirst)||k.toLowerCase().includes(sFirst);
+  });
+  if(!key){
+    // No specific data — clear to blank generic template
+    ['modelFullName','kitRef','kitNo','specLength','specHeight','specWeight',
+     'specCaliber','color1','color2','color3','color4','sprueA','sprueB',
+     'weatheringZones','accuracyNotes','accessories','markings','assemblyGroups'].forEach(id=>{
+      var el=document.getElementById(id);
+      if(el)el.value='';
+    });
+    document.getElementById('modelFullName').value=subjName+' | [Add full model name]';
+    document.getElementById('assemblyGroups').value='[Define assembly groups for '+subjName+'\nFormat: GROUP NAME [COLOR] — ① Part name (description), ② Part name...]';
+    document.getElementById('accuracyNotes').value='[Add critical accuracy notes for '+subjName+'\n- Key mechanical features\n- Configuration specifics\n- Common AI mistakes to avoid]';
+    return;
+  }
+  var d=MODEL_DATA[key];
+
+  // Fill all text fields
+  var fieldMap={
+    modelFullName:d.fullName, kitRef:d.kitRef, kitNo:d.kitNo,
+    specLength:d.length, specHeight:d.height, specWeight:d.weight,
+    specCaliber:d.caliber, color1:d.c1, color2:d.c2, color3:d.c3, color4:d.c4,
+    sprueA:d.sprueA, sprueB:d.sprueB, weatheringZones:d.weathering,
+    accuracyNotes:d.accuracy, accessories:d.accessories, markings:d.markings,
+    assemblyGroups:d.assembly
+  };
+  Object.keys(fieldMap).forEach(id=>{
+    var el=document.getElementById(id);
+    if(el&&fieldMap[id]!==undefined)el.value=fieldMap[id];
+  });
+
+  // Update op system chip
+  S.opSystem=d.opSys||'short_stroke';
+  document.querySelectorAll('#opSystemRow .chip').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('#opSystemRow .chip').forEach(x=>{
+    var t=x.textContent.toLowerCase();
+    if((d.opSys==='short_stroke'&&t.includes('short'))||
+       (d.opSys==='long_stroke'&&t.includes('long'))||
+       (d.opSys==='gas_impingement'&&t.includes('impingement'))||
+       (d.opSys==='blowback'&&t.includes('blowback'))||
+       (d.opSys==='recoil'&&t.includes('recoil'))||
+       (d.opSys==='electric'&&t.includes('electric'))||
+       (d.opSys==='manual'&&t.includes('manual'))||
+       (d.opSys==='bolt_action'&&t.includes('bolt'))||
+       (d.opSys==='pump_action'&&t.includes('pump')))
+      x.classList.add('on');
+  });
+
+  // Update config chip
+  S.config=d.config||'conventional';
+  document.querySelectorAll('#configRow .chip').forEach(x=>x.classList.remove('on','on-ac'));
+  document.querySelectorAll('#configRow .chip').forEach(x=>{
+    var t=x.textContent.toLowerCase();
+    if((d.config==='bullpup'&&t.includes('bullpup'))||
+       (d.config==='conventional'&&t.includes('conventional'))||
+       (d.config==='semi_auto'&&t.includes('semi'))||
+       (d.config==='modular'&&t.includes('modular'))||
+       (d.config==='manual'&&t.includes('manual')))
+      x.classList.add('on','on-ac');
+  });
+
+  // Update part count chip
+  S.partCount=d.parts||'30-40';
+  document.querySelectorAll('#partCountRow .chip').forEach(x=>{
+    x.classList.remove('on','on-ac');
+    if(x.textContent.includes(d.parts))x.classList.add('on');
+  });
+}
+
+// INIT
+// ═══════════════════════════════════════
+renderCatTabs();renderSubjects();renderZones();renderScales();
+renderPartCounts();renderOpSystems();renderConfigs();
+
+// Auto-fill AUG A1 on initial load
+autoFillModel('Steyr AUG A1');
+updatePreview();
+</script>
+</body>
+</html>

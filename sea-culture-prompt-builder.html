@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEA Culture Vector Prompt Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FBF7F0;--bg2:#FFFFFF;--bg3:#F5EFE6;--bg4:#EDE5D8;
+  --ink:#1E1A14;--ink2:#6A5F4E;--ink3:#A89880;
+  --border:#E0D8CC;--border2:#C8BFAF;
+  --gold:#C4860A;--gold-l:#FDF3DC;--gold-m:#F0C44A;
+  --red:#B83020;--red-l:#FDECEA;
+  --green:#2A6040;--green-l:#E8F5EE;
+  --blue:#1A4878;--blue-l:#E6EEFA;
+  --teal:#0F6458;--teal-l:#E0F5F2;
+  --umber:#7A4A28;--umber-l:#F5EBE0;
+  --batik1:#C4860A;--batik2:#B83020;--batik3:#2A6040;--batik4:#1A4878;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+
+/* decorative batik dots */
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,rgba(196,134,10,.12) 1.5px,transparent 1.5px);background-size:24px 24px;pointer-events:none;z-index:0}
+
+.app{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 24px 80px}
+
+/* HEADER */
+header{padding:36px 0 28px;border-bottom:2px solid var(--gold-m);margin-bottom:28px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.hd-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.hd-title{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;letter-spacing:-.02em;line-height:1.1;color:var(--ink)}
+.hd-title em{font-style:italic;color:var(--gold);font-weight:400}
+.hd-sub{font-size:12px;color:var(--ink3);margin-top:6px}
+.hd-pill{padding:8px 16px;border-radius:4px;background:var(--gold-l);color:var(--gold);font-size:10px;font-weight:700;border:1px solid #E8C060;font-family:'JetBrains Mono',monospace;letter-spacing:.06em}
+
+/* COUNTRY TABS */
+.country-strip{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px}
+.ctry{padding:7px 14px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;border:1.5px solid var(--border2);color:var(--ink2);background:var(--bg2);transition:all .15s;display:flex;align-items:center;gap:6px;font-family:'Plus Jakarta Sans',sans-serif}
+.ctry:hover{border-color:var(--gold);color:var(--gold)}
+.ctry.on{background:var(--gold-l);border-color:var(--gold);color:var(--gold);font-weight:700}
+.ctry-flag{font-size:16px;line-height:1}
+.ctry-badge{font-size:8px;padding:1px 5px;border-radius:2px;font-family:'JetBrains Mono',monospace;font-weight:700}
+
+/* MAIN GRID */
+.grid{display:grid;grid-template-columns:340px 1fr;gap:18px;align-items:start}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+
+/* SIDEBAR */
+.sidebar{display:flex;flex-direction:column;gap:12px}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.ph{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg3)}
+.pt{font-size:11px;font-weight:700;color:var(--ink);letter-spacing:.01em}
+.pb{padding:14px 16px}
+.tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.tg{background:var(--gold-l);color:var(--gold)}
+.tr{background:var(--red-l);color:var(--red)}
+.tb{background:var(--blue-l);color:var(--blue)}
+.tc{background:var(--teal-l);color:var(--teal)}
+.tgr{background:var(--green-l);color:var(--green)}
+
+/* FIELDS */
+.field{margin-bottom:11px}
+.field:last-child{margin-bottom:0}
+.flabel{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between}
+.fhint{font-size:10px;color:var(--ink3);margin-top:4px;line-height:1.5}
+.fhint-gold{font-size:10px;color:var(--umber);margin-top:4px;padding:5px 8px;background:var(--umber-l);border-left:2px solid var(--gold);line-height:1.5}
+input[type=text],textarea,select{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:5px;color:var(--ink);font-family:'JetBrains Mono',monospace;font-size:11px;padding:8px 11px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+input:focus,textarea:focus,select:focus{border-color:var(--gold);background:var(--bg)}
+textarea{resize:vertical;line-height:1.6}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{padding:4px 10px;border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--border2);color:var(--ink2);background:var(--bg3);transition:all .12s;font-family:'Plus Jakarta Sans',sans-serif}
+.chip:hover{border-color:var(--gold);color:var(--gold)}
+.chip.on{background:var(--gold-l);border-color:var(--gold);color:var(--gold);font-weight:700}
+
+/* STYLE CARDS */
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.sc{border:1px solid var(--border2);border-radius:5px;padding:8px 6px;cursor:pointer;text-align:center;transition:all .15s;background:var(--bg3)}
+.sc:hover{border-color:var(--ink2)}
+.sc.on{border-color:var(--gold);background:var(--gold-l)}
+.sc.on .scl{color:var(--gold)}
+.sci{font-size:16px;margin-bottom:3px;display:block;line-height:1}
+.scl{font-size:9px;font-weight:700;color:var(--ink3);letter-spacing:.04em;text-transform:uppercase}
+
+/* BG SWATCHES */
+.sw-row{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.sw{width:24px;height:24px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:transform .15s;flex-shrink:0}
+.sw:hover{transform:scale(1.15)}
+.sw.on{outline:2px solid var(--gold);outline-offset:2px}
+
+/* TOGGLES */
+.tog-group{display:flex;flex-direction:column;gap:7px}
+.tog-row{display:flex;align-items:center;justify-content:space-between}
+.tog-txt{font-size:11px;color:var(--ink2)}
+.tog{width:30px;height:16px;border-radius:8px;background:var(--bg4);border:1px solid var(--border2);cursor:pointer;position:relative;transition:all .2s;flex-shrink:0}
+.tog.on{background:var(--gold);border-color:var(--gold)}
+.tog::after{content:'';position:absolute;top:1px;left:1px;width:12px;height:12px;border-radius:50%;background:#fff;transition:transform .2s}
+.tog.on::after{transform:translateX(14px)}
+
+/* SUBJECT TAGS */
+.stag-area{min-height:72px;background:var(--bg3);border:1px solid var(--border2);border-radius:5px;padding:7px;display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start;cursor:text;transition:border-color .2s}
+.stag-area:focus-within{border-color:var(--gold)}
+.stag-item{display:flex;align-items:center;gap:3px;background:var(--gold);color:#fff;border-radius:3px;padding:3px 7px;font-size:9px;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.stag-del{cursor:pointer;color:rgba(255,255,255,.6);font-size:10px}
+.stag-del:hover{color:#fff}
+.stag-input{border:none;background:transparent;color:var(--ink);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;min-width:60px;flex:1}
+.qf-btn{font-size:9px;padding:2px 7px;border-radius:3px;background:var(--bg4);border:1px dashed var(--border2);color:var(--ink3);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .12s}
+.qf-btn:hover{border-color:var(--gold);color:var(--gold)}
+.qf-wrap{position:relative}
+.qf-dd{display:none;position:absolute;top:calc(100%+3px);left:0;right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:5px;z-index:50;max-height:180px;overflow-y:auto;box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.qf-dd.open{display:block}
+.qf-item{padding:8px 11px;cursor:pointer;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--ink2);border-bottom:1px solid var(--border);line-height:1.5;transition:background .1s}
+.qf-item:last-child{border-bottom:none}
+.qf-item:hover{background:var(--bg3);color:var(--ink)}
+.qf-item strong{display:block;color:var(--ink);font-size:10px;margin-bottom:2px}
+
+/* MAIN OUTPUT */
+.main{display:flex;flex-direction:column;gap:12px}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.sl{font-size:9px;color:var(--ink3);text-transform:uppercase;letter-spacing:.07em;font-weight:700;margin-bottom:2px}
+.sv{font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);font-weight:600}
+.sv.cg{color:var(--gold)}
+.sv.cr{color:var(--red)}
+.sv.ct{color:var(--teal)}
+.sv.cgr{color:var(--green)}
+
+/* TABS */
+.tabs{display:flex;gap:1px;background:var(--border);border-radius:5px;padding:2px;width:fit-content}
+.tab{padding:5px 14px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;color:var(--ink3);background:transparent;border:none;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.02em;transition:all .15s}
+.tab.on{background:var(--bg2);color:var(--ink)}
+
+/* OUT CARD */
+.out-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.oh{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg3)}
+.ot{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink2);display:flex;align-items:center;gap:8px}
+.qdot{width:7px;height:7px;border-radius:50%;background:var(--ink3)}
+.qdot.q2{background:var(--gold)}
+.qdot.q3{background:var(--green)}
+.qdot.q4{background:var(--teal)}
+.ob{padding:14px 16px}
+.pbox{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.9;color:var(--ink);background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:13px;min-height:140px;white-space:pre-wrap;word-break:break-word;outline:none;cursor:text}
+.pbox:focus{border-color:var(--gold)}
+.pbox:empty::before{content:attr(data-ph);color:var(--ink3);font-style:italic}
+.pmeta{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--ink3)}
+
+/* ACTIONS */
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.btn{padding:8px 16px;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.02em;transition:all .15s;border:1px solid transparent}
+.btn-gold{background:var(--gold);color:#fff;border-color:var(--gold)}
+.btn-gold:hover{opacity:.88}
+.btn-out{background:transparent;color:var(--ink);border-color:var(--border2)}
+.btn-out:hover{border-color:var(--gold);color:var(--gold)}
+
+/* METADATA */
+.meta-body{padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.mr{display:grid;grid-template-columns:76px 1fr;gap:6px;align-items:start;font-size:11px}
+.mk{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink3);padding-top:8px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.mv{font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:6px 9px;color:var(--ink);line-height:1.6;min-height:30px;word-break:break-word}
+.kw-box{display:flex;flex-wrap:wrap;gap:3px;padding:5px;background:var(--bg3);border:1px solid var(--border);border-radius:3px}
+.kw{padding:2px 6px;border-radius:2px;background:var(--gold-l);border:1px solid #E8C060;font-size:9px;color:var(--gold);font-family:'JetBrains Mono',monospace;font-weight:600}
+
+/* VAR GRID */
+.var-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+@media(max-width:580px){.var-grid{grid-template-columns:1fr}}
+.vc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 13px}
+.vc:hover{border-color:var(--gold)}
+.vlbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--gold);font-weight:700;letter-spacing:.06em;margin-bottom:3px}
+.vname{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.vnote{font-size:10px;color:var(--ink3);line-height:1.5;margin-bottom:8px}
+
+/* HIST */
+.hi{background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:8px 10px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink2);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;transition:border-color .15s;margin-bottom:5px}
+.hi:hover{border-color:var(--gold);color:var(--ink)}
+
+/* OPPORTUNITY PANEL */
+.opp-card{background:var(--gold-l);border:1px solid #E8C060;border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.opp-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--gold);margin-bottom:8px;font-style:italic}
+.opp-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(196,134,10,.2);font-size:11px}
+.opp-row:last-child{border-bottom:none}
+.opp-label{color:var(--umber)}
+.opp-val{font-weight:700;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink)}
+.opp-val.green{color:var(--green)}
+.opp-val.red{color:var(--red)}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;z-index:999;background:var(--ink);color:#FBF7F0;padding:9px 16px;border-radius:5px;font-size:11px;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;transform:translateY(10px);opacity:0;transition:all .25s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ALERT */
+.alert{padding:9px 12px;border-radius:6px;font-size:11px;line-height:1.6;margin-bottom:10px}
+.ag{background:var(--green-l);border-left:2px solid var(--green);color:var(--green)}
+.ab{background:var(--blue-l);border-left:2px solid var(--blue);color:var(--blue)}
+.agd{background:var(--gold-l);border-left:2px solid var(--gold);color:var(--umber)}
+
+/* NICHE PILL */
+.niche-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:700;font-family:'JetBrains Mono',monospace}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:10px 0}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<header>
+  <div>
+    <div class="hd-eyebrow">Adobe Stock · Blue Ocean Niche 2026</div>
+    <div class="hd-title">SEA Culture <em>Vector</em> Prompt Builder</div>
+    <div class="hd-sub">Indonesia · Malaysia · Thailand · Philippines · Vietnam · Singapore · Myanmar · Cambodia</div>
+  </div>
+  <div class="hd-pill">Home Advantage</div>
+</header>
+
+<!-- STATS -->
+<div class="stats" style="margin-bottom:20px">
+  <div class="stat"><div class="sl">Negara tersedia</div><div class="sv cg">8</div></div>
+  <div class="stat"><div class="sl">Kompetisi Adobe Stock</div><div class="sv cgr">Sangat Rendah</div></div>
+  <div class="stat"><div class="sl">Adobe 2026 Trend</div><div class="sv ct">Local Culture</div></div>
+  <div class="stat"><div class="sl">Subjects per set</div><div class="sv cr">24</div></div>
+</div>
+
+<!-- COUNTRY PICKER -->
+<div style="margin-bottom:18px">
+  <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--ink3);margin-bottom:10px">Pilih negara / wilayah</div>
+  <div class="country-strip" id="countryStrip"></div>
+</div>
+
+<!-- OPPORTUNITY -->
+<div class="opp-card" style="margin-bottom:20px">
+  <div class="opp-title">Kenapa SEA Culture adalah Blue Ocean di 2026</div>
+  <div class="opp-row"><div class="opp-label">Supply di Adobe Stock sekarang</div><div class="opp-val green">Sangat sedikit (under-served)</div></div>
+  <div class="opp-row"><div class="opp-label">Adobe 2026 official trend</div><div class="opp-val">"Local Culture & Authentic"</div></div>
+  <div class="opp-row"><div class="opp-label">Buyer dari brand SEA region</div><div class="opp-val green">Naik, kebutuhan identitas lokal</div></div>
+  <div class="opp-row"><div class="opp-label">Kompetitor yang sudah ada</div><div class="opp-val green">Sedikit — first mover advantage</div></div>
+  <div class="opp-row"><div class="opp-label">Kamu sebagai creator lokal</div><div class="opp-val green">Home advantage — pemahaman kontekstual</div></div>
+  <div class="opp-row"><div class="opp-label">Niche saturation risk</div><div class="opp-val green">Rendah dalam 12–18 bulan ke depan</div></div>
+</div>
+
+<div class="grid">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+  <!-- STYLE -->
+  <div class="panel">
+    <div class="ph"><span class="pt">Visual Style</span><span class="tag tr">Required</span></div>
+    <div class="pb">
+      <div class="field">
+        <div class="flabel">Icon style</div>
+        <div class="sgrid" id="styleGrid">
+          <div class="sc on" data-val="flat outlined with thin uniform 2px stroke, dark outline on white" onclick="sClick(this)"><span class="sci">◻</span><span class="scl">Flat Outlined</span></div>
+          <div class="sc" data-val="filled solid flat clean silhouette" onclick="sClick(this)"><span class="sci">◼</span><span class="scl">Filled Solid</span></div>
+          <div class="sc" data-val="duotone two-color flat design" onclick="sClick(this)"><span class="sci">◧</span><span class="scl">Duotone</span></div>
+          <div class="sc" data-val="minimal hairline line art single weight" onclick="sClick(this)"><span class="sci">—</span><span class="scl">Line Art</span></div>
+          <div class="sc" data-val="cartoon expressive playful illustration" onclick="sClick(this)"><span class="sci">★</span><span class="scl">Cartoon</span></div>
+          <div class="sc" data-val="sticker thick black outline vibrant fill" onclick="sClick(this)"><span class="sci">◉</span><span class="scl">Sticker</span></div>
+          <div class="sc" data-val="clay 3D soft matte volumetric pastel render" onclick="sClick(this)"><span class="sci">◍</span><span class="scl">Clay 3D</span></div>
+          <div class="sc" data-val="batik-inspired intricate pattern flat vector" onclick="sClick(this)"><span class="sci">⬡</span><span class="scl">Batik-inspired</span></div>
+          <div class="sc" data-val="bold rounded friendly geometric shapes" onclick="sClick(this)"><span class="sci">▣</span><span class="scl">Bold Round</span></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="flabel">Color mood</div>
+        <div class="chips" id="moodChips">
+          <button class="chip on" data-val="vibrant tropical warm saturated" onclick="cOne(this,'moodChips')">Tropical Vibrant</button>
+          <button class="chip" data-val="earthy terracotta warm natural tones" onclick="cOne(this,'moodChips')">Earthy Terracotta</button>
+          <button class="chip" data-val="pastel soft muted gentle" onclick="cOne(this,'moodChips')">Pastel Soft</button>
+          <button class="chip" data-val="gold and red festive bold" onclick="cOne(this,'moodChips')">Gold & Red Festive</button>
+          <button class="chip" data-val="monochromatic batik indigo" onclick="cOne(this,'moodChips')">Batik Indigo</button>
+          <button class="chip" data-val="neon modern SEA street" onclick="cOne(this,'moodChips')">Modern Neon SEA</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="flabel">Background</div>
+        <div class="sw-row" id="bgPicker">
+          <div class="sw on" data-bg="pure white #FFFFFF background" style="background:#fff;border-color:#ddd" onclick="pickBg(this)"></div>
+          <div class="sw" data-bg="transparent background" style="background:repeating-conic-gradient(#ccc 0% 25%,#fff 0% 50%) 0 0/10px 10px" onclick="pickBg(this)"></div>
+          <div class="sw" data-bg="#FDF8F0 warm parchment background" style="background:#FDF8F0;border-color:#E8D8B8" onclick="pickBg(this)"></div>
+          <div class="sw" data-bg="#F0FDF4 tropical mint background" style="background:#F0FDF4;border-color:#A8DDB8" onclick="pickBg(this)"></div>
+          <div class="sw" data-bg="#FFF8E8 golden cream background" style="background:#FFF8E8;border-color:#E8C860" onclick="pickBg(this)"></div>
+          <div class="sw" data-bg="#1A1814 dark batik background" style="background:#1A1814;border-color:#444" onclick="pickBg(this)"></div>
+        </div>
+        <div class="fhint-gold" style="margin-top:6px">Untuk SEA culture: white atau parchment (#FDF8F0) paling versatile. Transparent untuk sticker pack.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOM SUBJECTS -->
+  <div class="panel">
+    <div class="ph"><span class="pt">Custom Subjects</span><span class="tag tc">Optional override</span></div>
+    <div class="pb">
+      <div class="field">
+        <div class="flabel" style="justify-content:space-between">
+          Add subjects
+          <button class="qf-btn" onclick="toggleDD()" id="ddBtn">+ Quick add ▾</button>
+        </div>
+        <div class="qf-wrap">
+          <div class="qf-dd" id="qfDD"></div>
+        </div>
+        <div class="stag-area" id="stagArea" onclick="focusInput()">
+          <input class="stag-input" id="stagInput" placeholder="Type + Enter to add..." onkeydown="tagKey(event)">
+        </div>
+        <div class="fhint" id="subCount">0 custom subjects (leave empty to use preset list)</div>
+      </div>
+
+      <div class="field">
+        <div class="flabel">Grid layout</div>
+        <div class="chips" id="gridChips">
+          <button class="chip on" data-cols="6" data-rows="4" onclick="setGrid(6,4,this)">6×4 (24)</button>
+          <button class="chip" data-cols="4" data-rows="4" onclick="setGrid(4,4,this)">4×4 (16)</button>
+          <button class="chip" data-cols="5" data-rows="4" onclick="setGrid(5,4,this)">5×4 (20)</button>
+          <button class="chip" data-cols="8" data-rows="4" onclick="setGrid(8,4,this)">8×4 (32)</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="flabel">Output format</div>
+        <div class="chips" id="fmtChips">
+          <button class="chip on" data-val="SVG vector" onclick="cOne(this,'fmtChips')">SVG</button>
+          <button class="chip" data-val="Adobe Illustrator AI" onclick="cOne(this,'fmtChips')">AI</button>
+          <button class="chip" data-val="EPS vector" onclick="cOne(this,'fmtChips')">EPS</button>
+          <button class="chip" data-val="PNG transparent" onclick="cOne(this,'fmtChips')">PNG</button>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:8px">
+        <div class="tog-group">
+          <div class="tog-row"><span class="tog-txt">Style DNA lock (consistency)</span><div class="tog on" id="togDNA" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+          <div class="tog-row"><span class="tog-txt">Grid spec (auto-sliceable)</span><div class="tog on" id="togGrid" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+          <div class="tog-row"><span class="tog-txt">Adobe Stock compliance</span><div class="tog on" id="togAdobe" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+          <div class="tog-row"><span class="tog-txt">Cultural accuracy note</span><div class="tog on" id="togCulture" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+          <div class="tog-row"><span class="tog-txt">Delivery (transparent + white)</span><div class="tog on" id="togDelivery" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end sidebar -->
+
+<!-- MAIN -->
+<div class="main">
+
+  <div class="tabs">
+    <button class="tab on" onclick="switchTab('prompt',this)">Prompt</button>
+    <button class="tab" onclick="switchTab('vars',this)">Variations</button>
+    <button class="tab" onclick="switchTab('meta',this)">Metadata</button>
+    <button class="tab" onclick="switchTab('subjects',this)">Subject list</button>
+    <button class="tab" onclick="switchTab('hist',this)">History</button>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-gold" onclick="buildPrompt()">Build Prompt</button>
+    <button class="btn btn-out" onclick="copyPrompt()">Copy</button>
+    <button class="btn btn-out" onclick="buildVars()">4 Variations</button>
+    <button class="btn btn-out" onclick="copyAll()">Copy full bundle</button>
+    <button class="btn btn-out" onclick="clearCustom()">Reset</button>
+  </div>
+
+  <div id="tab-prompt">
+    <div class="out-card">
+      <div class="oh">
+        <div class="ot"><div class="qdot" id="qdot"></div><span id="promptTitle">SEA Culture Prompt</span><span style="font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;background:var(--gold-l);color:var(--gold);border-radius:3px" id="gridTag">6×4 · 24 icons</span></div>
+        <span style="font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--ink3)" id="qlabel">—</span>
+      </div>
+      <div class="ob">
+        <div class="pbox" id="pbox" contenteditable="true" data-ph="Select a country above, then click Build Prompt..."></div>
+        <div class="pmeta">
+          <span id="pmeta">0 chars · 0 words</span>
+          <span id="pscore"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-vars" style="display:none">
+    <div class="alert ab" style="margin-bottom:10px">4 variasi prompt — setiap variasi bisa jadi batch upload tersendiri di Adobe Stock.</div>
+    <div class="var-grid" id="varGrid"><div style="font-size:11px;color:var(--ink3);font-family:'JetBrains Mono',monospace;padding:8px">Build prompt dulu, lalu klik "4 Variations".</div></div>
+  </div>
+
+  <div id="tab-meta" style="display:none">
+    <div class="out-card">
+      <div class="oh">
+        <div class="ot">Adobe Stock Metadata</div>
+        <button class="btn btn-out" style="padding:4px 10px;font-size:10px" onclick="copyMeta()">Copy all</button>
+      </div>
+      <div class="meta-body">
+        <div class="mr"><div class="mk">Title</div><div class="mv" id="mTitle">—</div></div>
+        <div class="mr"><div class="mk">Description</div><div class="mv" id="mDesc">—</div></div>
+        <div class="mr"><div class="mk">Category</div><div class="mv">Graphic Resources &gt; Icons &amp; Pictograms</div></div>
+        <div class="mr"><div class="mk">Keywords</div><div class="kw-box" id="mKw"></div></div>
+        <div class="mr"><div class="mk">AI flag</div><div class="mv" style="color:var(--red);font-weight:600">Generative AI — declare on upload</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-subjects" style="display:none">
+    <div class="out-card">
+      <div class="oh">
+        <div class="ot">Subject List — <span id="subjCountLabel">24 subjects</span></div>
+        <button class="btn btn-out" style="padding:4px 10px;font-size:10px" onclick="copySubjects()">Copy list</button>
+      </div>
+      <div class="ob">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0" id="subjGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-hist" style="display:none">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-bottom:8px">History</div>
+    <div id="histList"><div style="font-size:11px;color:var(--ink3);font-family:'JetBrains Mono',monospace;padding:8px">No prompts yet.</div></div>
+  </div>
+
+</div><!-- end main -->
+</div><!-- end grid -->
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════ DATA ═══════ */
+const COUNTRIES = {
+  id: {
+    flag:'🇮🇩', name:'Indonesia', badge:'home',
+    theme:'Indonesian cultural heritage and traditional arts',
+    dna:'flat outlined vector style, warm earthy color palette with terracotta and gold accents, consistent 2px dark outline, batik-inspired geometric details on each icon, same visual weight throughout, white background, all icons clearly represent authentic Indonesian culture',
+    subjects:['batik cloth pattern tile','wayang kulit shadow puppet','kris dagger ceremonial','gamelan bronze instrument','rumah adat traditional house','sawah rice field terrace','tumpeng rice cone ceremony','rendang dish bowl','satay skewer grill','nasi goreng wok pan','bemo public transport','becak cycle rickshaw','angklung bamboo instrument','jamu herbal drink','songket woven fabric','keris ornamental sheath','pura balinese temple','prambanan temple silhouette','barong mask dance','ondel-ondel giant puppet','gado-gado salad bowl','soto soup bowl','bandeng milkfish','durian fruit tropical'],
+    keywords:['Indonesia icons','Indonesian culture vector','batik vector','wayang icon','Indonesian traditional','kris vector','gamelan icon','Indonesian heritage','Nusantara icons','Javanese culture','Balinese icons','traditional Indonesia','Indonesian food icons','adat icons','Indonesia flat icons','Indonesian vector set','cultural icons Indonesia','SEA culture icons','Asian heritage vector','tropical Indonesia','Indonesia SVG','Indonesian illustration'],
+    tip:'Sertakan deskripsi "Indonesian traditional" dan "Nusantara" sebagai keywords untuk jangkauan maksimal di buyer Asia.'
+  },
+  my: {
+    flag:'🇲🇾', name:'Malaysia', badge:'',
+    theme:'Malaysian multicultural heritage and local traditions',
+    dna:'flat outlined vector style, vibrant multicultural color palette with red and yellow primary, consistent 2px dark outline, traditional Malaysian pattern details, same visual weight throughout, white background, icons represent authentic Malaysian multicultural identity',
+    subjects:['petronas towers silhouette','songket woven cloth','baju kurung dress','keris weapon traditional','wayang kulit puppet','kompang drum instrument','lemang bamboo rice','nasi lemak dish','roti canai bread','teh tarik pulling tea','kopitiam coffee shop','bajau sea boat','wau kite traditional','sepak takraw ball','batik Malaysia fabric','chinese lantern festival','deepavali diya lamp','orang asli bamboo craft','hornbill sarawak bird','rafflesia giant flower','durian king fruit','mangosteen queen fruit','toddy palm drink','bunga raya hibiscus'],
+    keywords:['Malaysia icons','Malaysian culture vector','Nasi lemak icon','Malaysian traditional','batik Malaysia vector','Petronas icon','Malaysian heritage','multicultural Malaysia','Malaysia flat icons','Malaysian food icons','SEA culture icons','Malaysian vector set','Melayu icons','Sabah Sarawak icons','Malaysian SVG','Asian culture vector'],
+    tip:'Highlight kata "multicultural" dan "diverse" dalam metadata — brand multinasional sering cari ini untuk campaign Malaysia.'
+  },
+  th: {
+    flag:'🇹🇭', name:'Thailand', badge:'',
+    theme:'Thai cultural traditions and Buddhist heritage',
+    dna:'flat outlined vector style, golden and orange Thai temple color palette, consistent 2px dark outline, Thai floral and pointed arch details per icon, same visual weight throughout, white background, all icons represent authentic Thai Buddhist and cultural elements',
+    subjects:['wat temple golden spire','tuk tuk vehicle','muay thai fighter','thai boxing gloves','elephant mahout','lotus flower bloom','buddhas hand blessing','songkran water festival','lanna lantern float','thai silk fabric pattern','tom yum soup bowl','pad thai noodle wok','mango sticky rice plate','thai iced tea glass','longtail boat wooden','phi phi islands rock','jasmine garland offering','khon dance mask','ramakien character','sawatdee hand greeting','golden reclining buddha','monk saffron robe','ladyboy parasol festival','spirit house shrine'],
+    keywords:['Thailand icons','Thai culture vector','Thai temple icon','Buddhist icons vector','Muay Thai icon','Thai food icons','Thailand heritage vector','Thai traditional icons','Bangkok icons','Tuk tuk vector','Thai flat icons','SEA culture icons','Thai SVG icons','Asia culture vector','Thailand vector set'],
+    tip:'Thai temple dan Buddhist elements sangat dicari brand wellness dan travel agency global — keyword "Buddhist" dan "Zen" penting.'
+  },
+  ph: {
+    flag:'🇵🇭', name:'Philippines', badge:'',
+    theme:'Filipino cultural heritage and island traditions',
+    dna:'flat outlined vector style, vibrant tropical color palette with blue and yellow, consistent 2px dark outline, island and coconut-inspired elements, same visual weight, white background, icons clearly represent authentic Filipino culture and island life',
+    subjects:['jeepney colorful bus','parol christmas lantern','tinikling bamboo dance','carabao water buffalo','coconut palm tree','banca outrigger boat','adobo dish bowl','sinigang soup bowl','lechon roast pig','halo-halo dessert glass','kalesa horse carriage','barong tagalog shirt','rice terraces banaue','chocolate hills bohol','nipa hut bahay kubo','capiz shell window','inabel woven textile','pangalay hand dance','arnis stick fighting','sampaguita flower garland','manok chicken sabong','palayok clay pot','salakot hat traditional','carabao horns motif'],
+    keywords:['Philippines icons','Filipino culture vector','Jeepney icon','Filipino heritage vector','Philippine traditional','Filipino food icons','Philippines flat icons','Pinoy culture icons','SEA culture icons','Filipino SVG icons','Philippines vector set','Asian culture vector','tropical Philippines','island culture icons'],
+    tip:'Jeepney adalah ikon paling recognizable Filipina secara global — jadikan pilihan utama untuk thumbnail preview di Adobe Stock.'
+  },
+  vn: {
+    flag:'🇻🇳', name:'Vietnam', badge:'',
+    theme:'Vietnamese cultural heritage and traditional arts',
+    dna:'flat outlined vector style, red and gold Vietnamese color palette, consistent 2px dark outline, lacquer art-inspired details, same visual weight throughout, white background, all icons authentically represent Vietnamese culture and heritage',
+    subjects:['conical ao dai dress','non la hat traditional','ao dai side split dress','pho noodle soup bowl','banh mi sandwich','spring roll plate','halong bay boat','lotus pond scene','dragon boat racing','water puppet theater','dong ho folk painting','lacquerware box traditional','red lantern hoi an','hoi an ancient town roof','pagoda multi-tier tower','rice paddy field','cyclo pedicab vehicle','com tam broken rice','bun bo hue bowl','moon cake lantern festival','vietnamese coffee filter','dan bau string instrument','bronze dong son drum','five fruits tray tet'],
+    keywords:['Vietnam icons','Vietnamese culture vector','Ao dai icon','Pho icon vector','Vietnamese heritage','Vietnam flat icons','Vietnamese traditional icons','Hoi An icons','Vietnam food vector','SEA culture icons','Vietnamese SVG','Asian culture vector','Vietnam vector set','Tet holiday icons'],
+    tip:'Ao dai + Non la combination adalah yang paling dicari secara global untuk represent Vietnam — pastikan keduanya ada di preview thumbnail.'
+  },
+  sg: {
+    flag:'🇸🇬', name:'Singapore', badge:'',
+    theme:'Singapore multicultural identity and modern heritage',
+    dna:'flat outlined vector style, clean modern Singapore color palette with red white and multicultural accents, consistent 2px dark outline, blend of modern and traditional details, same visual weight, white background, icons represent Singapore multicultural fusion identity',
+    subjects:['merlion fountain singapore','marina bay sands hotel','supertree grove garden','hawker centre food stall','bak kut teh soup','chili crab dish','hainanese chicken rice','laksa noodle bowl','char kway teow wok','kaya toast breakfast','teh c pulled tea','peranakan shophouse','singapore orchid national','red lantern chinatown','little india garland shop','malay kampong house','satay bee hoon plate','durian mao shan wang','rojak salad plate','kachang puteh bag','singapore airlines tailfin','public transit mrt','flyer ferris wheel','singapore skyline night'],
+    keywords:['Singapore icons','Singaporean culture vector','Merlion icon','Singapore food vector','Singapore heritage icons','Hawker center icon','Singapore flat icons','SEA culture icons','Singapore multicultural','Asian city icons','Singapore SVG','Peranakan icons vector'],
+    tip:'Singapore "hawker culture" sudah UNESCO-listed — ini keyword yang sangat powerful untuk buyer global yang cari food culture content.'
+  },
+  mm: {
+    flag:'🇲🇲', name:'Myanmar', badge:'new',
+    theme:'Myanmar traditional culture and Buddhist traditions',
+    dna:'flat outlined vector style, gold and burgundy Myanmar palace color palette, consistent 2px dark outline, lotus and stupa architectural details, same visual weight, white background, icons authentically represent Myanmar Buddhist and traditional culture',
+    subjects:['shwedagon pagoda golden','longyis wrap sarong','thanakha face powder','mohinga noodle soup','laphet tea leaf salad','burmese harp saung','chinlon cane ball','nat spirit figure','mandalay palace gate','bagan temple silhouette','irrawaddy river boat','myanmar wooden puppet','shan noodle bowl','traditional bamboo hat','kayin tapestry weaving','dancing peacock motif','myanmar lacquerware bowl','elephant teak forest','ruby gem gemstone','jade imperial stone','open lotus flower','water festival thingyan','weaving loom traditional','myanmar morning market'],
+    keywords:['Myanmar icons','Burmese culture vector','Shwedagon icon','Myanmar traditional','Bagan temple vector','Myanmar Buddhist icons','Burma culture vector','Myanmar heritage icons','SEA culture icons','Myanmar flat icons','Asian Buddhist vector'],
+    tip:'Myanmar masih sangat under-represented di Adobe Stock — first mover advantage sangat kuat di niche ini.'
+  },
+  kh: {
+    flag:'🇰🇭', name:'Cambodia', badge:'new',
+    theme:'Cambodian Khmer heritage and traditional culture',
+    dna:'flat outlined vector style, sandstone and gold Khmer temple color palette, consistent 2px dark outline, Apsara dancer and lotus motifs as details, same visual weight, white background, icons authentically represent Cambodian Khmer Empire heritage',
+    subjects:['angkor wat temple','apsara dancer figure','cambodian krama scarf','sampot silk sarong','amok fish curry','bai sach chrouk pork','num pang baguette','tuk tuk rickshaw','palm sugar tree','lotus flower sacred','khmer alphabet letter','royal palace phnom penh','cambodian flag temple','cyclo pedicab bike','tonle sap lake fish','kouprey cattle rare','cambodian silk loom','prahok fermented fish','cambodian basket weaving','silver smithing craft','apsara hand gesture','pineapple tropical fruit','coconut sugar sweet','cambodian shadow puppet'],
+    keywords:['Cambodia icons','Khmer culture vector','Angkor Wat icon','Cambodia heritage vector','Apsara dancer icon','Cambodian traditional','Khmer icons vector','Cambodia flat icons','SEA culture icons','Asian heritage vector','Cambodia SVG icons'],
+    tip:'Angkor Wat adalah UNESCO heritage — sangat dicari oleh travel brand, educational content, dan tourism marketing globally.'
+  },
+};
+
+const VARIANTS = [
+  {label:'TRANSPARENT BG',note:'Override background ke transparent. Buyer bisa drop langsung di atas background apapun. Ini primary upload ke Adobe Stock.'},
+  {label:'DARK BATIK VERSION',note:'Dark version dengan background hitam gelap #1A1814. Ikon menggunakan warna emas dan terang. Estetika batik malam hari yang premium.'},
+  {label:'CLAY 3D VERSION',note:'Reinterpretasi dalam gaya clay 3D render — soft volumetric, matte pastel surface. Sama subject, berbeda style. Batch upload tambahan.'},
+  {label:'MINIMAL LINE ART',note:'Penyederhanaan ke hairline single-weight line art. Ultra-minimal, no fill, hanya outline. Sangat versatile untuk brand yang butuh clean aesthetic.'},
+];
+
+let subjects = [], currentCountry = 'id', currentStyle = 'flat outlined with thin uniform 2px stroke, dark outline on white';
+let currentBg = 'pure white #FFFFFF background', cols = 6, rows = 4, genCount = 0, history = [];
+
+function init() {
+  buildCountryStrip();
+  buildQuickDD();
+  loadCountry('id');
+}
+
+function buildCountryStrip() {
+  const strip = document.getElementById('countryStrip');
+  strip.innerHTML = '';
+  Object.entries(COUNTRIES).forEach(([key, c]) => {
+    const el = document.createElement('button');
+    el.className = 'ctry' + (key === 'id' ? ' on' : '');
+    const badges = {new:'background:rgba(45,96,64,.12);color:var(--green)',home:'background:rgba(196,134,10,.12);color:var(--gold)'};
+    const badgeHTML = c.badge ? `<span class="ctry-badge" style="${badges[c.badge]||''}">${c.badge}</span>` : '';
+    el.innerHTML = `<span class="ctry-flag">${c.flag}</span>${c.name}${badgeHTML}`;
+    el.onclick = () => loadCountry(key, el);
+    strip.appendChild(el);
+  });
+}
+
+function buildQuickDD() {
+  const dd = document.getElementById('qfDD');
+  dd.innerHTML = '';
+  const custom = {
+    'Makanan tradisional':['nasi goreng','rendang','sate','gado-gado','soto','ketupat','opor ayam','pecel','rawon','bakso'],
+    'Pakaian adat':['kebaya','batik shirt','baju bodo','ulos batak','kain songket','blangkon hat','udeng headband','baju kurung','kebaya encim'],
+    'Kesenian':['wayang kulit','reog ponorogo','tari kecak','tari saman','tari legong','angklung','gamelan gong','kolintang','sasando harp'],
+    'Arsitektur':['rumah joglo','rumah gadang','tongkonan toraja','rumah honai','pura bali','masjid kubah','istana maimun'],
+  };
+  Object.entries(custom).forEach(([cat, items]) => {
+    const d = document.createElement('div');
+    d.className = 'qf-item';
+    d.innerHTML = `<strong>${cat}</strong>${items.slice(0,4).join(', ')}...`;
+    d.onclick = () => { items.forEach(addTag); closeDD(); scheduleGen(); };
+    dd.appendChild(d);
+  });
+}
+
+function loadCountry(key, el) {
+  currentCountry = key;
+  document.querySelectorAll('.ctry').forEach(c => c.classList.remove('on'));
+  if (el) el.classList.add('on');
+  else document.querySelector(`.ctry:nth-child(${Object.keys(COUNTRIES).indexOf(key)+1})`).classList.add('on');
+  const c = COUNTRIES[key];
+  renderSubjectTab(c.subjects);
+  document.getElementById('promptTitle').textContent = c.flag + ' ' + c.name + ' Culture Icon Set';
+  scheduleGen();
+}
+
+function renderSubjectTab(subs) {
+  const grid = document.getElementById('subjGrid');
+  grid.innerHTML = '';
+  subs.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.style.cssText = 'display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;color:var(--ink2);font-family:\'JetBrains Mono\',monospace';
+    d.innerHTML = `<span style="font-size:10px;color:var(--ink3);min-width:20px">${String(i+1).padStart(2,'0')}</span><span>${s}</span>`;
+    grid.appendChild(d);
+  });
+  document.getElementById('subjCountLabel').textContent = subs.length + ' subjects';
+}
+
+function addTag(val) {
+  val = val.trim();
+  if (!val || subjects.includes(val.toLowerCase())) return;
+  subjects.push(val.toLowerCase());
+  const area = document.getElementById('stagArea'), inp = document.getElementById('stagInput');
+  const t = document.createElement('div');
+  t.className = 'stag-item'; t.dataset.val = val;
+  t.innerHTML = `${val}<span class="stag-del" onclick="removeTag('${val.replace(/'/g,"\\'")}',this.parentNode)">×</span>`;
+  area.insertBefore(t, inp);
+  document.getElementById('subCount').textContent = subjects.length + ' custom subjects';
+}
+function removeTag(val, el) { subjects = subjects.filter(s => s !== val.toLowerCase()); el.remove(); document.getElementById('subCount').textContent = subjects.length + ' custom subjects'; scheduleGen(); }
+function tagKey(e) {
+  if (e.key === 'Enter') { e.preventDefault(); const v = e.target.value.trim(); if (v) { addTag(v); e.target.value = ''; scheduleGen(); } }
+  if (e.key === 'Backspace' && !e.target.value) { const t = document.querySelectorAll('.stag-item'); if (t.length) { const l = t[t.length-1]; removeTag(l.dataset.val, l); } }
+}
+function focusInput() { document.getElementById('stagInput').focus(); }
+function toggleDD() { document.getElementById('qfDD').classList.toggle('open'); }
+function closeDD() { document.getElementById('qfDD').classList.remove('open'); }
+document.addEventListener('click', e => { if (!e.target.closest('.qf-wrap') && !e.target.closest('#ddBtn')) closeDD(); });
+
+function sClick(el) { document.querySelectorAll('.sc').forEach(e => e.classList.remove('on')); el.classList.add('on'); currentStyle = el.dataset.val; scheduleGen(); }
+function cOne(el, gid) { document.querySelectorAll('#'+gid+' .chip').forEach(e => e.classList.remove('on')); el.classList.add('on'); scheduleGen(); }
+function getChip(gid) { const el = document.querySelector('#'+gid+' .chip.on'); return el ? el.dataset.val : ''; }
+function pickBg(el) { document.querySelectorAll('.sw').forEach(e => e.classList.remove('on')); el.classList.add('on'); currentBg = el.dataset.bg; scheduleGen(); }
+function setGrid(c, r, el) {
+  cols = c; rows = r;
+  document.querySelectorAll('#gridChips .chip').forEach(ch => ch.classList.remove('on'));
+  if (el) el.classList.add('on');
+  else { const t = Array.from(document.querySelectorAll('#gridChips .chip')).find(ch => parseInt(ch.dataset.cols)===c && parseInt(ch.dataset.rows)===r); if(t) t.classList.add('on'); }
+  document.getElementById('gridTag').textContent = c+'×'+r+' · '+(c*r)+' icons';
+  scheduleGen();
+}
+
+function buildPrompt() {
+  const c = COUNTRIES[currentCountry];
+  const total = cols * rows;
+  const cellW = Math.round(1536 / cols), cellH = Math.round(1024 / rows);
+  const canvasW = cellW * cols, canvasH = cellH * rows;
+  const mood = getChip('moodChips');
+  const fmt = getChip('fmtChips').split(' ')[0];
+  const useDNA = document.getElementById('togDNA').classList.contains('on');
+  const useGrid = document.getElementById('togGrid').classList.contains('on');
+  const useAdobe = document.getElementById('togAdobe').classList.contains('on');
+  const useCulture = document.getElementById('togCulture').classList.contains('on');
+  const useDelivery = document.getElementById('togDelivery').classList.contains('on');
+  const subList = subjects.length >= total ? subjects.slice(0, total) : c.subjects.slice(0, total);
+
+  const lines = [];
+
+  if (useGrid) {
+    lines.push(`IMPORTANT: Draw exactly ${total} icons in a strict ${cols}-column × ${rows}-row grid. Auto-sliceable — zero gap between cells.\n`);
+  }
+
+  lines.push(`Create a cohesive set of ${total} vector icons celebrating "${c.theme}".\n`);
+
+  lines.push(`VISUAL STYLE:`);
+  lines.push(`  Style:        ${currentStyle}`);
+  lines.push(`  Color mood:   ${mood}`);
+  lines.push(`  Background:   ${currentBg}`);
+  lines.push(`  Quality:      Premium stock quality, clean crisp vectors\n`);
+
+  if (useDNA) {
+    lines.push(`STYLE DNA (maintain across all ${total} icons):`);
+    lines.push(`  ${c.dna}\n`);
+  }
+
+  if (useGrid) {
+    lines.push(`GRID SPECIFICATION:`);
+    lines.push(`  Canvas:       ${canvasW}×${canvasH} pixels`);
+    lines.push(`  Grid:         ${cols} columns × ${rows} rows = ${total} cells`);
+    lines.push(`  Cell size:    ${cellW}×${cellH} pixels each`);
+    lines.push(`  Gutter:       0px — edge-to-edge, no gaps`);
+    lines.push(`  Labels:       None — no numbers or borders between cells`);
+    lines.push(`  Format:       ${fmt}\n`);
+  }
+
+  lines.push(`SUBJECTS (${total} icons, left-to-right, top-to-bottom):`);
+  subList.forEach((s, i) => lines.push(`  ${String(i+1).padStart(2,'0')}. ${s}`));
+  lines.push('');
+
+  lines.push(`CONSISTENCY:`);
+  lines.push(`  — Identical stroke weight, corner radius, color palette across all icons`);
+  lines.push(`  — Same visual weight — no icon dominates or looks too small`);
+  lines.push(`  — All icons feel like they belong to one unified design system\n`);
+
+  if (useCulture) {
+    lines.push(`CULTURAL ACCURACY:`);
+    lines.push(`  — Each icon must authentically represent ${c.name} culture`);
+    lines.push(`  — Avoid stereotypes or oversimplification — respect cultural elements`);
+    lines.push(`  — Reference real ${c.name} visual traditions in styling and detail\n`);
+  }
+
+  if (useAdobe) {
+    lines.push(`ADOBE STOCK COMPLIANCE:`);
+    lines.push(`  — No real identifiable persons, no trademarks, no watermarks`);
+    lines.push(`  — AI-generated content — will be declared on upload`);
+    lines.push(`  — Commercially safe for global use\n`);
+  }
+
+  if (useDelivery) {
+    lines.push(`DELIVERY:`);
+    lines.push(`  Version A (primary):  transparent background PNG + SVG`);
+    lines.push(`  Version B:            ${currentBg.includes('transparent') ? 'pure white #FFFFFF' : currentBg} version`);
+    lines.push(`  Assembled as ${cols}×${rows} sprite sheet + ${total} individual labeled files.`);
+  } else {
+    lines.push(`Deliver as ${cols}×${rows} sprite sheet (${total} icons) + individual labeled ${fmt} files.`);
+  }
+
+  const prompt = lines.join('\n');
+  document.getElementById('pbox').textContent = prompt;
+  updateStats(prompt);
+  genMeta(c, total, mood, fmt);
+  saveHist(prompt);
+  genCount++;
+  document.getElementById('subCount').textContent = subjects.length + ' custom subjects (using preset)';
+}
+
+function updateStats(txt) {
+  const chars = txt.length, words = txt.trim() ? txt.trim().split(/\s+/).length : 0;
+  document.getElementById('pmeta').textContent = chars + ' chars · ' + words + ' words';
+  const dot = document.getElementById('qdot'), lbl = document.getElementById('qlabel'), sc = document.getElementById('pscore');
+  if (chars < 300) { dot.className = 'qdot'; lbl.textContent = 'Building'; sc.textContent = ''; }
+  else if (chars < 600) { dot.className = 'qdot q2'; lbl.textContent = 'Good'; sc.textContent = 'Solid prompt'; sc.style.color = 'var(--gold)'; }
+  else if (chars < 1000) { dot.className = 'qdot q3'; lbl.textContent = 'Great'; sc.textContent = 'Production-ready'; sc.style.color = 'var(--green)'; }
+  else { dot.className = 'qdot q4'; lbl.textContent = 'Ultra'; sc.textContent = 'Maximum detail'; sc.style.color = 'var(--teal)'; }
+}
+
+function genMeta(c, total, palette, fmt) {
+  const sname = document.querySelector('.sc.on')?.querySelector('.scl')?.textContent || 'Flat';
+  document.getElementById('mTitle').textContent = `${c.name} Culture Vector Icons — ${total} ${sname} Icon Set | ${fmt}`;
+  document.getElementById('mDesc').textContent = `A cohesive collection of ${total} ${sname.toLowerCase()} vector icons celebrating ${c.theme}. ${palette} color palette. Authentic cultural elements — traditional crafts, cuisine, architecture, textiles, performing arts, and symbols. All icons share consistent style and visual language. White and transparent background included. Adobe Stock commercial license.`;
+  const kws = [...new Set([...c.keywords, 'SEA culture icons', 'Southeast Asia vector', 'cultural icons', 'heritage vector', 'traditional icons', 'Asia icons', 'world culture vector', 'ethnic icons', 'folk art vector', 'transparent background', 'white background', 'commercial use', 'SVG icons', 'icon set', 'Adobe Stock', 'flat icons', 'vector clipart', 'royalty free', 'icon pack', palette.split(' ')[0]])].slice(0, 40);
+  const kwBox = document.getElementById('mKw'); kwBox.innerHTML = '';
+  kws.forEach(k => { const s = document.createElement('span'); s.className = 'kw'; s.textContent = k; kwBox.appendChild(s); });
+}
+
+function buildVars() {
+  const base = document.getElementById('pbox').textContent;
+  if (!base.trim()) { buildPrompt(); }
+  const grid = document.getElementById('varGrid');
+  grid.innerHTML = '';
+  VARIANTS.forEach((v, i) => {
+    const el = document.createElement('div');
+    el.className = 'vc';
+    el.innerHTML = `<div class="vlbl">VAR ${i+1} — ${v.label}</div><div class="vname">${v.label.split(' ').map(w=>w[0]+w.slice(1).toLowerCase()).join(' ')}</div><div class="vnote">${v.note}</div><button class="btn btn-out" style="font-size:10px;padding:4px 10px;border-radius:4px" onclick="copyVar(${i})">Copy var ${i+1}</button>`;
+    grid.appendChild(el);
+  });
+  switchTab('vars', document.querySelectorAll('.tab')[1]);
+  toast('4 variations ready');
+}
+
+function copyVar(i) {
+  const base = document.getElementById('pbox').textContent;
+  const v = VARIANTS[i];
+  navigator.clipboard.writeText(v.note + '\n\nOVERRIDE NOTE: ' + v.label + '\n\n' + base).then(() => toast(`Var ${i+1} copied!`));
+}
+
+function saveHist(p) {
+  if (history[history.length-1] === p) return;
+  history.push(p); if (history.length > 8) history.shift();
+  const list = document.getElementById('histList');
+  list.innerHTML = '';
+  [...history].reverse().forEach(h => {
+    const d = document.createElement('div'); d.className = 'hi'; d.textContent = h;
+    d.onclick = () => { document.getElementById('pbox').textContent = h; updateStats(h); switchTab('prompt', document.querySelector('.tab')); toast('Loaded'); };
+    list.appendChild(d);
+  });
+}
+
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on')); el.classList.add('on');
+  ['prompt','vars','meta','subjects','hist'].forEach(t => document.getElementById('tab-'+t).style.display = t===name?'':'none');
+}
+
+let schedTimer = null;
+function scheduleGen() { clearTimeout(schedTimer); schedTimer = setTimeout(() => { if (document.getElementById('pbox').textContent.trim()) buildPrompt(); }, 400); }
+
+function copyPrompt() { const t = document.getElementById('pbox').textContent; if (!t.trim()) { buildPrompt(); return; } navigator.clipboard.writeText(t).then(() => toast('Prompt copied!')); }
+function copySubjects() {
+  const c = COUNTRIES[currentCountry];
+  navigator.clipboard.writeText(c.subjects.map((s,i) => `${String(i+1).padStart(2,'0')}. ${s}`).join('\n')).then(() => toast('Subjects copied!'));
+}
+function copyMeta() {
+  const t = document.getElementById('mTitle').textContent, d = document.getElementById('mDesc').textContent;
+  const kws = Array.from(document.querySelectorAll('.kw')).map(k=>k.textContent).join(', ');
+  navigator.clipboard.writeText(`TITLE: ${t}\n\nDESCRIPTION: ${d}\n\nCATEGORY: Graphic Resources > Icons & Pictograms\n\nKEYWORDS: ${kws}\n\nAI FLAG: Generative AI — declare on upload`).then(() => toast('Metadata copied!'));
+}
+function copyAll() {
+  const base = document.getElementById('pbox').textContent;
+  if (!base.trim()) { buildPrompt(); return; }
+  const bundle = [base, ...VARIANTS.map((v,i) => `\n${'━'.repeat(50)}\nVARIATION ${i+1}: ${v.label}\n${'━'.repeat(50)}\n${v.note}\n\n${base}`)].join('\n\n');
+  navigator.clipboard.writeText(bundle).then(() => toast('Full bundle (5 prompts) copied!'));
+}
+function clearCustom() {
+  subjects = []; document.querySelectorAll('.stag-item').forEach(e=>e.remove());
+  document.getElementById('subCount').textContent = '0 custom subjects';
+  document.getElementById('pbox').textContent = '';
+  loadCountry(currentCountry);
+  toast('Reset');
+}
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2200); }
+
+init();
+</script>
+</body>
+</html>

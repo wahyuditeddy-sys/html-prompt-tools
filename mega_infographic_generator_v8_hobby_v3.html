@@ -1,0 +1,794 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.w{padding:1.25rem;max-width:980px;margin:0 auto;font-family:var(--font-sans,sans-serif);}
+.hdr{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:0.5px solid var(--color-border-tertiary);}
+.hdr-ic{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#1a1a2e,#c0392b);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.hdr h1{font-size:16px;font-weight:500;color:var(--color-text-primary);}
+.hdr p{font-size:11px;color:var(--color-text-secondary);margin-top:2px;}
+.lbl{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-secondary);display:block;margin-bottom:5px;margin-top:.85rem;}
+.seg{display:flex;gap:4px;background:var(--color-background-secondary);border-radius:9px;padding:3px;flex-wrap:wrap;}
+.sb{font-size:10.5px;font-weight:500;padding:7px 6px;border:none;border-radius:6px;cursor:pointer;background:transparent;color:var(--color-text-secondary);transition:all .15s;text-align:center;flex:1;white-space:nowrap;}
+.sb.on{background:var(--color-background-primary);color:var(--color-text-primary);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+input[type=text]{font-size:13px;padding:9px 13px;border:1.5px solid var(--color-border-secondary);border-radius:8px;background:var(--color-background-primary);color:var(--color-text-primary);outline:none;width:100%;}
+input[type=text]:focus{border-color:var(--acc,#1a1a2e);}
+.mg{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.mc{border:1.5px solid var(--color-border-tertiary);border-radius:9px;padding:10px 8px;cursor:pointer;transition:all .15s;background:var(--color-background-primary);text-align:center;}
+.mc:hover{border-color:var(--acc,#1a1a2e);}
+.mc.sel{border-color:var(--acc,#1a1a2e);background:var(--acc-bg,#f0f0f8);}
+.mc.sel .mct{color:var(--acc-txt,#1a1a2e);}
+.mc-i{font-size:17px;margin-bottom:2px;}
+.mct{font-size:10.5px;font-weight:500;color:var(--color-text-primary);margin-bottom:1px;}
+.mcd{font-size:9.5px;color:var(--color-text-secondary);line-height:1.3;}
+.pr{display:flex;gap:6px;flex-wrap:wrap;}
+.pl{font-size:11px;padding:4px 10px;border:1px solid var(--color-border-secondary);border-radius:20px;cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);transition:all .12s;}
+.pl:hover{border-color:var(--acc,#1a1a2e);}
+.pl.sel{background:var(--acc,#1a1a2e);color:#fff;border-color:var(--acc,#1a1a2e);}
+.bg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
+.bg-opt{border:2px solid var(--color-border-tertiary);border-radius:7px;padding:6px 4px;cursor:pointer;text-align:center;transition:all .15s;font-size:9.5px;color:var(--color-text-secondary);}
+.bg-opt:hover,.bg-opt.sel{border-color:var(--acc,#1a1a2e);}
+.bg-opt.sel{background:var(--acc-bg,#f0f0f8);}
+.bg-sw{width:100%;height:20px;border-radius:4px;margin-bottom:3px;border:0.5px solid var(--color-border-tertiary);}
+.opt-block{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:9px;padding:10px 12px;margin-bottom:.75rem;}
+.sz-section{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.75rem;}
+.ft{font-size:10.5px;font-weight:500;padding:5px 10px;border:1px solid var(--color-border-secondary);border-radius:6px;cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);transition:all .12s;}
+.ft.on{background:var(--acc,#1a1a2e);color:#fff;border-color:var(--acc,#1a1a2e);}
+.sz-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.sz-opt{border:1.5px solid var(--color-border-tertiary);border-radius:7px;padding:7px 8px;cursor:pointer;text-align:center;transition:all .15s;}
+.sz-opt:hover,.sz-opt.sel{border-color:var(--acc,#1a1a2e);}
+.sz-opt.sel{background:var(--acc-bg,#f0f0f8);}
+.sz-name{font-size:10.5px;font-weight:500;color:var(--color-text-primary);}
+.sz-dim{font-size:9.5px;color:var(--color-text-secondary);font-family:monospace;}
+.sz-use{font-size:9px;color:var(--color-text-tertiary);}
+.sz-ic{font-size:13px;margin-bottom:1px;}
+.sz-dpi{font-size:9px;font-weight:600;padding:1px 5px;border-radius:4px;margin-top:2px;display:inline-block;}
+.dpi-72{background:#fef3c7;color:#92400e;}.dpi-150{background:#dbeafe;color:#1e40af;}.dpi-300{background:#dcfce7;color:#166534;}.dpi-600{background:#f3e8ff;color:#6b21a8;}
+.pixel-info{background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);border-radius:8px;padding:8px 12px;margin-top:6px;font-size:11px;color:var(--color-text-secondary);line-height:1.6;}
+.pixel-info .hi{color:#059669;font-weight:500;}.pixel-info .warn{color:#d97706;font-weight:500;}
+.lang-bar{display:flex;align-items:center;gap:8px;background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);border-radius:9px;padding:8px 12px;margin-bottom:.75rem;flex-wrap:wrap;}
+.lang-pill{font-size:11px;font-weight:500;padding:5px 12px;border-radius:20px;border:1.5px solid var(--color-border-secondary);cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);transition:all .15s;display:flex;align-items:center;gap:4px;}
+.lang-pill.sel{background:var(--acc,#1a1a2e);color:#fff;border-color:var(--acc,#1a1a2e);}
+.gen-row{display:flex;gap:8px;margin-top:.75rem;margin-bottom:1.25rem;}
+.gen-btn{flex:1;font-size:13px;font-weight:500;padding:11px 18px;border-radius:8px;cursor:pointer;transition:all .15s;border:none;color:#fff;background:var(--acc,#1a1a2e);}
+.gen-btn:active{transform:scale(.98);}
+.clr-btn{font-size:12px;padding:11px 14px;border:.5px solid var(--color-border-secondary);border-radius:8px;background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;}
+.tabs{display:flex;gap:2px;flex-wrap:wrap;border-bottom:.5px solid var(--color-border-tertiary);margin-bottom:1rem;}
+.tb{font-size:11px;font-weight:500;padding:6px 9px;border:none;background:none;cursor:pointer;color:var(--color-text-secondary);border-bottom:2px solid transparent;margin-bottom:-.5px;transition:all .12s;white-space:nowrap;}
+.tb.on{color:var(--color-text-primary);border-bottom-color:var(--acc,#1a1a2e);}
+.pb{background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);border-radius:9px;padding:1rem 1.25rem;margin-bottom:.75rem;}
+.pb-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:6px;flex-wrap:wrap;}
+.pb-tag{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:20px;color:#fff;flex-shrink:0;}
+.pb-b{font-size:9.5px;padding:2px 7px;border-radius:10px;font-weight:500;flex-shrink:0;}
+.cp-btn{font-size:11px;padding:4px 9px;border:.5px solid var(--color-border-secondary);border-radius:6px;background:var(--color-background-primary);color:var(--color-text-secondary);cursor:pointer;transition:all .12s;}
+.cp-btn.ok{color:#059669;border-color:#059669;}
+.pp{font-family:monospace;font-size:11px;line-height:1.75;color:var(--color-text-primary);white-space:pre-wrap;word-break:break-word;}
+.empty{text-align:center;padding:2rem 1rem;color:var(--color-text-tertiary);font-size:13px;}
+.tc{display:none;}.tc.on{display:block;}
+.exs{display:flex;flex-wrap:wrap;gap:5px;}
+.ep{font-size:10.5px;padding:3px 9px;border:.5px solid var(--color-border-secondary);border-radius:20px;cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);transition:all .12s;}
+.ep:hover{background:var(--acc,#1a1a2e);color:#fff;border-color:var(--acc,#1a1a2e);}
+.format-tabs{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap;}
+.bnr{border-radius:9px;padding:10px 14px;margin-bottom:.75rem;font-size:12px;display:flex;gap:10px;align-items:flex-start;line-height:1.6;}
+.tg{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.tc-c{padding:10px 12px;border:.5px solid var(--color-border-tertiary);border-radius:8px;}
+.tc-t{font-size:11.5px;font-weight:500;margin-bottom:4px;color:var(--color-text-primary);}
+.tc-b{font-size:10.5px;color:var(--color-text-secondary);line-height:1.5;}
+
+/* NEW: hobby sub-type selector */
+.hobby-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:.5rem;}
+.hb{border:1.5px solid var(--color-border-tertiary);border-radius:9px;padding:9px 8px;cursor:pointer;transition:all .15s;background:var(--color-background-primary);text-align:center;}
+.hb:hover{border-color:var(--acc,#1a1a2e);}
+.hb.sel{border-color:var(--acc,#1a1a2e);background:var(--acc-bg,#f0f0f8);}
+.hb-i{font-size:20px;margin-bottom:3px;}
+.hb-t{font-size:11px;font-weight:500;color:var(--color-text-primary);}
+.hb-d{font-size:9.5px;color:var(--color-text-secondary);line-height:1.3;margin-top:2px;}
+.spec-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:.75rem;}
+.spec-card{border:1.5px solid var(--color-border-tertiary);border-radius:8px;padding:8px 10px;cursor:pointer;transition:all .15s;background:var(--color-background-primary);}
+.spec-card:hover{border-color:var(--acc,#1a1a2e);}
+.spec-card.sel{border-color:var(--acc,#1a1a2e);background:var(--acc-bg,#f0f0f8);}
+.spec-card input[type=checkbox]{accent-color:var(--acc,#1a1a2e);margin-right:5px;}
+.spec-label{font-size:11px;font-weight:500;color:var(--color-text-primary);}
+.spec-desc{font-size:10px;color:var(--color-text-secondary);margin-top:2px;line-height:1.3;}
+</style>
+
+<div class="w">
+<div class="hdr">
+  <div class="hdr-ic">🤖</div>
+  <div>
+    <h1>Technical Infographic Prompt Generator — Pro Edition v8</h1>
+    <p>Otomotif · Alam · Teknis · IT · Data Center · <strong>🤖 Gundam · 🚗 Diecast · ⭐ Star Wars · 🎮 Retro Console · 🪖 Military · 🧱 LEGO (EXPANDED!)</strong></p>
+  </div>
+</div>
+
+<span class="lbl" style="margin-top:0;">Pilih Tipe Generator</span>
+<div class="seg" id="typeSeg">
+  <button class="sb" onclick="setType('otomotif',this)">🚗 Otomotif</button>
+  <button class="sb" onclick="setType('alam',this)">🌿 Alam</button>
+  <button class="sb" onclick="setType('teknis',this)">⚙️ Teknis</button>
+  <button class="sb" onclick="setType('it',this)">🖥️ IT Infra</button>
+  <button class="sb" onclick="setType('dc',this)">🏢 Data Center</button>
+  <button class="sb on" onclick="setType('hobby',this)">🤖 Gundam & Model</button>
+</div>
+
+<!-- HOBBY SUB-TYPE -->
+<div id="hobbySubSection">
+  <span class="lbl">Pilih Kategori Koleksi</span>
+  <div class="hobby-seg" id="hobbySubGrid" style="grid-template-columns:repeat(5,1fr);">
+    <div class="hb sel" onclick="selHobby(this,'gundam')">
+      <div class="hb-i">🤖</div>
+      <div class="hb-t">Gundam & Mecha</div>
+      <div class="hb-d">Mobile Suit, Robot Mecha, Bandai</div>
+    </div>
+    <div class="hb" onclick="selHobby(this,'diecast')">
+      <div class="hb-i">🚗</div>
+      <div class="hb-t">Diecast & Model Mobil</div>
+      <div class="hb-d">Hot Wheels, Tomica, Matchbox, 1:18</div>
+    </div>
+    <div class="hb" onclick="selHobby(this,'hotwheels')">
+      <div class="hb-i">🔥</div>
+      <div class="hb-t">Hot Wheels Premium</div>
+      <div class="hb-d">Car Culture, RLC, HW Team, Kolektor</div>
+    </div>
+    <div class="hb" onclick="selHobby(this,'plastic')">
+      <div class="hb-i">🏎️</div>
+      <div class="hb-t">Plastic Model Kit</div>
+      <div class="hb-d">Tamiya, Hasegawa, Fujimi, Aoshima</div>
+    </div>
+    <div class="hb" onclick="selHobby(this,'military_vehicle')">
+      <div class="hb-i">🪖</div>
+      <div class="hb-t">Tamiya Military Vehicle</div>
+      <div class="hb-d">Tank, APC, Half-track, 1:35 armor</div>
+    </div>
+    <div class="hb" onclick="selHobby(this,'lego')">
+      <div class="hb-i">🧱</div>
+      <div class="hb-t">LEGO & Block Toys</div>
+      <div class="hb-d">Technic, Creator, Speed Champions</div>
+    </div>
+    <div class="hb" onclick="selHobby(this,'starwars')">
+      <div class="hb-i">⭐</div>
+      <div class="hb-t">Star Wars Model</div>
+      <div class="hb-d">X-Wing, TIE Fighter, Millennium Falcon</div>
+    </div>
+    <div class="hb" onclick="selHobby(this,'figure')">
+      <div class="hb-i">🎭</div>
+      <div class="hb-t">Action Figure & Statue</div>
+      <div class="hb-d">Marvel, DC, Nendoroid, Figma</div>
+    </div>
+    <div class="hb" onclick="selHobby(this,'retroconsole')">
+      <div class="hb-i">🎮</div>
+      <div class="hb-t">Retro Game Console</div>
+      <div class="hb-d">NES, Game Boy, PS1, Sega, Neo Geo</div>
+    </div>
+    <div class="hb" onclick="selHobby(this,'military')">
+      <div class="hb-i">✈️</div>
+      <div class="hb-t">Military Aircraft & Ship</div>
+      <div class="hb-d">Pesawat perang, kapal, 1:72 scale</div>
+    </div>
+  </div>
+</div>
+
+<span class="lbl" id="lbl-obj">Nama Model / Objek</span>
+<div style="display:flex;gap:8px;margin-bottom:.5rem;">
+  <input type="text" id="objIn" placeholder="contoh: RX-78-2 Gundam, Hot Wheels McLaren, Tamiya Ferrari..." style="flex:1;" />
+</div>
+
+<span class="lbl">Contoh Cepat</span>
+<div class="exs" id="exRow" style="margin-bottom:.5rem;"></div>
+
+<span class="lbl" id="modeLbl">Gaya Visual / Perspektif</span>
+<div class="mg" id="modeGrid" style="margin-bottom:.75rem;"></div>
+
+<!-- SPEC DETAIL SELECTOR (hobby only) -->
+<div id="specSection">
+  <span class="lbl">Detail Spesifikasi yang Ditampilkan</span>
+  <div class="spec-grid" id="specGrid">
+    <div class="spec-card sel" onclick="togSpec(this,'dimensions')">
+      <div><input type="checkbox" checked> <span class="spec-label">Dimensi & Skala</span></div>
+      <div class="spec-desc">Tinggi, lebar, berat, rasio skala (1:144, 1:18, dll)</div>
+    </div>
+    <div class="spec-card sel" onclick="togSpec(this,'materials')">
+      <div><input type="checkbox" checked> <span class="spec-label">Material & Bahan</span></div>
+      <div class="spec-desc">ABS plastic, die-cast zinc, resin, PVC, metal parts</div>
+    </div>
+    <div class="spec-card sel" onclick="togSpec(this,'articulation')">
+      <div><input type="checkbox" checked> <span class="spec-label">Titik Artikulasi / Sendi</span></div>
+      <div class="spec-desc">Jumlah joint, range of motion, poseable parts</div>
+    </div>
+    <div class="spec-card sel" onclick="togSpec(this,'weapons')">
+      <div><input type="checkbox" checked> <span class="spec-label">Senjata & Aksesori</span></div>
+      <div class="spec-desc">Beam rifle, shield, effect parts, base, hands</div>
+    </div>
+    <div class="spec-card sel" onclick="togSpec(this,'markings')">
+      <div><input type="checkbox" checked> <span class="spec-label">Marking & Livery</span></div>
+      <div class="spec-desc">Nomor unit, decal, color scheme, sponsor livery</div>
+    </div>
+    <div class="spec-card sel" onclick="togSpec(this,'internals')">
+      <div><input type="checkbox" checked> <span class="spec-label">Internal Frame / Struktur</span></div>
+      <div class="spec-desc">Inner frame, chassis, suspension detail, gearbox</div>
+    </div>
+    <div class="spec-card sel" onclick="togSpec(this,'grade')">
+      <div><input type="checkbox" checked> <span class="spec-label">Grade / Series Info</span></div>
+      <div class="spec-desc">HG / MG / RG / PG / SD grade, tahun rilis, skala kit</div>
+    </div>
+    <div class="spec-card sel" onclick="togSpec(this,'paintwork')">
+      <div><input type="checkbox" checked> <span class="spec-label">Panel Lines & Cat</span></div>
+      <div class="spec-desc">Panel line detail, color separation, weathering effect</div>
+    </div>
+  </div>
+</div>
+
+<span class="lbl">Untuk Siapa</span>
+<div class="pr" id="audRow" style="margin-bottom:.75rem;"></div>
+
+<!-- LANGUAGE -->
+<div class="lang-bar">
+  <span style="font-size:11px;font-weight:500;color:var(--color-text-secondary);flex-shrink:0;">Bahasa Label:</span>
+  <div class="lang-pill sel" onclick="setLang('id',this)">🇮🇩 Indonesia</div>
+  <div class="lang-pill" onclick="setLang('en',this)">🇬🇧 English</div>
+  <div class="lang-pill" onclick="setLang('both',this)">🌐 Bilingual</div>
+  <span id="lang-note" style="font-size:10px;color:var(--color-text-tertiary);margin-left:auto;">Label dalam Bahasa Indonesia</span>
+</div>
+
+<div class="opt-block">
+  <span class="lbl" style="margin-top:0;">Background</span>
+  <div class="bg-grid">
+    <div class="bg-opt sel" onclick="selBg(this,'White / Studio Clean','pure white studio background #FFFFFF, product photography style')"><div class="bg-sw" style="background:#fff;"></div>Putih Studio</div>
+    <div class="bg-opt" onclick="selBg(this,'Dark Showroom','dark charcoal showroom background #1a1a1a, dramatic product display')"><div class="bg-sw" style="background:#1a1a1a;"></div>Dark Show</div>
+    <div class="bg-opt" onclick="selBg(this,'Blueprint Technical','dark blueprint navy #0d2137, technical drawing background')"><div class="bg-sw" style="background:#0d2137;"></div>Blueprint</div>
+    <div class="bg-opt" onclick="selBg(this,'Space / Cosmic','deep space nebula background, dramatic sci-fi atmosphere')"><div class="bg-sw" style="background:linear-gradient(135deg,#0d0d2e,#1a0a2e,#2e1a0a);"></div>Space</div>
+    <div class="bg-opt" onclick="selBg(this,'Workshop Desk','workshop desk environment, subtle tools background, collector display')"><div class="bg-sw" style="background:#8b7355;"></div>Workshop</div>
+    <div class="bg-opt" onclick="selBg(this,'Carbon Fiber','matte carbon fiber texture dark background, premium collector feel')"><div class="bg-sw" style="background:#2a2a2a;"></div>Carbon</div>
+    <div class="bg-opt" onclick="selBg(this,'Light Gray Gradient','soft light gray gradient background, professional product shot')"><div class="bg-sw" style="background:linear-gradient(135deg,#f0f0f0,#d0d0d0);"></div>Gray Soft</div>
+    <div class="bg-opt" onclick="selBg(this,'Diorama Scene','miniature diorama scene background, model display environment, scale scene')"><div class="bg-sw" style="background:linear-gradient(135deg,#4a7c59,#8b7355);"></div>Diorama</div>
+  </div>
+</div>
+
+<div class="sz-section">
+  <div class="opt-block" style="margin-bottom:0;">
+    <span class="lbl" style="margin-top:0;">Format & Ukuran</span>
+    <div class="format-tabs" id="fmtTabs">
+      <button class="ft on" onclick="setFmt('digital',this)">Digital</button>
+      <button class="ft" onclick="setFmt('print',this)">Print</button>
+      <button class="ft" onclick="setFmt('custom',this)">Custom</button>
+    </div>
+    <div id="szContainer" class="sz-grid"></div>
+  </div>
+  <div class="opt-block" style="margin-bottom:0;">
+    <span class="lbl" style="margin-top:0;">Resolusi / DPI</span>
+    <div class="sz-grid" id="dpiGrid">
+      <div class="sz-opt" onclick="selDpi(this,'72','72 DPI, screen/web only')"><div class="sz-ic">🖥️</div><div class="sz-name">72 DPI</div><div class="sz-dim">Screen</div><div class="sz-use">Web/Sosmed</div><div class="sz-dpi dpi-72">SCREEN</div></div>
+      <div class="sz-opt" onclick="selDpi(this,'150','150 DPI, medium print, office printer')"><div class="sz-ic">🖨️</div><div class="sz-name">150 DPI</div><div class="sz-dim">Medium</div><div class="sz-use">Printer Kantor</div><div class="sz-dpi dpi-150">MEDIUM</div></div>
+      <div class="sz-opt sel" onclick="selDpi(this,'300','300 DPI, professional print standard, no pixelation')"><div class="sz-ic">🖼️</div><div class="sz-name">300 DPI</div><div class="sz-dim">Print Pro</div><div class="sz-use">Cetak Profesional</div><div class="sz-dpi dpi-300">PRINT READY</div></div>
+      <div class="sz-opt" onclick="selDpi(this,'600','600 DPI, ultra HD, large format banner')"><div class="sz-ic">🏆</div><div class="sz-name">600 DPI</div><div class="sz-dim">Ultra HD</div><div class="sz-use">Banner Besar</div><div class="sz-dpi dpi-600">ULTRA HD</div></div>
+    </div>
+    <div class="pixel-info" id="pixelInfo">Pilih format + DPI untuk melihat total pixel.</div>
+  </div>
+</div>
+
+<div class="opt-block" id="customBlock" style="display:none;">
+  <span class="lbl" style="margin-top:0;">Custom Ukuran (cm)</span>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:end;">
+    <div><span style="font-size:10px;color:var(--color-text-secondary);display:block;margin-bottom:4px;">Lebar (cm)</span><input type="text" id="custW" placeholder="60" oninput="calcCustom()" /></div>
+    <div><span style="font-size:10px;color:var(--color-text-secondary);display:block;margin-bottom:4px;">Tinggi (cm)</span><input type="text" id="custH" placeholder="90" oninput="calcCustom()" /></div>
+    <div id="custResult" style="font-size:11px;color:var(--color-text-secondary);padding-bottom:10px;"></div>
+  </div>
+</div>
+
+<div class="gen-row">
+  <button class="gen-btn" id="genBtn" onclick="doGen()">Generate Semua Prompt ↗</button>
+  <button class="clr-btn" onclick="clearAll()">Reset</button>
+</div>
+
+<div class="opt-block" id="metaBlock" style="display:none;margin-bottom:1rem;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+    <span style="font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#e05c30;">📦 Adobe Stock Metadata — Siap Upload</span>
+    <button class="cp-btn" id="meta-copy-btn" onclick="copyMeta()">Copy Metadata</button>
+  </div>
+  <pre class="pp" id="metaOutput" style="font-size:10.5px;line-height:1.7;background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:7px;padding:10px 12px;"></pre>
+</div>
+
+<div class="tabs">
+  <button class="tb on" onclick="swTab('nb2',this)" style="color:#d97706;font-weight:600;">🍌 Nano Banana 2</button>
+  <button class="tb" onclick="swTab('mj',this)">Midjourney</button>
+  <button class="tb" onclick="swTab('dalle',this)">DALL-E / GPT-4o</button>
+  <button class="tb" onclick="swTab('sd',this)">Stable Diffusion</button>
+  <button class="tb" onclick="swTab('native',this)" id="tab-native">🇮🇩 Bahasa Indonesia</button>
+  <button class="tb" onclick="swTab('tips',this)">Panduan</button>
+</div>
+<div class="tc on" id="tc-nb2"><div class="empty">Isi semua pilihan lalu klik Generate.</div></div>
+<div class="tc" id="tc-mj"><div class="empty">Isi semua pilihan lalu klik Generate.</div></div>
+<div class="tc" id="tc-dalle"><div class="empty">Isi semua pilihan lalu klik Generate.</div></div>
+<div class="tc" id="tc-sd"><div class="empty">Isi semua pilihan lalu klik Generate.</div></div>
+<div class="tc" id="tc-native"><div class="empty">Isi semua pilihan lalu klik Generate.</div></div>
+<div class="tc" id="tc-tips">
+  <div class="bnr" style="background:#fff0f0;border:1px solid #ffb3b3;">
+    <span style="font-size:20px;">🤖</span>
+    <div style="color:#7b0000;"><strong>Tips Gundam & Model — Hasil Terbaik</strong><br>Sebutkan grade (HG/MG/RG/PG), skala, dan seri secara spesifik. Contoh: "RG 1/144 RX-78-2 Gundam Ver.2.0" jauh lebih baik dari hanya "Gundam". Sertakan warna dominan dan detail panel lines yang diinginkan.</div>
+  </div>
+  <div class="bnr" style="background:#fff8e1;border:1px solid #ffd54f;">
+    <span style="font-size:20px;">🍌</span>
+    <div style="color:#7b5800;"><strong>Nano Banana 2 untuk Hobby Models</strong> — NB2 mengenal database Bandai, Hot Wheels, Tamiya berkat Gemini world knowledge. Sebutkan merek dan nomor seri untuk hasil paling akurat. Output 4K sangat ideal untuk detail panel lines dan marking decal.</div>
+  </div>
+  <div class="bnr" style="background:#e8f5e9;border:1px solid #a5d6a7;">
+    <span style="font-size:20px;">🔥</span>
+    <div style="color:#1b5e20;"><strong>Hot Wheels Premium Collector</strong> — Untuk niche ini, selalu sebutkan: nama seri (Car Culture/Boulevard/RLC), apakah real rider atau basic wheels, casting name, dan warna. Gambar collector infografis Hot Wheels sangat langka di Adobe Stock — ini niche emas yang belum banyak diisi.</div>
+  </div>
+  <div class="bnr" style="background:#e8eaf6;border:1px solid #9fa8da;">
+    <span style="font-size:20px;">⭐</span>
+    <div style="color:#1a237e;"><strong>Star Wars Scale Model</strong> — Bandai & Fine Molds punya akurasi tertinggi. Sebutkan: episode asal (A New Hope/Empire/Rogue One), versi markings (Rebel/Empire), dan apakah versi snap-fit atau glue-type. Niche ini sangat populer di kalangan kolektor global.</div>
+  </div>
+  <div class="bnr" style="background:#fce4ec;border:1px solid #f48fb1;">
+    <span style="font-size:20px;">🎮</span>
+    <div style="color:#880e4f;"><strong>Retro Game Console</strong> — Ini adalah niche yang hampir tidak ada kompetisi di Adobe Stock! Technical infografis untuk NES, PS1, Game Boy sangat dicari oleh desainer game, media, dan konten retro gaming. Selalu sebutkan model/revisi (Model 1 vs 2), tahun, dan regional variant.</div>
+  </div>
+  <div class="bnr" style="background:#e0f2f1;border:1px solid #80cbc4;">
+    <span style="font-size:20px;">🪖</span>
+    <div style="color:#004d40;"><strong>Tamiya Military Vehicle 1:35</strong> — Gunakan nomor kit resmi Tamiya (32571, 35190, dll.) agar Gemini dapat akses akurat ke spesifikasi asli. Minta "camouflage color guide, weathering zones, Tamiya paint codes" untuk infografis paling berguna bagi modeler.</div>
+  </div>
+  <div class="tg">
+    <div class="tc-c"><div class="tc-t">🤖 Gundam Grade Guide</div><div class="tc-b"><strong>SD</strong> (chibi, simple) → <strong>HG 1/144</strong> (entry, detail sedang) → <strong>MG 1/100</strong> (detail tinggi, inner frame) → <strong>RG 1/144</strong> (ultra detail, real grade) → <strong>PG 1/60</strong> (premium, terbesar). Semakin tinggi grade = semakin banyak detail yang bisa ditampilkan.</div></div>
+    <div class="tc-c"><div class="tc-t">🔥 Hot Wheels Hierarchy</div><div class="tc-b"><strong>Basic</strong> (mainline, plastic) → <strong>HW Premium</strong> (metal body, real riders) → <strong>Car Culture</strong> (tema khusus) → <strong>Boulevard</strong> (JDM focus) → <strong>RLC</strong> (Red Line Club, numbered limited). Semakin tinggi seri = semakin langka = semakin bernilai koleksi.</div></div>
+    <div class="tc-c"><div class="tc-t">⭐ Star Wars Scale Guide</div><div class="tc-b"><strong>1:144</strong> (kecil, Bandai) → <strong>1:72</strong> (standard, Fine Molds/Revell) → <strong>1:53</strong> (AT-AT Revell) → <strong>1:24</strong> (large studio scale). Bandai snap-fit cocok untuk pemula, Fine Molds butuh lem tapi detail lebih akurat secara kanon.</div></div>
+    <div class="tc-c"><div class="tc-t">🎮 Retro Console Era</div><div class="tc-b"><strong>Gen 1</strong> (Atari 2600, 1977) → <strong>8-bit</strong> (NES/Famicom, 1983) → <strong>16-bit</strong> (SNES/Genesis, 1990) → <strong>32-bit</strong> (PS1/Saturn, 1994) → <strong>Handheld</strong> (Game Boy/GG, 1989). Setiap generasi punya komunitas kolektor aktif yang berbeda.</div></div>
+    <div class="tc-c"><div class="tc-t">🪖 Tamiya Military Tips</div><div class="tc-b">Gunakan kit number resmi: Tiger I Early = 35216, Panther G = 35170, Sherman = 35250. Selalu minta "Tamiya paint codes (XF series), camouflage zones, weathering guide, decal placement" untuk infografis paling berguna bagi builder.</div></div>
+    <div class="tc-c"><div class="tc-t">📐 Adobe Stock — Metadata Tips</div><div class="tc-b">Untuk upload ke Adobe Stock: centang "Created using AI tools". Keywords terbaik: "<em>technical infographic, collector reference, scale model, exploded view, [brand name], [year]</em>". Submit sebagai <em>Illustration</em>, bukan Photo. Max 40 keywords, 7 keyword pertama = paling penting.</div></div>
+    <div class="tc-c"><div class="tc-t">🎨 Midjourney v7 — Tips Penting</div><div class="tc-b">MJ v7 TIDAK lagi pakai <code>--q</code> (deprecated → error). Prompt sudah dioptimasi: keyword-first, singkat, padat. Gunakan <code>--style raw</code> untuk hasil lebih fotorealistis dan kurangi "artistic interpretation". Jika hasil masih kurang detail, tambahkan kata <strong>hyper detailed, intricate</strong> di awal prompt secara manual.</div></div>
+  </div>
+</div>
+</div>
+
+<script>
+var curType='hobby', curHobby='gundam', curMode='iso_hero', curAud='kolektor';
+var curBgLabel='White / Studio Clean', curBgPrompt='pure white studio background #FFFFFF, product photography style';
+var curSzLabel='1080×1080', curSzAr='--ar 1:1', curSzW=1080, curSzH=1080, curSzPrompt='';
+var curDpi='300', curDpiPrompt='300 DPI, professional print standard, no pixelation';
+var curFmt='digital', curLang='id';
+var activeSpecs=new Set(['dimensions','materials','articulation','weapons','markings','internals','grade','paintwork']);
+
+var HOBBY_TYPES={
+  gundam:{
+    exs:['RX-78-2 Gundam HG 1/144','Wing Gundam Zero MG 1/100','Strike Freedom Gundam RG 1/144','Unicorn Gundam PG 1/60','Zaku II MS-06 MG','Barbatos Gundam IBO HG','Sazabi Ver.Ka MG','Nu Gundam Ver.Ka MG','Destiny Gundam SEED RG','God Gundam G HG'],
+    arrows:{id:'MERAH (senjata beam/energi), BIRU (sistem komunikasi/sensor), ORANYE (thruster/propulsi), HIJAU (titik artikulasi/sendi), KUNING (panel lines/detail)',en:'RED (beam weapons/energy), BLUE (communication/sensor systems), ORANGE (thrusters/propulsion), GREEN (articulation joints), YELLOW (panel lines/detail)'},
+    specHints:'Mobile Suit grade, scale ratio, inner frame detail, beam saber, shield, rifle, cockpit hatch, thruster nozzles, verniers, sensor eye gimmick, articulation points count',
+  },
+  diecast:{
+    exs:['Hot Wheels McLaren P1 1:64','Tomica Toyota GR86 1:57','Matchbox Lamborghini Urus 1:64','Bburago Ferrari 488 1:18','Maisto Porsche 911 GT3 1:18','Minichamps BMW M3 1:43','AutoArt Nissan GTR R35 1:18','Kyosho Honda NSX 1:18','Norev Mercedes AMG GT 1:43','Greenlight Ford Mustang Shelby 1:18'],
+    arrows:{id:'MERAH (rem/sistem pengereman), BIRU (sistem elektronik/lampu), ORANYE (mesin/transmisi), HIJAU (suspensi/roda), KUNING (detail eksterior/panel)',en:'RED (brake system), BLUE (electronics/lights), ORANGE (engine/drivetrain), GREEN (suspension/wheels), YELLOW (exterior details/body panel)'},
+    specHints:'Scale ratio, diecast zinc alloy body, opening doors hoods trunks, rubber tires, working steering, interior detail, engine bay detail, livery markings',
+  },
+  plastic:{
+    exs:['Tamiya Ferrari F40 1:24','Hasegawa F-14 Tomcat 1:72','Fujimi Toyota Supra A80 1:24','Aoshima Nissan Skyline GT-R R34 1:24','Revell Porsche 911 GT3 RS 1:24','Tamiya F1 Red Bull 2023 1:20','Academy Tiger I Tank 1:35','Trumpeter USS Missouri Battleship 1:350','Dragon Panzer IV 1:35','Tamiya Ducati Desmosedici 1:12'],
+    arrows:{id:'MERAH (parts runner/sprues), BIRU (decal placement), ORANYE (panel lines & scribing), HIJAU (assembly joints/pegs), KUNING (painting guide/color call-out)',en:'RED (parts runner/sprues), BLUE (decal placement), ORANGE (panel lines/scribing), GREEN (assembly joints/pegs), YELLOW (painting guide/color call-out)'},
+    specHints:'Scale ratio, part count, runner layout, photo-etch parts, decal sheet, recommended paints Tamiya/Gunze, assembly sequence, panel line locations',
+  },
+  lego:{
+    exs:['LEGO Technic McLaren Formula E 42141','LEGO Speed Champions Ferrari Roma 76914','LEGO Creator Porsche 911 10295','LEGO Technic Bugatti Chiron 42083','LEGO Icons Eiffel Tower 10307','LEGO Technic Land Rover Defender 42110','LEGO Star Wars Millennium Falcon 75192','LEGO Architecture Burj Khalifa 21055','LEGO City Police Station 60316','LEGO Ideas NASA Apollo Saturn V 92176'],
+    arrows:{id:'MERAH (power functions/motor), BIRU (sambungan Technic/axle), ORANYE (mekanisme gigi/gear), HIJAU (panel/bodywork), KUNING (detail aksesori/minifigure)',en:'RED (power functions/motor), BLUE (Technic connections/axle), ORANGE (gear mechanisms), GREEN (panels/bodywork), YELLOW (accessories/minifigures)'},
+    specHints:'Piece count, set number, Technic functions, motorized features, minifigure count, scale, building stages, exclusive colors',
+  },
+  figure:{
+    exs:['Nendoroid Gojo Satoru 2002','Figma Link Breath of the Wild','SH Figuarts Spider-Man No Way Home','Hot Toys Iron Man Mark LXXXV','POP UP PARADE Rem Re:Zero','Bandai S.H.Figuarts Son Goku Ultra Instinct','Good Smile Hatsune Miku 1/7 Scale','Kotobukiya ArtFX Batman','Mezco One:12 Collective Wolverine','McFarlane Toys Batman Dark Knight'],
+    arrows:{id:'MERAH (efek khusus/effect parts), BIRU (aksesori/swap parts), ORANYE (titik artikulasi/joint), HIJAU (stand/base), KUNING (detail ekspresi/face parts)',en:'RED (special effects/effect parts), BLUE (accessories/swap parts), ORANGE (articulation joints), GREEN (display stand/base), YELLOW (expression/face parts detail)'},
+    specHints:'Scale height in cm, articulation points, interchangeable faces hands, effect parts, base included, PVC ABS material, manufacturer, series number',
+  },
+  military:{
+    exs:['Tamiya Tiger I Tank 1:35','Academy Sherman M4A3E8 1:35','Revell F-16 Fighting Falcon 1:72','Trumpeter USS Missouri BB-63 1:350','Dragon StuG III Ausf.G 1:35','Hasegawa A-10 Thunderbolt 1:72','Meng Models Merkava Mk.4 1:35','Border Models T-34/85 1:35','Takom Leopard 2A7 1:35','Airfix Supermarine Spitfire 1:24'],
+    arrows:{id:'MERAH (senjata utama/armament), BIRU (antena/komunikasi), ORANYE (mesin/power plant), HIJAU (running gear/track/roda), KUNING (armor plating/camouflage)',en:'RED (main armament/weapons), BLUE (antenna/communications), ORANGE (engine/power plant), GREEN (running gear/tracks/wheels), YELLOW (armor plating/camouflage)'},
+    specHints:'Scale, armor thickness callouts, gun caliber labels, crew hatches, periscopes, tracks detail, camouflage color guide, weathering zones, marking options',
+  },
+  hotwheels:{
+    exs:['Hot Wheels RLC Deora III Kustom','Hot Wheels Car Culture Mix 1 McLaren Senna GTR','Hot Wheels Treasure Hunt Dodge Challenger SRT','Hot Wheels Premium Fast & Furious Toyota Supra MK4','Hot Wheels Boulevard Datsun 240Z','Hot Wheels Red Line Club 2023 Camaro Z/28','Hot Wheels Premium Porsche 911 GT3 RS','Hot Wheels Car Culture Volkswagen Golf GTI MK2','Hot Wheels Boulevard 1967 Ford Mustang','Hot Wheels Premium Lamborghini Countach'],
+    arrows:{id:'MERAH (livery/grafis khusus), BIRU (detail roda/ban real rider), ORANYE (aksen logam/die-cast body), HIJAU (sertifikasi/nomor seri kolektor), KUNING (keunikan model vs versi reguler)',en:'RED (special livery/graphics), BLUE (wheel/tire details — real riders), ORANGE (metal/die-cast body accents), GREEN (collector series/numbering), YELLOW (unique features vs regular version)'},
+    specHints:'Series name (Car Culture/Premium/Boulevard/RLC), production number for limited editions, real rider wheels vs basic wheels, metal body vs plastic body, casting name & year, color variant exclusivity, chase vs regular, scale 1:64, country of manufacture (Thailand/Malaysia), blister vs case pack',
+  },
+  military_vehicle:{
+    exs:['Tamiya King Tiger Porsche Turret 1:35','Tamiya M26 Pershing Heavy Tank 1:35','Tamiya Panzer IV Ausf.J 1:35','Tamiya M4A3 Sherman w/Hedgerow Device 1:35','Tamiya Sd.Kfz.251/1 Ausf.C Half-Track 1:35','Tamiya German 8-Ton Half-Track Sd.Kfz.7 1:35','Dragon M1A2 Abrams OIF 1:35','Meng Challenger 2 TES Megatron 1:35','Takom Leopard 2A5 1:35','Border Models Panzerkampfwagen V Panther G 1:35'],
+    arrows:{id:'MERAH (senjata utama — cannon, MG, armament), BIRU (antena/radio/komunikasi), ORANYE (mesin & exhaust system), HIJAU (track & running gear — roda, sprocket, idler), KUNING (zona armor & camouflage scheme)',en:'RED (main weapons — cannon, MG), BLUE (antenna/radio/comms), ORANGE (engine & exhaust), GREEN (tracks & running gear — wheels, sprocket, idler), YELLOW (armor zones & camouflage scheme)'},
+    specHints:'Tamiya kit number, scale 1:35, part count, photo-etch availability, markings options (unit, theatre, year), armor thickness callouts at key areas, gun caliber (75mm/88mm/120mm), crew figure included, commander hatch (open/closed), stowage & zimmerit detail, recommended weathering colors (XF-60, XF-62, etc.), Tamiya paint codes',
+  },
+  starwars:{
+    exs:['Bandai Star Wars 1/72 X-Wing Fighter','Bandai Star Wars 1/144 Millennium Falcon','Fine Molds TIE Fighter 1:72','Fine Molds Slave I Boba Fett 1:72','Revell AT-AT Walker 1:53','AMT Y-Wing Fighter 1:72','Bandai Star Wars BB-8 1/2 Scale','Hot Wheels Starships Millennium Falcon','Lego Star Wars UCS Millennium Falcon 75192','LEGO Star Wars AT-AT 75313'],
+    arrows:{id:'MERAH (sistem senjata — laser cannon, proton torpedo), BIRU (shield generator/sensor array), ORANYE (engine & thruster system), HIJAU (landing gear/docking system), KUNING (panel detail & livery — battle damage, weathering)',en:'RED (weapon systems — laser cannons, proton torpedoes), BLUE (shield generator/sensor array), ORANGE (engine & thruster systems), GREEN (landing gear/docking clamps), YELLOW (surface detail & weathering — battle damage, grime)'},
+    specHints:'Manufacturer (Bandai/Fine Molds/Revell/AMT/LEGO), scale (1:72/1:144/1:53), kit number, movie episode origin (ANH/ESB/ROTJ/TFA/Rogue One), light & sound features, decal options (Rebel Alliance/Empire markings), weathering guide, paint recommendations, cockpit interior detail, landing gear (extended/retracted), exclusive parts vs standard release, Bandai snap-fit vs glue required',
+  },
+  retroconsole:{
+    exs:['Nintendo Entertainment System (NES) Famicom 1983','Game Boy Original DMG-01 1989','Sony PlayStation 1 PSOne 1994','Sega Mega Drive Genesis Model 1','Super Nintendo SNES Model 1','Sega Game Gear 1990','Atari 2600 Woody 1977','Neo Geo AES Console SNK','Nintendo 64 N64 Jungle Green','Sega Saturn Model 2 1995'],
+    arrows:{id:'MERAH (power supply/RF unit), BIRU (port koneksi — controller/cartridge/A/V), ORANYE (PCB/prosesor utama), HIJAU (mekanisme cartridge/disc tray), KUNING (detail fisik — vent, label, badge, regional variant)',en:'RED (power supply/RF modulator), BLUE (connection ports — controller/cartridge/A/V out), ORANGE (main PCB/CPU/processor), GREEN (cartridge mechanism/disc drive tray), YELLOW (physical details — vents, labels, badge, regional variants)'},
+    specHints:'Model/revision number (Model 1 vs Model 2), CPU & clock speed, RAM specs, regional variant (NTSC/PAL/JP), original retail price (historical), cartridge slot type, controller port count, A/V output options (RF/composite/RGB), launch year & discontinuation year, color variants (original vs limited edition), famous launch titles, estimated units sold, collector grade (mint/very good/good), common failure points (capacitors/belt), notable accessories included',
+  }
+};
+
+var HOBBY_MODES=[
+  {id:'iso_hero',i:'⭐',t:'Hero Isometrik 3D',d:'45° dramatic hero shot, detail lengkap semua sisi'},
+  {id:'blueprint_4view',i:'📐',t:'Blueprint 4-View',d:'Tampak depan/belakang/samping/atas, ukuran presisi'},
+  {id:'exploded_kit',i:'💥',t:'Exploded Parts View',d:'Semua komponen terpisah melayang, nomor part'},
+  {id:'spec_sheet',i:'📋',t:'Spec Sheet Resmi',d:'Layout katalog resmi, tabel spesifikasi lengkap'},
+  {id:'closeup_detail',i:'🔍',t:'Close-up Detail',d:'Zoom detail panel lines, decal, joint, texture'},
+  {id:'diorama_scene',i:'🏔️',t:'Diorama / Scene',d:'Model dalam setting diorama miniatur realistis'},
+  {id:'comparison_scale',i:'📏',t:'Comparison Scale',d:'Perbandingan skala & ukuran antar grade/versi'},
+  {id:'cutaway_inner',i:'✂️',t:'Cutaway Interior',d:'Inner frame, mesin, kokpit terlihat melalui irisan'},
+  {id:'photoshoot_style',i:'📷',t:'Photoshoot Koleksi',d:'Gaya foto produk profesional, studio lighting'},
+];
+
+var HOBBY_AUDS=[
+  {id:'kolektor',l:'Kolektor / Hobbyist'},
+  {id:'builder',l:'Modeler / Builder'},
+  {id:'reviewer',l:'Reviewer / YouTuber'},
+  {id:'anak',l:'Anak-anak / Gift Guide'},
+  {id:'seller',l:'Penjual / Marketplace'},
+  {id:'umum',l:'Umum / Penggemar'},
+];
+
+var TYPES_OTHER={
+  otomotif:{color:'#c0392b',accbg:'#fff5f5',acctxt:'#922b21',label:{id:'Gaya Visual Otomotif',en:'Automotive Visual Style'},exs:['Mesin V8 Twin Turbo','Motor Ninja 250 RR','Toyota GR Supra','Turbocharger','Rem Cakram ABS','Transmisi CVT','Suspensi MacPherson','Tesla Model 3','Mesin Diesel Common Rail','Knalpot Racing'],modes:[{id:'isometrik',i:'📐',t:'Isometrik Teknis',d:'45° cutaway, engineering manual'},{id:'exploded',i:'💥',t:'Exploded View',d:'Komponen melayang berlabel'},{id:'cutaway',i:'✂️',t:'Cutaway Kendaraan',d:'Irisan body/mesin, gaya Haynes'},{id:'blueprint',i:'📋',t:'Blueprint CAD',d:'Patent drawing presisi'},{id:'racing',i:'🏁',t:'Racing Poster',d:'Estetika premium + teknis'},{id:'infografis',i:'📊',t:'Infografis',d:'Ikon + label + alir'}],auds:[{id:'mekanik',l:'Mekanik'},{id:'guru',l:'Guru SMK'},{id:'pelajar',l:'Pelajar SMK'},{id:'umum',l:'Umum'},{id:'anak',l:'Anak'}],arrows:{id:'MERAH (bahan bakar), BIRU (pendingin), ORANYE (panas), HIJAU (sensor)',en:'RED (fuel), BLUE (cooling), ORANGE (heat), GREEN (sensor)'},styles:{isometrik:{en:'45-degree isometric 3D, engineering manual, photorealistic with black ink annotations, cutaway',neg:'cartoon, blurry'},exploded:{en:'exploded parts diagram, floating numbered components, Haynes aesthetic',neg:'assembled, cartoon'},cutaway:{en:'vehicle cross-section cutaway, ghost view, Haynes Chilton aesthetic',neg:'opaque, cartoon'},blueprint:{en:'automotive blueprint, CAD drawing, patent drawing aesthetic',neg:'colorful, cartoon'},racing:{en:'premium automotive racing poster, dramatic 3/4 angle, studio lighting',neg:'cartoon, sketch'},infografis:{en:'automotive educational infographic, clean flat design, technical icons',neg:'dark, cartoon'}}},
+  alam:{color:'#2d5a1b',accbg:'#eaf3de',acctxt:'#27500a',label:{id:'Gaya Alam / Makhluk Hidup',en:'Nature Visual Style'},exs:['Pohon Mangga','Kupu-kupu Monarki','Katak Pohon','Bunga Mawar','Lebah Madu','Hiu Paus','Jamur Amanita','Elang Jawa','Penyu Hijau','Pohon Kelapa'],modes:[{id:'naturalis',i:'🎨',t:'Naturalis',d:'BBC/NatGeo realistic'},{id:'edu_anak',i:'📚',t:'Buku Anak',d:'Cerah, ramah anak'},{id:'botani',i:'🔬',t:'Botani/Zoologi',d:'Victorian botanical print'},{id:'cutaway_bio',i:'✂️',t:'Cutaway Organik',d:'Jaringan/sel alami'},{id:'infografis_bio',i:'📊',t:'Infografis',d:'Poster sekolah'},{id:'teknis_lembut',i:'📐',t:'Teknis Lembut',d:'Sains + keindahan alami'}],auds:[{id:'guru',l:'Guru'},{id:'murid_sd',l:'Murid SD'},{id:'murid_smp',l:'Murid SMP'},{id:'murid_sma',l:'SMA/Mahasiswa'},{id:'ortu',l:'Orang Tua'},{id:'umum',l:'Umum'}],arrows:{id:'HIJAU (fotosintesis), BIRU (nutrisi), MERAH (reproduksi), KUNING (pertahanan)',en:'GREEN (photosynthesis), BLUE (nutrients), RED (reproduction), YELLOW (defense)'},styles:{naturalis:{en:'natural history illustration, BBC nature style, soft watercolor, photorealistic botanical accuracy',neg:'mechanical, robotic'},edu_anak:{en:'educational children book illustration, bright colors, DK encyclopedia style',neg:'scary, dark, robotic'},botani:{en:'Victorian botanical illustration, Ernst Haeckel style, scientific print, elegant linework',neg:'cartoon, robotic'},cutaway_bio:{en:'organic biological cross-section, natural tissue, DK Eyewitness book style',neg:'robotic gears, mechanical'},infografis_bio:{en:'educational infographic poster, biology textbook diagram, museum exhibit panel',neg:'robotic, dark'},teknis_lembut:{en:'soft technical illustration, gentle precision linework, scientific accuracy with artistic warmth',neg:'heavy mechanical'}}},
+  teknis:{color:'#1a1a2e',accbg:'#f0f0f8',acctxt:'#1a1a2e',label:{id:'Teknis Umum',en:'General Technical'},exs:['Pompa Sentrifugal','Panel Surya','Generator Listrik','Sistem Hidrolik','Kompresor AC','Kamera DSLR','Drone DJI','Robot Industri','Mesin CNC','Turbin Angin'],modes:[{id:'isometrik_tek',i:'📐',t:'Isometrik',d:'45° cutaway, engineering'},{id:'exploded_tek',i:'💥',t:'Exploded',d:'Komponen melayang'},{id:'cutaway_tek',i:'✂️',t:'Cutaway',d:'Interior terlihat'},{id:'blueprint_tek',i:'📋',t:'Blueprint',d:'Garis putih, latar biru'},{id:'infografis_tek',i:'📊',t:'Infografis',d:'Diagram alir + label'},{id:'foto_anotasi',i:'📸',t:'Foto + Anotasi',d:'Foto + overlay label'}],auds:[{id:'teknisi',l:'Teknisi'},{id:'guru',l:'Guru'},{id:'mahasiswa',l:'Mahasiswa'},{id:'umum',l:'Umum'},{id:'klien',l:'Klien'}],arrows:{id:'MERAH (daya/listrik), BIRU (data), ORANYE (panas), HIJAU (output/sensor)',en:'RED (power), BLUE (data), ORANGE (heat), GREEN (output/sensor)'},styles:{isometrik_tek:{en:'45-degree isometric 3D, engineering manual, photorealistic with annotations, cutaway',neg:'cartoon, blurry'},exploded_tek:{en:'exploded parts diagram, floating numbered components, assembly drawing',neg:'assembled, cartoon'},cutaway_tek:{en:'technical cross-section cutaway, transparent shell revealing internals',neg:'opaque, cartoon'},blueprint_tek:{en:'technical blueprint, dark navy, white precision linework, CAD drawing',neg:'colorful, cartoon'},infografis_tek:{en:'technical infographic poster, clean flat design, system flow diagram',neg:'dark, cluttered, cartoon'},foto_anotasi:{en:'photorealistic product photo with technical annotation overlay, studio lighting',neg:'illustration, cartoon'}}},
+  it:{color:'#0d6efd',accbg:'#e8f0fe',acctxt:'#0d3b86',label:{id:'IT Infrastructure',en:'IT Infrastructure'},exs:['Cisco Firewall Cluster','Network Topology LAN/WAN','Kubernetes Cluster','Microservices Architecture','Load Balancer','VPN Gateway','SDN Controller','Zero Trust Network','Cloud Hybrid','Active Directory'],modes:[{id:'topo_net',i:'🗺️',t:'Network Topology',d:'Diagram LAN/WAN/Cloud'},{id:'arch_diagram',i:'🏗️',t:'Architecture',d:'System architecture layer'},{id:'isometrik_it',i:'📐',t:'Isometrik 3D IT',d:'Rack, switch perspektif 3D'},{id:'blueprint_it',i:'📋',t:'Blueprint Network',d:'Gaya Cisco diagram'},{id:'cloud_arch',i:'☁️',t:'Cloud Architecture',d:'AWS/Azure/GCP flow'},{id:'security_map',i:'🔐',t:'Security Topology',d:'Zero trust, DMZ, firewall'}],auds:[{id:'arsitek',l:'Network Architect'},{id:'admin',l:'Sysadmin'},{id:'guru_it',l:'Dosen IT'},{id:'mhs_it',l:'Mahasiswa TI'},{id:'klien',l:'Presentasi Klien'}],arrows:{id:'MERAH (traffic berbahaya), BIRU (data flow), ORANYE (monitoring), HIJAU (secure flow)',en:'RED (malicious/blocked), BLUE (data flow), ORANGE (monitoring), GREEN (secure/encrypted)'},styles:{topo_net:{en:'professional network topology diagram, Cisco-style icons, node-link graph, labeled subnets',neg:'cartoon, artistic, blurry'},arch_diagram:{en:'software architecture diagram, clean layered illustration, microservices, cloud-native',neg:'cartoon, blurry'},isometrik_it:{en:'isometric 3D IT infrastructure, server racks, labeled hardware, cable routing visible',neg:'flat 2D, cartoon'},blueprint_it:{en:'network blueprint, dark navy, white Cisco symbols, subnets labeled',neg:'colorful, cartoon'},cloud_arch:{en:'cloud architecture diagram, AWS/Azure/GCP icons, service boxes, availability zones',neg:'dark, cartoon, blurry'},security_map:{en:'network security topology, zero trust, DMZ zones, threat vectors, security perimeter',neg:'cartoon, blurry, artistic'}}},
+  dc:{color:'#6f42c1',accbg:'#f0ecff',acctxt:'#4a2d85',label:{id:'Data Center',en:'Data Center'},exs:['Server Rack 42U Dell','DC Floor Plan Tier III','Cooling CRAC/CRAH','Power UPS PDU','Cabling Infrastructure','Hot Cold Aisle','Network Spine Leaf','Raised Floor System','Fire Suppression FM-200','Physical Security'],modes:[{id:'rack_diagram',i:'🗄️',t:'Rack Diagram',d:'Isi rack U per U'},{id:'floor_plan',i:'🏢',t:'Floor Plan',d:'Denah lantai isometrik'},{id:'cooling_flow',i:'❄️',t:'Cooling Flow',d:'Airflow CRAC/CRAH'},{id:'power_flow',i:'⚡',t:'Power Flow',d:'UPS, PDU, generator'},{id:'network_dc',i:'🌐',t:'Network DC',d:'Spine-leaf, ToR'},{id:'isometrik_dc',i:'📐',t:'Isometrik 3D DC',d:'Cutaway data center 3D'}],auds:[{id:'dc_manager',l:'DC Manager'},{id:'infra_eng',l:'Infra Engineer'},{id:'fasilitas',l:'Facility Mgr'},{id:'klien',l:'Presentasi Klien'},{id:'mhs',l:'Mahasiswa'}],arrows:{id:'MERAH (daya listrik), BIRU (data/network), ORANYE (panas), HIJAU (udara dingin)',en:'RED (electrical power), BLUE (data/network), ORANGE (hot air), GREEN (cold air/coolflow)'},styles:{rack_diagram:{en:'professional rack elevation diagram, labeled 1U 2U slots, Visio-style',neg:'cartoon, blurry, 3D photorealistic'},floor_plan:{en:'isometric data center floor plan, raised floor, server rows, hot-cold aisle, CRAC units',neg:'2D flat only, cartoon'},cooling_flow:{en:'data center cooling airflow diagram, hot aisle cold aisle, CRAC placement, flow arrows',neg:'cartoon, blurry'},power_flow:{en:'data center power distribution, UPS, PDU, generator backup, A and B power feeds',neg:'cartoon, artistic'},network_dc:{en:'data center network topology, spine-leaf architecture, ToR switches, VLAN labels',neg:'cartoon, blurry, artistic'},isometrik_dc:{en:'isometric 3D data center cutaway, server rows, raised floor, ceiling cable trays, cooling visible',neg:'flat 2D, cartoon'}}}
+};
+
+var FORMATS={
+  digital:[{id:'sq',i:'⬛',n:'Square 1:1',d:'1080×1080 px',u:'Feed / Sosmed',ar:'--ar 1:1',w:1080,h:1080},{id:'port',i:'📱',n:'Portrait 9:16',d:'1080×1920 px',u:'Story / Reels',ar:'--ar 9:16',w:1080,h:1920},{id:'land',i:'🖥️',n:'Landscape 16:9',d:'1920×1080 px',u:'YouTube / Presentasi',ar:'--ar 16:9',w:1920,h:1080},{id:'fb',i:'🌐',n:'Web OG 1.91:1',d:'1200×630 px',u:'Facebook / LinkedIn',ar:'--ar 1.91:1',w:1200,h:630}],
+  print:[{id:'a4p',i:'📄',n:'A4 Portrait',d:'2480×3508 px',u:'Poster (300 DPI)',ar:'--ar 1:1.41',w:2480,h:3508,dpiRef:'300'},{id:'a4l',i:'📋',n:'A4 Landscape',d:'3508×2480 px',u:'Infografis (300 DPI)',ar:'--ar 1.41:1',w:3508,h:2480,dpiRef:'300'},{id:'a3p',i:'📰',n:'A3 Portrait',d:'3508×4961 px',u:'Poster Besar (300 DPI)',ar:'--ar 1:1.41',w:3508,h:4961,dpiRef:'300'},{id:'a3l',i:'🗞️',n:'A3 Landscape',d:'4961×3508 px',u:'Poster Kelas (300 DPI)',ar:'--ar 1.41:1',w:4961,h:3508,dpiRef:'300'},{id:'a5p',i:'📓',n:'A5 Portrait',d:'1748×2480 px',u:'Kartu Spec / Flyer',ar:'--ar 1:1.41',w:1748,h:2480,dpiRef:'300'},{id:'xb',i:'🎪',n:'X-Banner 60×160',d:'7087×18898 px',u:'Banner Event (300 DPI)',ar:'--ar 3:8',w:7087,h:18898,dpiRef:'300'}],
+  custom:[]
+};
+
+function setType(t,btn){
+  curType=t;
+  document.querySelectorAll('.sb').forEach(b=>b.classList.remove('on')); btn.classList.add('on');
+  var isHobby=(t==='hobby');
+  document.getElementById('hobbySubSection').style.display=isHobby?'block':'none';
+  document.getElementById('specSection').style.display=isHobby?'block':'none';
+  if(isHobby){
+    var acc='#8b1a1a';
+    document.documentElement.style.setProperty('--acc',acc);
+    document.documentElement.style.setProperty('--acc-bg','#fff0f0');
+    document.documentElement.style.setProperty('--acc-txt','#5c0000');
+    document.getElementById('genBtn').style.background=acc;
+    document.getElementById('modeLbl').textContent='Gaya Visual / Perspektif';
+    renderHobbyModes(); renderHobbyAuds(); renderHobbyExs();
+  } else {
+    var cfg=TYPES_OTHER[t];
+    document.documentElement.style.setProperty('--acc',cfg.color);
+    document.documentElement.style.setProperty('--acc-bg',cfg.accbg);
+    document.documentElement.style.setProperty('--acc-txt',cfg.acctxt);
+    document.getElementById('genBtn').style.background=cfg.color;
+    document.getElementById('modeLbl').textContent=cfg.label[curLang==='en'?'en':'id'];
+    renderOtherModes(cfg); renderOtherAuds(cfg); renderOtherExs(cfg);
+  }
+  clearOutputs();
+}
+function selHobby(el,h){
+  document.querySelectorAll('.hb').forEach(b=>b.classList.remove('sel')); el.classList.add('sel');
+  curHobby=h; renderHobbyExs();
+}
+function renderHobbyModes(){
+  var g=document.getElementById('modeGrid'); g.innerHTML='';
+  HOBBY_MODES.forEach(function(m,i){
+    var d=document.createElement('div'); d.className='mc'+(i===0?' sel':'');
+    d.onclick=function(){selMode(this,m.id);}; 
+    d.innerHTML='<div class="mc-i">'+m.i+'</div><div class="mct">'+m.t+'</div><div class="mcd">'+m.d+'</div>';
+    g.appendChild(d);
+  });
+  curMode=HOBBY_MODES[0].id;
+}
+function renderHobbyAuds(){
+  var r=document.getElementById('audRow'); r.innerHTML='';
+  HOBBY_AUDS.forEach(function(a,i){
+    var s=document.createElement('span'); s.className='pl'+(i===0?' sel':'');
+    s.onclick=function(){selAud(this,a.id);}; s.textContent=a.l; r.appendChild(s);
+  });
+  curAud=HOBBY_AUDS[0].id;
+}
+function renderHobbyExs(){
+  var ht=HOBBY_TYPES[curHobby]; if(!ht) return;
+  var r=document.getElementById('exRow'); r.innerHTML='';
+  ht.exs.forEach(function(e){
+    var s=document.createElement('span'); s.className='ep';
+    s.onclick=function(){setEx(e);}; s.textContent=e; r.appendChild(s);
+  });
+}
+function renderOtherModes(cfg){
+  var g=document.getElementById('modeGrid'); g.innerHTML='';
+  cfg.modes.forEach(function(m,i){
+    var d=document.createElement('div'); d.className='mc'+(i===0?' sel':'');
+    d.onclick=function(){selMode(this,m.id);}; 
+    d.innerHTML='<div class="mc-i">'+m.i+'</div><div class="mct">'+m.t+'</div><div class="mcd">'+m.d+'</div>';
+    g.appendChild(d);
+  });
+  curMode=cfg.modes[0].id;
+}
+function renderOtherAuds(cfg){
+  var r=document.getElementById('audRow'); r.innerHTML='';
+  cfg.auds.forEach(function(a,i){
+    var s=document.createElement('span'); s.className='pl'+(i===0?' sel':'');
+    s.onclick=function(){selAud(this,a.id);}; s.textContent=a.l; r.appendChild(s);
+  });
+  curAud=cfg.auds[0].id;
+}
+function renderOtherExs(cfg){
+  var r=document.getElementById('exRow'); r.innerHTML='';
+  cfg.exs.forEach(function(e){
+    var s=document.createElement('span'); s.className='ep';
+    s.onclick=function(){setEx(e);}; s.textContent=e; r.appendChild(s);
+  });
+}
+
+function togSpec(el,key){
+  el.classList.toggle('sel');
+  var cb=el.querySelector('input[type=checkbox]');
+  if(activeSpecs.has(key)){activeSpecs.delete(key);cb.checked=false;}
+  else{activeSpecs.add(key);cb.checked=true;}
+}
+function getActiveSpecsText(){
+  var map={
+    dimensions:curLang==='en'?'scale ratio, height, width, weight dimensions':'rasio skala, tinggi, lebar, berat',
+    materials:curLang==='en'?'material callouts (ABS plastic, die-cast zinc, PVC, metal parts)':'callout material (ABS plastic, die-cast zinc, PVC, part logam)',
+    articulation:curLang==='en'?'articulation points count, range of motion, poseable joints':'jumlah titik artikulasi, range of motion, sendi poseable',
+    weapons:curLang==='en'?'weapons and accessories list (included items)':'daftar senjata dan aksesori (barang yang disertakan)',
+    markings:curLang==='en'?'marking details, livery callouts, color scheme labels, decal placement':'detail marking, callout livery, label skema warna, penempatan decal',
+    internals:curLang==='en'?'internal frame/chassis cutaway detail, suspension, gearbox':'detail inner frame/chassis cutaway, suspensi, gearbox',
+    grade:curLang==='en'?'grade/series info (HG/MG/RG/PG/SD), release year, kit scale':'info grade/seri (HG/MG/RG/PG/SD), tahun rilis, skala kit',
+    paintwork:curLang==='en'?'panel line engraving detail, color separation callouts, weathering zones':'detail panel line, callout pemisahan warna, zona weathering'
+  };
+  return Array.from(activeSpecs).map(k=>map[k]).filter(Boolean).join('; ');
+}
+
+function selMode(el,m){document.querySelectorAll('.mc').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');curMode=m;}
+function selAud(el,a){document.querySelectorAll('#audRow .pl').forEach(p=>p.classList.remove('sel'));el.classList.add('sel');curAud=a;}
+function selBg(el,label,prompt){document.querySelectorAll('.bg-opt').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');curBgLabel=label;curBgPrompt=prompt;}
+function setEx(v){document.getElementById('objIn').value=v;}
+function setLang(l,btn){curLang=l;document.querySelectorAll('.lang-pill').forEach(p=>p.classList.remove('sel'));btn.classList.add('sel');var notes={id:'Label dalam Bahasa Indonesia',en:'Labels in English',both:'Bilingual ID + EN'};document.getElementById('lang-note').textContent=notes[l];var t=document.getElementById('tab-native');t.textContent=l==='en'?'🇬🇧 English Prompt':l==='both'?'🌐 Bilingual':'🇮🇩 Bahasa Indonesia';}
+function swTab(id,btn){document.querySelectorAll('.tc').forEach(t=>t.classList.remove('on'));document.querySelectorAll('.tb').forEach(b=>b.classList.remove('on'));document.getElementById('tc-'+id).classList.add('on');btn.classList.add('on');}
+function clearOutputs(){['nb2','mj','dalle','sd','native'].forEach(t=>{document.getElementById('tc-'+t).innerHTML='<div class="empty">Isi semua pilihan lalu klik Generate.</div>';});}
+function clearAll(){document.getElementById('objIn').value='';clearOutputs();}
+function setFmt(f,btn){curFmt=f;document.querySelectorAll('.ft').forEach(b=>b.classList.remove('on'));btn.classList.add('on');document.getElementById('customBlock').style.display=(f==='custom'?'block':'none');renderSizes();updatePixelInfo();}
+function renderSizes(){
+  var c=document.getElementById('szContainer');c.innerHTML='';
+  (FORMATS[curFmt]||[]).forEach(function(f,i){
+    var d=document.createElement('div');d.className='sz-opt'+(i===0?' sel':'');
+    d.onclick=function(){selSz(this,f);};
+    var dpiTag=f.dpiRef?'<div class="sz-dpi dpi-300">300 DPI</div>':'';
+    d.innerHTML='<div class="sz-ic">'+f.i+'</div><div class="sz-name">'+f.n+'</div><div class="sz-dim">'+f.d+'</div><div class="sz-use">'+f.u+'</div>'+dpiTag;
+    c.appendChild(d);if(i===0)applySize(f);
+  });
+}
+function applySize(f){curSzLabel=f.n;curSzAr=f.ar;curSzW=f.w;curSzH=f.h;curSzPrompt=f.w+'×'+f.h+' pixels, '+f.n+', '+f.ar+(f.dpiRef?', '+f.dpiRef+' DPI print-ready':'');}
+function selSz(el,f){document.querySelectorAll('.sz-opt').forEach(s=>s.classList.remove('sel'));el.classList.add('sel');applySize(f);updatePixelInfo();}
+function selDpi(el,d,prompt){document.querySelectorAll('#dpiGrid .sz-opt').forEach(s=>s.classList.remove('sel'));el.classList.add('sel');curDpi=d;curDpiPrompt=prompt;updatePixelInfo();}
+function calcCustom(){var w=parseFloat(document.getElementById('custW').value)||0,h=parseFloat(document.getElementById('custH').value)||0,dpi=parseInt(curDpi)||300;if(w>0&&h>0){var pw=Math.round(w/2.54*dpi),ph=Math.round(h/2.54*dpi);document.getElementById('custResult').innerHTML='<strong style="color:var(--color-text-primary);">'+pw+' × '+ph+' px</strong><br><span style="font-size:10px;color:#059669;">@ '+dpi+' DPI</span>';curSzLabel='Custom '+w+'×'+h+'cm';curSzAr='--ar '+w+':'+h;curSzW=pw;curSzH=ph;curSzPrompt=pw+'×'+ph+' pixels, custom '+w+'cm×'+h+'cm, '+dpi+' DPI print-ready';}}
+function updatePixelInfo(){var dpi=parseInt(curDpi)||300;var rW=curFmt!=='digital'?Math.round(curSzW/300*dpi):curSzW,rH=curFmt!=='digital'?Math.round(curSzH/300*dpi):curSzH;var dpiC={'72':'warn','150':'warn','300':'hi','600':'hi'}[curDpi]||'hi';var note=curDpi==='72'?'⚠️ Screen only — do not print':curDpi==='150'?'Office printer quality':curDpi==='300'?'✅ Print standard — no pixelation':'✅ Ultra HD large format';document.getElementById('pixelInfo').innerHTML='<strong>'+curSzLabel+'</strong> @ <span class="'+dpiC+'">'+curDpi+' DPI</span> = <strong class="'+dpiC+'">'+rW+' × '+rH+' px</strong><br><span style="font-size:10px;">'+note+'</span>';curSzPrompt=rW+'×'+rH+' pixels, '+curSzLabel+', '+curDpi+' DPI'+(parseInt(curDpi)>=150?' print-ready':'  digital only');if(curFmt==='custom')calcCustom();}
+
+function getModeLabel(){if(curType==='hobby'){var m=HOBBY_MODES.find(x=>x.id===curMode);return m?m.t:curMode;}var cfg=TYPES_OTHER[curType];if(!cfg)return curMode;var m=cfg.modes.find(x=>x.id===curMode);return m?m.t:curMode;}
+function getAudLabel(){if(curType==='hobby'){var a=HOBBY_AUDS.find(x=>x.id===curAud);return a?a.l:curAud;}var cfg=TYPES_OTHER[curType];if(!cfg)return curAud;var a=cfg.auds.find(x=>x.id===curAud);return a?a.l:curAud;}
+function getTypeLabel(){return{otomotif:'Automotive',alam:'Nature / Living Things',teknis:'General Technical',it:'IT Infrastructure',dc:'Data Center',hobby:{gundam:'Gundam & Mecha',diecast:'Diecast & Scale Car Model',hotwheels:'Hot Wheels Premium Collector',plastic:'Plastic Model Kit',military_vehicle:'Tamiya Military Vehicle 1:35',lego:'LEGO & Block Toys',starwars:'Star Wars Scale Model',figure:'Action Figure & Statue',retroconsole:'Retro Game Console',military:'Military Aircraft & Ship'}[curHobby]||'Hobby & Collectible'}[curType]||curType;}
+function getArrows(){if(curType==='hobby'){var ht=HOBBY_TYPES[curHobby];return ht?(curLang==='en'?ht.arrows.en:ht.arrows.id):'';} var cfg=TYPES_OTHER[curType];return cfg?(curLang==='en'?cfg.arrows.en:cfg.arrows.id):'';}
+function getStyle(){if(curType==='hobby'){return {en:getHobbyStyleEn(),neg:'cartoon low-poly, unclear labels, blurry, pixelated, toy-like flat design'};} var cfg=TYPES_OTHER[curType];if(!cfg)return{en:'',neg:''};var s=cfg.styles[curMode];return s||{en:'',neg:''};}
+
+function getHobbyMJStyle(){
+  // MJ v7 keyword-first: concise visual descriptors, no long sentences
+  var modeStyleMap={
+    iso_hero:'isometric 3D hero shot, dramatic 45-degree angle, studio product photography, all sides visible, depth and shadow',
+    blueprint_4view:'technical blueprint 4-view orthographic, front rear side top, engineering drawing style, white background, dimension lines',
+    exploded_kit:'exploded parts diagram, floating numbered components, assembly instruction style, parts separated in space, white background',
+    spec_sheet:'official spec sheet layout, product catalog design, multiple angle views, clean technical typography',
+    closeup_detail:'extreme macro close-up, panel line engraving detail, surface texture, joint mechanism, sharp photorealistic focus',
+    diorama_scene:'miniature diorama scene, scale environment, atmospheric realistic lighting, museum display quality',
+    comparison_scale:'scale comparison chart, multiple sizes side by side, proportion reference guide, size markers',
+    cutaway_inner:'technical cutaway, inner frame revealed, transparent outer shell, internal mechanism visible, cross-section',
+    photoshoot_style:'professional collector photoshoot, studio product photography, dramatic cinematic lighting, magazine quality'
+  };
+  var hobbyStyleMap={
+    gundam:'Gundam mobile suit robot mecha, detailed armor plating, beam weapons, thruster nozzles, sensor eye, inner frame detail',
+    diecast:'diecast scale car model, die-cast zinc alloy body, rubber tires, opening doors, engine bay detail, interior visible',
+    hotwheels:'Hot Wheels premium diecast car, 1:64 scale, real rider wheels, metal body, collector series packaging detail',
+    plastic:'plastic model kit scale replica, runner sprue layout, decal sheet, panel line engraving, assembly guide style',
+    military_vehicle:'military tank armored vehicle, 1:35 scale model, camouflage paint scheme, track detail, armor plating, weathering effects',
+    lego:'LEGO brick assembly, colorful interlocking pieces, Technic gears and axles, minifigure accessories',
+    starwars:'Star Wars spacecraft ship model, sci-fi detailed panel greebling, battle damage weathering, hyperdrive engine nozzles',
+    figure:'action figure articulated, interchangeable face parts, accessories weapons, display base, PVC ABS construction',
+    retroconsole:'retro vintage game console, circuit board PCB visible, cartridge slot, controller ports, button detail, classic hardware',
+    military:'military aircraft warship scale model, riveted panel detail, cockpit interior, weapon hardpoints, unit markings'
+  };
+  var modeKw=modeStyleMap[curMode]||'technical detailed infographic, professional collector reference';
+  var hobbyKw=hobbyStyleMap[curHobby]||'detailed scale model collector reference';
+  return hobbyKw+', '+modeKw;
+}
+
+function getHobbyStyleEn(){
+  var modeMap={
+    iso_hero:'45-degree isometric 3D hero shot, dramatic angle, studio lighting, ultra detailed product photography style, all sides visible, depth and dimension',
+    blueprint_4view:'technical 4-view orthographic blueprint — front, rear, side, top views on single sheet, pure white background, precise measurement annotations, engineering drawing style',
+    exploded_kit:'exploded parts diagram, all components floating and separated, numbered part callouts, runner and sprue layout visible, assembly instruction style, white background',
+    spec_sheet:'official specification sheet layout, product catalog style, multiple angles, clean typography for specs table, professional collector reference card',
+    closeup_detail:'extreme close-up macro detail shot, panel line engraving, decal texture, surface detail, joint mechanism visible, sharp focus photorealistic',
+    diorama_scene:'scale model in detailed miniature diorama scene, realistic environment, atmospheric lighting, museum display quality',
+    comparison_scale:'scale comparison chart, multiple sizes/grades side by side, size reference markers, proportion comparison, collector reference guide',
+    cutaway_inner:'technical cutaway revealing inner frame, internal mechanism, engine bay, cockpit, suspension detail through transparent outer shell',
+    photoshoot_style:'professional collector photoshoot style, studio product photography, dramatic lighting, magazine quality, showcase display'
+  };
+  return modeMap[curMode]||'professional technical detailed illustration, ultra detailed, collector reference quality';
+}
+
+function doGen(){
+  var obj=document.getElementById('objIn').value.trim();
+  if(!obj){alert('Masukkan nama model/objek terlebih dahulu!');return;}
+  var ml=getModeLabel(),al=getAudLabel(),tl=getTypeLabel();
+  var arrows=getArrows();
+  var style=getStyle();
+  var ll=curLang==='en'?'in English':curLang==='both'?'bilingual (Bahasa Indonesia and English side by side)':'in Bahasa Indonesia';
+  var lls=curLang==='en'?'English labels':curLang==='both'?'bilingual ID+EN':'Bahasa Indonesia labels';
+  var specsText=curType==='hobby'?getActiveSpecsText():'';
+  var hobbyExtra=curType==='hobby'?`
+Hobby Category: ${tl}
+Collector Specs to display (${ll}):
+${specsText}
+Hobby-specific details: ${HOBBY_TYPES[curHobby]?HOBBY_TYPES[curHobby].specHints:''}` : '';
+
+  var nb2=`Professional technical infographic of [${obj}].
+Category: ${tl} | Visual Style: ${ml} | Audience: ${al}
+Background: ${curBgLabel} — ${curBgPrompt}
+Output: ${curSzPrompt}
+Print Quality: ${curDpiPrompt}
+Label Language: ${ll}
+${hobbyExtra}
+
+Visual Style: ${style.en}
+
+Annotations (${ll}) embedded directly in image:
+- Model name and series in title box (top-left)
+- 8-12 color-coded callout boxes for all major parts/components
+- Color-coded directional arrows: ${arrows}
+- Dimension callouts with precise measurements and scale ratio
+- Material callouts (what each part is made of)
+- Technical legend / key at bottom
+- Inset detail zoom or cross-section diagram
+
+Use Gemini world knowledge for model accuracy — recognize actual product details.
+Text: all labels ${ll}, legible, correctly spelled.
+Resolution: ${curSzW}×${curSzH} px at ${curDpi} DPI. No watermark.
+Negative: ${style.neg}, low quality, blurry, pixelated, watermark`;
+
+  // MJ v7: build keyword-first, concise prompt — no --q (deprecated), no pixel dimensions in prompt body
+  var mjSubject=obj.toUpperCase();
+  var mjStyle=getHobbyMJStyle();
+  var mjBg=curBgLabel==='White / Studio Clean'?'pure white background':
+           curBgLabel==='Dark Showroom'?'dark dramatic background':
+           curBgLabel==='Blueprint Technical'?'dark navy blueprint background':
+           curBgLabel==='Space / Cosmic'?'deep space background':
+           curBgLabel==='Workshop Desk'?'workshop desk background':
+           curBgLabel==='Carbon Fiber'?'carbon fiber background':
+           curBgLabel==='Light Gray Gradient'?'soft gray gradient background':
+           'diorama miniature scene background';
+  var mjArrows='color-coded annotation arrows';
+  var mj=`${mjSubject}, ${mjStyle}, technical infographic collector poster, ${mjBg}, engineering callout boxes with labels, color-coded annotation arrows, title box top-left, spec sheet overlay, measurement dimensions, scale ratio labels, panel line detail, ultra sharp linework, photorealistic product render, professional collector reference ${curSzAr} --v 7 --stylize 850 --style raw
+
+--no cartoon, blurry text, watermark, low quality, flat design, toy aesthetic`;
+
+
+  var dalle=`Create a professional ultra-detailed technical collector infographic of "${obj}".
+
+Category: ${tl} | Style: ${ml} | For: ${al}
+Background: ${curBgLabel} (${curBgPrompt})
+Output: ${curSzPrompt} | ${curDpi} DPI — ${curDpiPrompt}
+Label language: ${ll}
+${curType==='hobby'?'Collector specs: '+specsText:''}
+
+VISUAL: ${style.en}
+
+ANNOTATIONS (${ll}):
+- Title box top-left: "${obj}" with series/grade info
+- 8-12 color-coded callout boxes for all major parts
+- Color-coded arrows: ${arrows}
+- Precise measurements, scale ratio, material labels
+- Technical legend at bottom
+- Detail zoom inset for key feature
+
+Photorealistic accuracy. Use real product reference. No watermark.`;
+
+  var sd=`ultra detailed technical collector infographic ${obj}, ${tl.toLowerCase()}, ${ml.toLowerCase()}, ${style.en}, ${curBgPrompt}, ${lls} annotations, color coded arrows, callout boxes, measurement labels, scale ratio, material callouts, title box, ${curSzW}x${curSzH} px, ${curDpi} dpi, print quality, no pixelation, ultra sharp, professional collector reference
+
+Negative: ${style.neg}, low quality, blurry, pixelated, watermark, simple, flat`;
+
+  var native=curLang==='en'?
+`Create a professional ultra-detailed collector technical infographic of "${obj}".
+Category: ${tl} | Style: ${ml} | Audience: ${al}
+Background: ${curBgLabel}
+Size: ${curSzPrompt}
+DPI: ${curDpi} — ${parseInt(curDpi)>=300?'PRINT READY, no pixelation guaranteed':'consider upgrading to 300 DPI for print'}
+Labels: All in English
+
+COLLECTOR SPECS (visible in image, English):
+${specsText||'Full technical specifications and component labels'}
+
+VISUAL STYLE: ${style.en}
+
+ANNOTATIONS IN ENGLISH:
+- Title box top-left: "${obj}" + series/grade
+- 8-12 color-coded callout boxes for all major parts
+- Color arrows: ${arrows}
+- Dimensions, scale ratio, material labels
+- Technical legend at bottom | Detail zoom inset
+
+Output: ${curSzW}×${curSzH} pixels @ ${curDpi} DPI. No watermark.`
+  :
+`Buat infografis teknis kolektor ultra-detail "${obj}".
+Kategori: ${tl} | Gaya: ${ml} | Untuk: ${al}
+Background: ${curBgLabel}
+Ukuran: ${curSzPrompt}
+DPI: ${curDpi} — ${parseInt(curDpi)>=300?'PRINT READY — tidak akan pecah saat dicetak':'pertimbangkan naik ke 300 DPI untuk print'}
+Bahasa Label: ${curLang==='both'?'Bilingual Bahasa Indonesia + English berdampingan':'Bahasa Indonesia'}
+
+SPESIFIKASI KOLEKTOR (tampil di gambar, ${curLang==='both'?'bilingual':'Bahasa Indonesia'}):
+${specsText||'Spesifikasi teknis lengkap dan label komponen'}
+
+GAYA VISUAL: ${style.en}
+Photorealistis, sangat detail, presisi tinggi. Gunakan referensi produk nyata.
+
+ANOTASI (${curLang==='both'?'bilingual ID+EN':'Bahasa Indonesia'}, langsung di gambar):
+- Kotak judul kiri atas: "${obj}" + info seri/grade
+- 8-12 kotak label berwarna untuk semua komponen utama
+- Panah berkode warna: ${HOBBY_TYPES[curHobby]?HOBBY_TYPES[curHobby].arrows.id:arrows}
+- Dimensi, rasio skala, label material
+- Legenda teknis di bawah | Zoom detail inset
+
+Output: ${curSzW}×${curSzH} piksel @ ${curDpi} DPI. Tanpa watermark.`;
+
+  function mkBox(tcId,tagColor,tagLabel,badge,bC,bBg,preId,txt){
+    document.getElementById(tcId).innerHTML=`<div class="pb">
+      <div class="pb-top">
+        <span class="pb-tag" style="background:${tagColor}">${tagLabel}</span>
+        ${badge?`<span class="pb-b" style="background:${bBg};color:${bC}">${badge}</span>`:''}
+        <span class="pb-b" style="background:var(--color-background-secondary);color:var(--color-text-secondary);font-family:monospace;">${curSzW}×${curSzH}px · ${curDpi}DPI · ${curLang==='en'?'EN':curLang==='both'?'ID+EN':'ID'}</span>
+        <button class="cp-btn" id="${preId}-btn" onclick="cp('${preId}','${preId}-btn')">Copy</button>
+      </div>
+      <pre class="pp" id="${preId}">${esc(txt)}</pre>
+    </div>`;
+  }
+  mkBox('tc-nb2','#d97706','NANO BANANA 2','Gemini 3.1 Flash','#92400e','#fef3c7','nb2-p',nb2);
+  mkBox('tc-mj','#5865F2','MIDJOURNEY','v7 --style raw','#3c3799','#e8e9ff','mj-p',mj);
+  mkBox('tc-dalle','#10a37f','DALL-E / GPT-4o','','','','dalle-p',dalle);
+  mkBox('tc-sd','#e05c30','STABLE DIFFUSION','SDXL','#7c2d12','#fff7ed','sd-p',sd);
+  var nativeLabel=curLang==='en'?'🇬🇧 English Prompt':curLang==='both'?'🌐 Bilingual':'🇮🇩 Bahasa Indonesia';
+  mkBox('tc-native',curLang==='en'?'#0d6efd':curLang==='both'?'#6f42c1':'#374151',nativeLabel,'','','','native-p',native);
+
+  // Generate Adobe Stock metadata
+  var meta=buildAdobeMetadata(obj,tl,ml);
+  document.getElementById('metaOutput').textContent=meta;
+  document.getElementById('metaBlock').style.display='block';
+}
+function cp(id,btnId){var t=document.getElementById(id).innerText;var b=document.getElementById(btnId);navigator.clipboard.writeText(t).then(()=>{b.textContent='✓ Copied';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy';b.classList.remove('ok');},2000);});}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function buildAdobeMetadata(obj,tl,ml){
+  var kwMap={
+    gundam:['gundam infographic','mobile suit','bandai model kit','mecha illustration','technical diagram','robot model','inner frame','HG MG RG PG','anime collector','scale model'],
+    diecast:['diecast model','scale car model','die-cast collector','miniature car','scale vehicle','collector infographic','metal model car','toy car technical'],
+    hotwheels:['hot wheels','hot wheels infographic','hot wheels collector','car culture series','diecast 1:64','hot wheels premium','real riders wheels','hot wheels technical diagram','miniature car collector'],
+    plastic:['plastic model kit','scale model infographic','assembly kit','tamiya model','hasegawa model','revell kit','model builder','scale model reference','exploded view model'],
+    military_vehicle:['tamiya military','tank model 1:35','armor model kit','military vehicle infographic','tank technical diagram','WWII tank','armor scale model','panzer model','military collector reference'],
+    lego:['lego infographic','lego technic','lego set diagram','building blocks','lego creator','lego speed champions','lego architecture','brick toy collector','lego pieces count'],
+    starwars:['star wars model','star wars ship infographic','x-wing fighter','millennium falcon','star wars collector','bandai star wars','fine molds star wars','sci-fi model kit','star wars scale'],
+    figure:['action figure infographic','collector figure','nendoroid figma','marvel figure','dc figure','anime figure','articulated figure','PVC figure collector','figure scale reference'],
+    retroconsole:['retro game console','vintage gaming','retro gaming infographic','NES nintendo infographic','game boy technical','retro collector','vintage console','80s gaming','90s gaming','classic console technical diagram'],
+    military:['military aircraft model','warship model','military scale model','fighter jet infographic','battleship technical','1:72 aircraft','military aviation','model aircraft collector']
+  };
+  var baseKw=['technical infographic','collector reference','detailed illustration','scale model diagram','AI generated illustration','educational poster','annotated diagram','exploded view','cutaway diagram'];
+  var hobbyKw=kwMap[curHobby]||[];
+  var objWords=obj.toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(' ').filter(w=>w.length>2).slice(0,5);
+  var allKw=[...new Set([...hobbyKw,...objWords,...baseKw])].slice(0,35);
+  var title=obj.substring(0,65)+' — Technical Infographic Collector Reference | '+tl;
+  if(title.length>70) title=title.substring(0,67)+'...';
+  return 'TITLE (maks 70 char):\n'+title+'\n\nKEYWORDS ('+allKw.length+' kata — paste ke Adobe Stock):\n'+allKw.join(', ')+'\n\nCATEGORY: Illustrations & Vectors\nSUB-CATEGORY: Education\nCHECKLIST:\n☑ Centang "Created using generative AI tools"\n☑ Centang "People and Property are fictional" (jika ada wajah/properti)\n☑ Submit sebagai: Illustration (bukan Photo)';
+}
+
+function copyMeta(){
+  var t=document.getElementById('metaOutput').innerText;
+  var b=document.getElementById('meta-copy-btn');
+  navigator.clipboard.writeText(t).then(()=>{b.textContent='✓ Copied!';b.classList.add('ok');setTimeout(()=>{b.textContent='Copy Metadata';b.classList.remove('ok');},2500);});
+}
+
+setType('hobby',document.querySelector('#typeSeg .sb.on'));
+setFmt('digital',document.querySelector('#fmtTabs .ft.on'));
+selDpi(document.querySelector('#dpiGrid .sz-opt:nth-child(3)'),'300','300 DPI, professional print standard, no pixelation');
+</script>

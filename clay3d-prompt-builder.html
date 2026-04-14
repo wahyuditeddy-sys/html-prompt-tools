@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clay 3D Prompt Builder — Adobe Stock</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --clay1: #F9E4D4; --clay2: #D4EAF9; --clay3: #D4F9E4;
+  --clay4: #F9F4D4; --clay5: #EDD4F9;
+  --ink: #1C1A18; --ink2: #5A5650; --ink3: #9A9690;
+  --bg: #FAF8F5; --bg2: #FFFFFF; --bg3: #F3F0EB; --bg4: #EBE8E2;
+  --border: #E0DDD8; --border2: #CCC9C3;
+  --accent: #E8652A; --accent2: #2A8AE8; --accent3: #2AE87A;
+  --shadow: rgba(28,26,24,0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* subtle dot grid */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none; z-index: 0; opacity: .5;
+}
+
+.app { position: relative; z-index: 1; max-width: 1140px; margin: 0 auto; padding: 0 24px 80px; }
+
+/* HEADER */
+header {
+  padding: 36px 0 28px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.hd-left {}
+.hd-eyebrow {
+  font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 6px; font-family: 'JetBrains Mono', monospace;
+}
+.hd-title {
+  font-size: 32px; font-weight: 800; letter-spacing: -.03em; line-height: 1.1;
+  color: var(--ink);
+}
+.hd-title em { font-style: italic; font-weight: 300; color: var(--ink2); }
+.hd-sub { font-size: 13px; color: var(--ink3); margin-top: 6px; font-weight: 400; }
+.hd-badge {
+  padding: 7px 14px; border-radius: 6px;
+  background: var(--clay1); color: var(--accent);
+  font-size: 11px; font-weight: 600; border: 1px solid #F0C4A0;
+  font-family: 'JetBrains Mono', monospace; letter-spacing: .04em;
+}
+
+/* THEME PICKER */
+.theme-section { margin-bottom: 28px; }
+.sec-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--ink3); margin-bottom: 12px;
+}
+.theme-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+}
+@media(max-width:700px){ .theme-grid { grid-template-columns: repeat(3,1fr); } }
+@media(max-width:460px){ .theme-grid { grid-template-columns: 1fr 1fr; } }
+
+.theme-card {
+  border: 1.5px solid var(--border); border-radius: 14px;
+  padding: 16px 12px 14px; cursor: pointer; text-align: center;
+  transition: all .2s; background: var(--bg2);
+  position: relative; overflow: hidden;
+}
+.theme-card::before {
+  content: ''; position: absolute; inset: 0;
+  opacity: 0; transition: opacity .2s;
+}
+.theme-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.theme-card.active { border-width: 2px; }
+
+.tc-swatch {
+  width: 40px; height: 40px; border-radius: 50%;
+  margin: 0 auto 10px; display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.tc-name { font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.tc-sub { font-size: 10px; color: var(--ink3); }
+.tc-pip {
+  width: 6px; height: 6px; border-radius: 50%;
+  margin: 8px auto 0; opacity: 0; transition: opacity .2s;
+}
+.theme-card.active .tc-pip { opacity: 1; }
+
+/* Fintech */
+.tc-fintech { border-color: #F0C4A0; }
+.tc-fintech.active { border-color: var(--accent); background: #FFF5F0; }
+.tc-fintech .tc-swatch { background: var(--clay1); }
+.tc-fintech .tc-pip { background: var(--accent); }
+/* Health */
+.tc-health.active { border-color: #2AE87A; background: #F0FFF6; }
+.tc-health .tc-swatch { background: var(--clay3); }
+.tc-health .tc-pip { background: #2AE87A; }
+/* Tech */
+.tc-tech.active { border-color: var(--accent2); background: #F0F6FF; }
+.tc-tech .tc-swatch { background: var(--clay2); }
+.tc-tech .tc-pip { background: var(--accent2); }
+/* Food */
+.tc-food.active { border-color: #E8A82A; background: #FFFBF0; }
+.tc-food .tc-swatch { background: var(--clay4); }
+.tc-food .tc-pip { background: #E8A82A; }
+/* Nature */
+.tc-nature.active { border-color: #8A2AE8; background: #FAF0FF; }
+.tc-nature .tc-swatch { background: var(--clay5); }
+.tc-nature .tc-pip { background: #8A2AE8; }
+
+/* MAIN GRID */
+.main-grid {
+  display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start;
+}
+@media(max-width:860px){ .main-grid { grid-template-columns: 1fr; } }
+
+/* PANEL */
+.panel {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 18px; overflow: hidden; margin-bottom: 16px;
+}
+.panel-head {
+  padding: 14px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg3);
+}
+.panel-title { font-size: 12px; font-weight: 700; color: var(--ink); letter-spacing: .01em; }
+.panel-body { padding: 18px 20px; }
+
+/* TABS */
+.tab-strip {
+  display: flex; gap: 2px; background: var(--bg3);
+  padding: 3px; border-radius: 10px; margin-bottom: 18px; width: fit-content;
+}
+.tab-btn {
+  padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 600;
+  cursor: pointer; border: none; background: transparent;
+  color: var(--ink3); font-family: 'Outfit', sans-serif;
+  transition: all .15s; letter-spacing: .01em;
+}
+.tab-btn:hover { color: var(--ink); }
+.tab-btn.on { background: var(--bg2); color: var(--ink); box-shadow: 0 1px 4px var(--shadow); }
+
+/* PROMPT DISPLAY */
+.prompt-output {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 18px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+  line-height: 1.9; color: var(--ink);
+  white-space: pre-wrap; word-break: break-word;
+  min-height: 220px;
+  transition: background .2s;
+}
+
+/* VARIANT CARDS */
+.var-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media(max-width:600px){ .var-grid { grid-template-columns: 1fr; } }
+.var-card {
+  border: 1px solid var(--border); border-radius: 12px;
+  padding: 14px; transition: border-color .15s; background: var(--bg2);
+}
+.var-card:hover { border-color: var(--border2); }
+.var-num { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink3); margin-bottom: 5px; letter-spacing: .08em; }
+.var-name { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.var-note { font-size: 11px; color: var(--ink3); line-height: 1.5; margin-bottom: 10px; }
+
+/* SUBJECT LIST */
+.subjects-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+}
+.subj-item {
+  display: flex; align-items: center; gap: 8px; padding: 7px 0;
+  border-bottom: 1px solid var(--border); font-size: 12px; color: var(--ink2);
+  font-family: 'JetBrains Mono', monospace;
+}
+.subj-item:nth-last-child(-n+2) { border-bottom: none; }
+.subj-num { font-size: 10px; color: var(--ink3); min-width: 22px; }
+
+/* METADATA */
+.meta-row {
+  display: grid; grid-template-columns: 72px 1fr; gap: 8px;
+  padding: 10px 0; border-bottom: 1px solid var(--border); align-items: start;
+  font-size: 12px;
+}
+.meta-row:last-child { border-bottom: none; }
+.meta-key { font-weight: 600; color: var(--ink3); font-size: 10px; padding-top: 2px; text-transform: uppercase; letter-spacing: .06em; }
+.meta-val { color: var(--ink); line-height: 1.6; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+.kw-box { display: flex; flex-wrap: wrap; gap: 4px; }
+.kw-tag {
+  padding: 2px 8px; border-radius: 4px; font-size: 10px;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--ink3); font-family: 'JetBrains Mono', monospace;
+}
+
+/* DNA BOX */
+.dna-box {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 16px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  line-height: 1.85; color: var(--ink2);
+}
+.dna-highlight { color: var(--accent2); font-weight: 500; }
+
+/* RIGHT PANEL */
+.info-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 18px 20px; margin-bottom: 14px;
+}
+.info-title { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 12px; }
+.stat-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12px;
+}
+.stat-row:last-child { border-bottom: none; }
+.stat-label { color: var(--ink3); }
+.stat-val { font-weight: 600; color: var(--ink); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+.stat-val.green { color: #1A7A3C; }
+.stat-val.orange { color: var(--accent); }
+.stat-val.blue { color: var(--accent2); }
+
+/* ALERT */
+.alert {
+  padding: 10px 14px; border-radius: 10px; font-size: 12px;
+  line-height: 1.6; margin-bottom: 12px;
+}
+.alert-orange { background: #FFF5F0; border-left: 3px solid var(--accent); color: #7A3010; border-radius: 0 10px 10px 0; }
+.alert-blue { background: #F0F6FF; border-left: 3px solid var(--accent2); color: #103A7A; border-radius: 0 10px 10px 0; }
+.alert-green { background: #F0FFF6; border-left: 3px solid #2AE87A; color: #0A5A2A; border-radius: 0 10px 10px 0; }
+
+/* BTNS */
+.btn {
+  padding: 9px 18px; border-radius: 10px; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: 'Outfit', sans-serif; letter-spacing: .02em;
+  transition: all .15s; border: 1px solid transparent;
+}
+.btn-ink { background: var(--ink); color: #FAF8F5; }
+.btn-ink:hover { opacity: .85; }
+.btn-outline { background: var(--bg2); color: var(--ink); border-color: var(--border2); }
+.btn-outline:hover { border-color: var(--ink); }
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-accent:hover { opacity: .9; }
+.btn-sm { padding: 5px 12px; font-size: 11px; border-radius: 7px; }
+
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 28px; right: 28px; z-index: 999;
+  background: var(--ink); color: #FAF8F5;
+  padding: 11px 20px; border-radius: 10px;
+  font-size: 12px; font-weight: 600; font-family: 'Outfit', sans-serif;
+  transform: translateY(12px); opacity: 0; transition: all .25s;
+  pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* COLOR PILLS */
+.palette-strip { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.pal-swatch {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1.5px solid rgba(0,0,0,.1); flex-shrink: 0;
+}
+.pal-label { font-size: 10px; color: var(--ink3); font-family: 'JetBrains Mono', monospace; }
+
+/* HEADER STATS */
+.stats-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  margin-bottom: 28px;
+}
+@media(max-width:580px){ .stats-strip { grid-template-columns: repeat(2,1fr); } }
+.stat-box {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 14px; padding: 14px 16px;
+}
+.sb-label { font-size: 10px; color: var(--ink3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; font-weight: 600; }
+.sb-val { font-size: 24px; font-weight: 800; color: var(--ink); font-family: 'JetBrains Mono', monospace; }
+.sb-sub { font-size: 10px; color: var(--ink3); margin-top: 2px; }
+
+/* STEP INDICATOR */
+.step-bar { display: flex; gap: 4px; margin-bottom: 20px; }
+.step {
+  flex: 1; height: 3px; border-radius: 2px;
+  background: var(--border); transition: background .3s;
+}
+.step.done { background: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<header>
+  <div class="hd-left">
+    <div class="hd-eyebrow">Adobe Stock · Q2 2026 Prediksi Naik</div>
+    <div class="hd-title">Clay 3D <em>Prompt</em> Builder</div>
+    <div class="hd-sub">5 tema · 24 subjects per tema · prompt + metadata + style DNA siap pakai</div>
+  </div>
+  <div class="hd-badge">Niche Trend 2026</div>
+</header>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="stat-box"><div class="sb-label">Tema tersedia</div><div class="sb-val">5</div><div class="sb-sub">fintech · health · tech · food · nature</div></div>
+  <div class="stat-box"><div class="sb-label">Subjects per tema</div><div class="sb-val">24</div><div class="sb-sub">siap paste ke Vector Studio</div></div>
+  <div class="stat-box"><div class="sb-label">Variasi per tema</div><div class="sb-val">4</div><div class="sb-sub">main + dark + minimal + vibrant + transparent</div></div>
+  <div class="stat-box"><div class="sb-label">Kompetisi di Adobe</div><div class="sb-val">Low</div><div class="sb-sub">supply masih sangat sedikit</div></div>
+</div>
+
+<!-- THEME PICKER -->
+<div class="theme-section">
+  <div class="sec-label">Pilih tema</div>
+  <div class="theme-grid" id="themeGrid">
+    <div class="theme-card tc-fintech active" data-theme="fintech" onclick="switchTheme('fintech',this)">
+      <div class="tc-swatch" style="background:#F9E4D4">💰</div>
+      <div class="tc-name">Fintech</div>
+      <div class="tc-sub">Payment & banking</div>
+      <div class="tc-pip"></div>
+    </div>
+    <div class="theme-card tc-health" data-theme="health" onclick="switchTheme('health',this)">
+      <div class="tc-swatch" style="background:#D4F9E4">🏥</div>
+      <div class="tc-name">Health</div>
+      <div class="tc-sub">Wellness & medical</div>
+      <div class="tc-pip"></div>
+    </div>
+    <div class="theme-card tc-tech" data-theme="tech" onclick="switchTheme('tech',this)">
+      <div class="tc-swatch" style="background:#D4EAF9">🤖</div>
+      <div class="tc-name">AI & Tech</div>
+      <div class="tc-sub">Digital & AI tools</div>
+      <div class="tc-pip"></div>
+    </div>
+    <div class="theme-card tc-food" data-theme="food" onclick="switchTheme('food',this)">
+      <div class="tc-swatch" style="background:#F9F4D4">☕</div>
+      <div class="tc-name">Food & Cafe</div>
+      <div class="tc-sub">Beverage & cuisine</div>
+      <div class="tc-pip"></div>
+    </div>
+    <div class="theme-card tc-nature" data-theme="nature" onclick="switchTheme('nature',this)">
+      <div class="tc-swatch" style="background:#EDD4F9">🌿</div>
+      <div class="tc-name">Nature & Eco</div>
+      <div class="tc-sub">Plants & wildlife</div>
+      <div class="tc-pip"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PALETTE PREVIEW -->
+<div style="margin-bottom:24px">
+  <div class="sec-label">Color DNA aktif</div>
+  <div class="palette-strip" id="paletteStrip"></div>
+</div>
+
+<!-- STEP PROGRESS -->
+<div class="step-bar" id="stepBar">
+  <div class="step done" id="step1"></div>
+  <div class="step" id="step2"></div>
+  <div class="step" id="step3"></div>
+  <div class="step" id="step4"></div>
+</div>
+
+<div class="main-grid">
+
+  <!-- LEFT: BUILDER -->
+  <div>
+
+    <!-- TABS -->
+    <div class="tab-strip">
+      <button class="tab-btn on" onclick="switchTab('prompt',this)">Main Prompt</button>
+      <button class="tab-btn" onclick="switchTab('variants',this)">4 Variasi</button>
+      <button class="tab-btn" onclick="switchTab('subjects',this)">Subjects</button>
+      <button class="tab-btn" onclick="switchTab('dna',this)">Style DNA</button>
+      <button class="tab-btn" onclick="switchTab('meta',this)">Metadata</button>
+    </div>
+
+    <!-- TAB: MAIN PROMPT -->
+    <div id="tab-prompt">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title" id="promptLabel">Clay 3D Fintech & Payment Icon Set</span>
+          <button class="btn btn-ink btn-sm" onclick="copyMain()">Copy prompt</button>
+        </div>
+        <div class="panel-body">
+          <div class="prompt-output" id="mainPromptBox"></div>
+          <div class="btn-row">
+            <button class="btn btn-accent" onclick="copyMain()">Copy main prompt</button>
+            <button class="btn btn-outline" onclick="copyAllBundle()">Copy full bundle (all 4 vars)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: VARIANTS -->
+    <div id="tab-variants" style="display:none">
+      <div class="alert alert-blue">Klik "Copy" pada variasi yang ingin kamu generate sebagai batch terpisah. Setiap variasi berbasis main prompt yang sama.</div>
+      <div class="var-grid" id="varGrid"></div>
+    </div>
+
+    <!-- TAB: SUBJECTS -->
+    <div id="tab-subjects" style="display:none">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">24 subjects — paste ke Vector Studio v5 tag input</span>
+          <button class="btn btn-ink btn-sm" onclick="copySubjects()">Copy semua</button>
+        </div>
+        <div class="panel-body">
+          <div class="subjects-grid" id="subjectsGrid"></div>
+          <div class="btn-row">
+            <button class="btn btn-accent" onclick="copySubjects()">Copy subject list</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: DNA -->
+    <div id="tab-dna" style="display:none">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">Style DNA — kunci konsistensi antar batch</span>
+          <button class="btn btn-ink btn-sm" onclick="copyDNA()">Copy DNA</button>
+        </div>
+        <div class="panel-body">
+          <div class="alert alert-blue" style="margin-bottom:14px">Paste Style DNA ini ke field "Style DNA" di Vector Studio v5 agar batch ke-2, ke-3 tetap konsisten secara visual.</div>
+          <div class="dna-box" id="dnaBox"></div>
+          <div class="btn-row">
+            <button class="btn btn-accent" onclick="copyDNA()">Copy Style DNA</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: METADATA -->
+    <div id="tab-meta" style="display:none">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">Adobe Stock metadata — siap upload</span>
+          <button class="btn btn-ink btn-sm" onclick="copyMeta()">Copy all metadata</button>
+        </div>
+        <div class="panel-body">
+          <div class="meta-row">
+            <div class="meta-key">Title</div>
+            <div class="meta-val" id="mTitle"></div>
+          </div>
+          <div class="meta-row">
+            <div class="meta-key">Description</div>
+            <div class="meta-val" id="mDesc"></div>
+          </div>
+          <div class="meta-row">
+            <div class="meta-key">Category</div>
+            <div class="meta-val">Graphic Resources &gt; Icons &amp; Pictograms</div>
+          </div>
+          <div class="meta-row">
+            <div class="meta-key">Keywords</div>
+            <div class="kw-box" id="mKw"></div>
+          </div>
+          <div class="meta-row">
+            <div class="meta-key">AI flag</div>
+            <div class="meta-val" style="color:var(--accent);font-weight:600">Generative AI — wajib declare saat upload</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-accent" onclick="copyMeta()">Copy all metadata</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end left -->
+
+  <!-- RIGHT -->
+  <div>
+
+    <div class="info-card">
+      <div class="info-title">Kenapa Clay 3D sekarang</div>
+      <div class="stat-row"><div class="stat-label">Supply di Adobe Stock</div><div class="stat-val green">Sangat rendah</div></div>
+      <div class="stat-row"><div class="stat-label">Adobe 2026 Trend</div><div class="stat-val blue">Multisensory</div></div>
+      <div class="stat-row"><div class="stat-label">Demand dari designer</div><div class="stat-val orange">Naik</div></div>
+      <div class="stat-row"><div class="stat-label">Kompetisi</div><div class="stat-val green">Rendah</div></div>
+      <div class="stat-row"><div class="stat-label">Style life cycle</div><div class="stat-val">2–3 tahun</div></div>
+      <div class="stat-row"><div class="stat-label">Best background</div><div class="stat-val">Transparent + White</div></div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-title">Strategy upload per tema</div>
+      <div class="stat-row"><div class="stat-label">Fintech</div><div class="stat-val blue">Minggu 1</div></div>
+      <div class="stat-row"><div class="stat-label">Health</div><div class="stat-val blue">Minggu 2</div></div>
+      <div class="stat-row"><div class="stat-label">AI & Tech</div><div class="stat-val blue">Minggu 3</div></div>
+      <div class="stat-row"><div class="stat-label">Food & Cafe</div><div class="stat-val blue">Minggu 4</div></div>
+      <div class="stat-row"><div class="stat-label">Nature & Eco</div><div class="stat-val blue">Minggu 5</div></div>
+      <div class="stat-row"><div class="stat-label">Total icons</div><div class="stat-val orange">120 icons</div></div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-title">Checklist sebelum upload</div>
+      <div id="checklist"></div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-title">Top keywords clay 3D</div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:4px" id="topKw"></div>
+    </div>
+
+  </div>
+
+</div><!-- end main grid -->
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const THEMES = {
+  fintech: {
+    label: 'Clay 3D Fintech & Payment Icon Set',
+    theme: 'fintech and digital payment',
+    swatches: ['#B2EBD4','#C8B8F0','#F4A68C','#FFFFFF'],
+    palLabels: ['Mint #B2EBD4','Lavender #C8B8F0','Coral accent #F4A68C','White bg'],
+    subjects: ['crypto wallet','bitcoin coin','stock chart rising','bank building','credit card tap','QR code payment','gold bar stack','piggy bank savings','investment graph','loan document','insurance shield','forex exchange','yield farm plant','DeFi protocol node','NFT digital frame','digital vault lock','wire transfer arrow','compound interest loop','tax return document','portfolio pie chart','fund manager briefcase','blockchain chain link','savings glass jar','financial report clipboard'],
+    dna: 'soft clay 3D render style, matte pastel surface texture with subtle specular highlight top-left, rounded puffy volumetric shapes, no sharp edges anywhere, same light source direction top-left 45°, consistent soft ambient shadow bottom-right, same scale and visual weight across all icons, pastel mint #B2EBD4 and soft lavender #C8B8F0 palette with coral accent #F4A68C, white background, icons feel tactile and touchable like molded clay',
+    keywords: ['clay 3D icons','3D render icons','fintech icons','payment icons','crypto icons','banking icons','financial icons','clay render','pastel 3D','soft render','icon set','vector icons','business icons','digital payment','investment icons','stock icons','white background','transparent background','commercial use','SVG icons','Adobe Stock','icon pack','modern icons','app icons','UI icons','blockchain icons','wallet icons','fintech clipart','3D clipart','pastel icons']
+  },
+  health: {
+    label: 'Clay 3D Health & Wellness Icon Set',
+    theme: 'health wellness and medical',
+    swatches: ['#B8D9F0','#A8E6CF','#F4B8C8','#FFFFFF'],
+    palLabels: ['Pastel blue #B8D9F0','Mint green #A8E6CF','Blush pink #F4B8C8','White bg'],
+    subjects: ['stethoscope','heart rate monitor','DNA double helix','pill capsule','syringe vaccine','medical cross plus','brain organ','lung pair','blood drop test','ambulance vehicle','hospital bed','x-ray scan frame','surgical scissors','microscope lab','first aid kit box','tooth molar','eye pupil','kidney bean organ','liver organ','spine column','ECG waveform','nutrition apple','yoga lotus pose','meditation figure'],
+    dna: 'soft clay 3D render style, matte pastel surface with gentle specular highlight top-left, rounded puffy volumetric medical shapes, no sharp edges, consistent top-left 45° light source, same soft ambient shadow bottom-right, pastel blue #B8D9F0 and soft green #A8E6CF palette with blush pink #F4B8C8 accent, clinical yet warm and approachable aesthetic, white background, tactile molded clay texture, same scale across all icons',
+    keywords: ['clay 3D icons','health icons','medical icons','wellness icons','3D render icons','healthcare icons','clay render','pastel 3D','soft render','icon set','vector icons','medical clipart','fitness icons','pharmacy icons','hospital icons','white background','transparent background','commercial use','SVG icons','Adobe Stock','icon pack','app icons','UI icons','doctor icons','body organ icons','nursing icons','healthcare clipart','wellness clipart','3D medical']
+  },
+  tech: {
+    label: 'Clay 3D AI & Tech Icon Set',
+    theme: 'AI technology and digital tools',
+    swatches: ['#A8C8F0','#C4B0E8','#8EDDD4','#FFFFFF'],
+    palLabels: ['Electric blue #A8C8F0','Soft purple #C4B0E8','Teal accent #8EDDD4','White bg'],
+    subjects: ['AI brain chip','robot head','neural network nodes','cloud server rack','smartphone device','laptop computer','wifi signal','database cylinder','CPU processor','GPU card','code brackets','API connector','algorithm flowchart','machine learning gear','data chart bar','security shield lock','VR headset','drone quadcopter','satellite dish','smart home hub','fingerprint scanner','voice wave','3D printer','electric circuit board'],
+    dna: 'soft clay 3D render style, matte cool-toned pastel surface, rounded puffy volumetric tech shapes, electric blue #A8C8F0 and soft purple #C4B0E8 palette with teal #8EDDD4 accent, subtle specular highlight top-left, same ambient shadow bottom-right, consistent scale and visual weight, no sharp corners, white background, icons feel approachable yet futuristic, same molded clay texture throughout all icons',
+    keywords: ['clay 3D icons','tech icons','AI icons','technology icons','3D render icons','digital icons','clay render','pastel 3D','soft render','icon set','vector icons','AI clipart','robot icons','computer icons','app icons','UI icons','white background','transparent background','commercial use','SVG icons','Adobe Stock','icon pack','website icons','startup icons','software icons','cloud icons','data icons','cybersecurity icons','AI tech clipart','3D tech icons']
+  },
+  food: {
+    label: 'Clay 3D Food & Cafe Icon Set',
+    theme: 'food beverage and cafe culture',
+    swatches: ['#F5E6C8','#E8A87C','#F0D060','#FFFFFF'],
+    palLabels: ['Warm cream #F5E6C8','Terracotta #E8A87C','Golden yellow #F0D060','White bg'],
+    subjects: ['coffee cup steam','espresso shot','croissant pastry','cake slice','burger bun','pizza slice','salad bowl','avocado half','sushi roll','ramen bowl','matcha latte','smoothie cup','donut ring','waffle stack','pancake stack','french fries','ice cream scoop','boba tea cup','croissant basket','sandwich wrap','pasta bowl','taco shell','cupcake frosted','juice glass'],
+    dna: 'soft clay 3D render style, warm pastel surface texture, rounded puffy volumetric food shapes that look delicious and tactile, warm cream #F5E6C8 and terracotta #E8A87C palette with golden yellow #F0D060 accent, consistent top-left light source, same soft shadow bottom-right, all food items look appetizing and slightly oversized cute proportions, white background, same molded clay aesthetic throughout, no sharp edges',
+    keywords: ['clay 3D icons','food icons','cafe icons','coffee icons','restaurant icons','3D render icons','food clipart','clay render','pastel 3D','soft render','icon set','vector icons','bakery icons','beverage icons','white background','transparent background','commercial use','SVG icons','Adobe Stock','icon pack','app icons','UI icons','menu icons','food delivery icons','drink icons','dessert icons','kitchen icons','food and drink clipart','cafe clipart','3D food icons']
+  },
+  nature: {
+    label: 'Clay 3D Nature & Ecology Icon Set',
+    theme: 'nature ecology and environment',
+    swatches: ['#A8D8B0','#B0D4E8','#F0C4A0','#FFFFFF'],
+    palLabels: ['Botanical green #A8D8B0','Sky blue #B0D4E8','Peach accent #F0C4A0','White bg'],
+    subjects: ['oak tree round','leaf sprout','sunflower bloom','mountain peak','ocean wave','raindrop water','snowflake crystal','sun rays circle','moon crescent','butterfly wings','bee body','mushroom cap','cactus plant','tropical palm','wheat stalk','apple fruit','strawberry','acorn seed','pinecone','coral reef','turtle shell','fox sitting','bear face','rabbit ears'],
+    dna: 'soft clay 3D render style, organic rounded shapes with matte natural pastel surface, botanical green #A8D8B0 and sky blue #B0D4E8 palette with warm peach #F0C4A0 accent, all shapes feel soft and touchable like clay sculptures of nature, consistent top-left light source, same gentle ambient shadow bottom-right, playful slightly oversized proportions, white background, warm and friendly aesthetic throughout, no hard edges',
+    keywords: ['clay 3D icons','nature icons','ecology icons','environment icons','botanical icons','3D render icons','clay render','pastel 3D','soft render','icon set','vector icons','plant icons','animal icons','weather icons','eco icons','white background','transparent background','commercial use','SVG icons','Adobe Stock','icon pack','app icons','UI icons','green icons','sustainability icons','wildlife icons','outdoor icons','botanical clipart','nature clipart','3D nature icons']
+  }
+};
+
+const VARIANTS = [
+  { name: 'Transparent background', desc: 'Sama persis dengan main prompt tapi background transparent (checkerboard). Ini yang paling laku — Adobe official wajibkan transparent untuk icon sheets.' },
+  { name: 'Cream background version', desc: 'Warm cream #FFF8F0 background instead of white. Premium, lifestyle feel. Cocok untuk wellness, food, dan fashion brands.' },
+  { name: 'Minimal clay (simplified)', desc: 'Reduce detail level ke minimum. Simpler shapes, maximum negative space. Suitable untuk app icon kecil 32–64px. Clay texture tetap ada tapi lebih subtle.' },
+  { name: 'Bold vibrant clay', desc: 'Sama style clay 3D tapi palette lebih saturated dan vibrant. Higher contrast. Better untuk social media marketing materials dan editorial.' },
+];
+
+const CHECKLIST = [
+  'Background: transparent (primary) + white (secondary)',
+  'Canvas minimum 1024×1024px per icon',
+  'Format: SVG + EPS + PNG transparent',
+  'Grid: 4×6 sprite sheet + 24 individual files',
+  'Style DNA konsisten — tidak ada drift antar icon',
+  'Light source: selalu top-left 45° semua icon',
+  'Shadow: soft ambient bottom-right semua icon',
+  'Declare AI-generated saat upload',
+  'No watermark, text, atau trademark',
+  'Preview thumbnail bersih dan menarik',
+];
+
+const TOP_KW = ['clay 3D','clay render','pastel 3D','soft render','icon set','vector icons','transparent background','white background','commercial use','SVG icons','Adobe Stock','icon pack','3D clipart'];
+
+let currentTheme = 'fintech';
+let currentTab = 'prompt';
+
+function buildPrompt(theme) {
+  const d = THEMES[theme];
+  return `Create a cohesive set of 24 clay 3D render vector icons on the theme of "${d.theme}".
+
+VISUAL STYLE:
+  Style:         Clay 3D render — soft, matte, volumetric, tactile
+  Detail level:  Balanced — moderate 3D depth with clear silhouette
+  Quality:       Premium stock quality, clean and crisp rendering
+
+CLAY 3D STYLE DNA:
+  ${d.dna}
+
+BACKGROUND & COLOR:
+  Background:    pure white #FFFFFF background
+  Icon palette:  ${d.swatches.slice(0,3).map((s,i)=>d.palLabels[i]).join(', ')}
+  Light source:  Top-left 45°, consistent across ALL icons
+  Shadow:        Soft ambient shadow bottom-right, same intensity all icons
+
+SUBJECTS TO INCLUDE (one icon per subject):
+${d.subjects.map((s,i)=>`  ${String(i+1).padStart(2,'0')}. ${s}`).join('\n')}
+
+TECHNICAL SPECIFICATIONS:
+  Canvas:        1024×1024px per icon
+  Format:        SVG + PNG transparent background
+  Safe zone:     8px padding around each icon
+  Layout:        4×6 sprite sheet + individual icons
+  Legibility:    Must be clear at 32px minimum
+
+CONSISTENCY REQUIREMENTS:
+  — Every icon must share identical clay texture, light direction, shadow style
+  — Same level of 3D depth and roundness across all icons
+  — Same scale — no icon should feel larger or smaller than others
+  — No stylistic drift between icons in the same set
+
+ADOBE STOCK COMPLIANCE:
+  — No real identifiable persons depicted
+  — No trademarked characters or logos
+  — No watermarks or text overlays
+  — Content is AI-generated — will be declared on upload per 2024 policy
+  — Commercially safe for UI, print, and digital use
+
+DELIVERY:
+  Version A (primary):  transparent background SVG + PNG
+  Version B:            pure white #FFFFFF background
+  Deliver as 4×6 sprite sheet + 24 individual labeled files.`;
+}
+
+function buildVariantPrompt(theme, i) {
+  const v = VARIANTS[i];
+  const base = buildPrompt(theme);
+  const mods = [
+    'OVERRIDE BACKGROUND: transparent background, no fill, fully transparent (checkerboard).\n\n',
+    'OVERRIDE BACKGROUND: warm cream #FFF8F0 background instead of white. Warmer premium feel.\n\n',
+    'OVERRIDE DETAIL LEVEL: Minimal — reduce to essential clay shapes only. Fewer surface details. Maximum negative space. Same clay texture but simpler geometry.\n\n',
+    'OVERRIDE COLOR PALETTE: More saturated vibrant version of the same clay palette. Higher contrast. Bolder, more vivid colors while maintaining the clay 3D matte texture.\n\n',
+  ];
+  return mods[i] + base;
+}
+
+function render() {
+  const d = THEMES[currentTheme];
+
+  document.getElementById('promptLabel').textContent = d.label;
+  document.getElementById('mainPromptBox').textContent = buildPrompt(currentTheme);
+
+  // palette strip
+  const ps = document.getElementById('paletteStrip');
+  ps.innerHTML = '';
+  d.swatches.forEach((c, i) => {
+    const sw = document.createElement('div');
+    sw.className = 'pal-swatch';
+    sw.style.cssText = `background:${c};${c==='#FFFFFF'?'border:1.5px solid #DDD;':''}`;
+    ps.appendChild(sw);
+    const lb = document.createElement('span');
+    lb.className = 'pal-label';
+    lb.textContent = d.palLabels[i];
+    ps.appendChild(lb);
+    if (i < d.swatches.length - 1) {
+      const sep = document.createElement('span');
+      sep.style.cssText = 'color:#CCC;font-size:12px;margin:0 4px';
+      sep.textContent = '·';
+      ps.appendChild(sep);
+    }
+  });
+
+  // DNA
+  document.getElementById('dnaBox').textContent = d.dna;
+
+  // Subjects
+  const sg = document.getElementById('subjectsGrid');
+  sg.innerHTML = '';
+  d.subjects.forEach((s, i) => {
+    const el = document.createElement('div');
+    el.className = 'subj-item';
+    el.innerHTML = `<span class="subj-num">${String(i+1).padStart(2,'0')}</span><span>${s}</span>`;
+    sg.appendChild(el);
+  });
+
+  // Variants
+  const vg = document.getElementById('varGrid');
+  vg.innerHTML = '';
+  VARIANTS.forEach((v, i) => {
+    const c = document.createElement('div');
+    c.className = 'var-card';
+    c.innerHTML = `
+      <div class="var-num">VARIASI 0${i+1}</div>
+      <div class="var-name">${v.name}</div>
+      <div class="var-note">${v.desc}</div>
+      <button class="btn btn-outline btn-sm" onclick="copyVariant(${i})">Copy prompt variasi</button>
+    `;
+    vg.appendChild(c);
+  });
+
+  // Metadata
+  document.getElementById('mTitle').textContent = `${d.label} — 24 Clay 3D Render Icons | SVG Vector`;
+  document.getElementById('mDesc').textContent = `A cohesive set of 24 clay 3D render icons on the theme of ${d.theme}. Soft matte volumetric pastel style with consistent light source and tactile clay texture. All icons share the same aesthetic — rounded, puffy, and touchable. Transparent and white background included. Clean scalable vectors for UI/UX design, apps, branding, websites, and print. AI-generated, commercially licensed.`;
+  const kwBox = document.getElementById('mKw');
+  kwBox.innerHTML = '';
+  d.keywords.forEach(k => {
+    const sp = document.createElement('span');
+    sp.className = 'kw-tag';
+    sp.textContent = k;
+    kwBox.appendChild(sp);
+  });
+}
+
+function switchTheme(theme, el) {
+  currentTheme = theme;
+  document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  render();
+  toast(`Tema: ${THEMES[theme].label}`);
+}
+
+function switchTab(name, el) {
+  document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  ['prompt','variants','subjects','dna','meta'].forEach(t => {
+    document.getElementById('tab-'+t).style.display = t === name ? '' : 'none';
+  });
+  currentTab = name;
+  const steps = { prompt:1, subjects:2, dna:3, meta:4, variants:2 };
+  const step = steps[name] || 1;
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById('step'+i).classList.toggle('done', i <= step);
+  }
+}
+
+function copyMain() {
+  navigator.clipboard.writeText(buildPrompt(currentTheme)).then(() => toast('Main prompt copied!'));
+}
+
+function copyVariant(i) {
+  navigator.clipboard.writeText(buildVariantPrompt(currentTheme, i)).then(() => toast(`Variasi ${i+1} copied!`));
+}
+
+function copySubjects() {
+  const subs = THEMES[currentTheme].subjects.map((s,i) => `${String(i+1).padStart(2,'0')}. ${s}`).join('\n');
+  navigator.clipboard.writeText(subs).then(() => toast('Subject list copied!'));
+}
+
+function copyDNA() {
+  navigator.clipboard.writeText(THEMES[currentTheme].dna).then(() => toast('Style DNA copied!'));
+}
+
+function copyMeta() {
+  const d = THEMES[currentTheme];
+  const title = document.getElementById('mTitle').textContent;
+  const desc = document.getElementById('mDesc').textContent;
+  const txt = `TITLE: ${title}\n\nDESCRIPTION: ${desc}\n\nCATEGORY: Graphic Resources > Icons & Pictograms\n\nKEYWORDS: ${d.keywords.join(', ')}\n\nAI FLAG: Generative AI — declare on upload (required 2024+)`;
+  navigator.clipboard.writeText(txt).then(() => toast('All metadata copied!'));
+}
+
+function copyAllBundle() {
+  const main = buildPrompt(currentTheme);
+  const all = [main, ...VARIANTS.map((_,i) => `\n${'─'.repeat(60)}\nVARIASI ${i+1}: ${VARIANTS[i].name}\n${'─'.repeat(60)}\n` + buildVariantPrompt(currentTheme, i))].join('\n\n');
+  navigator.clipboard.writeText(all).then(() => toast('Full bundle (5 prompts) copied!'));
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function initChecklist() {
+  const cl = document.getElementById('checklist');
+  cl.innerHTML = '';
+  CHECKLIST.forEach(item => {
+    const d = document.createElement('div');
+    d.style.cssText = 'display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:11px;color:var(--ink2)';
+    d.innerHTML = `<div style="width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;margin-top:1px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center" onclick="toggleCheck(this)"></div><span>${item}</span>`;
+    cl.appendChild(d);
+  });
+  // remove last border
+  if (cl.lastChild) cl.lastChild.style.borderBottom = 'none';
+}
+
+function toggleCheck(el) {
+  const done = !el.dataset.done;
+  el.dataset.done = done ? '1' : '';
+  el.style.background = done ? 'var(--accent2)' : '';
+  el.style.borderColor = done ? 'var(--accent2)' : 'var(--border2)';
+  el.innerHTML = done ? '<span style="color:#fff;font-size:10px;font-weight:700">✓</span>' : '';
+}
+
+function initTopKw() {
+  const el = document.getElementById('topKw');
+  TOP_KW.forEach(k => {
+    const sp = document.createElement('span');
+    sp.className = 'kw-tag';
+    sp.textContent = k;
+    el.appendChild(sp);
+  });
+}
+
+render();
+initChecklist();
+initTopKw();
+</script>
+</body>
+</html>

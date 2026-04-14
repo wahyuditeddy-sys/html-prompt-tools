@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adobe Stock Vector Prompt Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7F5F0;
+  --bg2: #FFFFFF;
+  --bg3: #EFECE6;
+  --bg4: #E8E4DC;
+  --ink: #1A1814;
+  --ink2: #5A5650;
+  --ink3: #9A9690;
+  --red: #CC3300;
+  --gold: #B8860B;
+  --green: #2D6A4F;
+  --blue: #1A4A8A;
+  --border: #D8D4CC;
+  --border2: #C8C4BC;
+  --accent: #CC3300;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
+  background: var(--ink);
+  color: #F7F5F0;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  position: sticky; top: 0; z-index: 100;
+}
+.header-brand {
+  display: flex; align-items: center; gap: 14px;
+}
+.header-logo {
+  font-family: 'Instrument Serif', serif;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  color: #F7F5F0;
+}
+.header-logo span { color: #FF5533; }
+.header-tagline {
+  font-size: 11px; color: #9A9690;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .04em;
+}
+.header-pills { display: flex; gap: 6px; }
+.header-pill {
+  padding: 4px 12px; border-radius: 3px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase;
+  cursor: pointer; border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.5); background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .15s;
+}
+.header-pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.header-pill:hover:not(.active) { color: #fff; border-color: rgba(255,255,255,0.4); }
+
+/* LAYOUT */
+.layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  min-height: calc(100vh - 56px);
+}
+@media(max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+/* SIDEBAR */
+.sidebar {
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  max-height: calc(100vh - 56px);
+  position: sticky; top: 56px;
+}
+@media(max-width:900px) { .sidebar { max-height: none; position: static; } }
+
+.sidebar-section {
+  border-bottom: 1px solid var(--border);
+  padding: 20px 24px;
+}
+.section-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; color: var(--ink3);
+  letter-spacing: .1em; margin-bottom: 6px;
+  display: block;
+}
+.section-title {
+  font-size: 13px; font-weight: 600;
+  color: var(--ink); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-title .badge {
+  font-size: 10px; padding: 2px 7px; border-radius: 2px;
+  font-weight: 600; letter-spacing: .04em;
+  text-transform: uppercase; font-family: 'DM Mono', monospace;
+}
+.badge-req { background: #FDECEA; color: var(--red); }
+.badge-opt { background: #F0EBE0; color: var(--gold); }
+.badge-key { background: #E8F0E8; color: var(--green); }
+
+/* FORM ELEMENTS */
+.field { margin-bottom: 14px; }
+.field:last-child { margin-bottom: 0; }
+.field-label {
+  font-size: 11px; font-weight: 600;
+  color: var(--ink2); margin-bottom: 7px;
+  text-transform: uppercase; letter-spacing: .07em;
+  display: block;
+}
+.field-hint {
+  font-size: 11px; color: var(--ink3);
+  margin-top: 4px; line-height: 1.5;
+}
+input[type=text], textarea, select {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--ink);
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  padding: 9px 12px;
+  outline: none;
+  transition: border-color .2s;
+  -webkit-appearance: none;
+}
+input[type=text]:focus, textarea:focus, select:focus {
+  border-color: var(--accent);
+  background: #fff;
+}
+textarea { min-height: 64px; resize: vertical; }
+select option { background: #fff; }
+
+/* CHIPS */
+.chip-group { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip {
+  padding: 5px 11px; border-radius: 3px;
+  font-size: 11px; font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  color: var(--ink2); background: var(--bg);
+  transition: all .12s;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: .01em;
+}
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+.chip.on { background: var(--ink); border-color: var(--ink); color: #F7F5F0; }
+.chip.on-red { background: #FDECEA; border-color: var(--red); color: var(--red); }
+.chip.on-gold { background: #FDF6E3; border-color: var(--gold); color: var(--gold); }
+.chip.on-green { background: #E8F0E8; border-color: var(--green); color: var(--green); }
+.chip.on-blue { background: #E6EEFA; border-color: var(--blue); color: var(--blue); }
+.chip[data-multi] { cursor: pointer; }
+
+/* STYLE CARDS */
+.style-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+.style-card {
+  border: 1px solid var(--border); border-radius: 4px;
+  padding: 10px 8px 8px; cursor: pointer;
+  text-align: center; transition: all .15s;
+  background: var(--bg);
+}
+.style-card:hover { border-color: var(--ink2); }
+.style-card.on { border-color: var(--ink); background: var(--ink); }
+.style-card.on .sc-icon { filter: invert(1); }
+.style-card.on .sc-label { color: #F7F5F0; }
+.sc-icon { font-size: 22px; margin-bottom: 4px; display: block; }
+.sc-label { font-size: 10px; font-weight: 600; color: var(--ink2); letter-spacing: .04em; text-transform: uppercase; }
+
+/* COLOR SWATCHES */
+.swatch-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.swatch {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 2px solid transparent; cursor: pointer;
+  transition: transform .15s, border-color .15s;
+  position: relative;
+}
+.swatch:hover { transform: scale(1.15); }
+.swatch.on { border-color: var(--ink) !important; }
+.swatch-custom {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1px dashed var(--border); cursor: pointer;
+  overflow: hidden; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.swatch-custom input[type=color] {
+  position: absolute; width: 140%; height: 140%;
+  top: -20%; left: -20%; border: none; cursor: pointer; opacity: 0;
+}
+.swatch-custom::after { content: '+'; font-size: 14px; color: var(--ink3); pointer-events: none; }
+
+/* RANGE */
+.range-row { display: flex; align-items: center; gap: 10px; margin-top: 2px; }
+input[type=range] {
+  flex: 1; height: 3px; border-radius: 2px;
+  -webkit-appearance: none; background: var(--bg4); outline: none;
+  cursor: pointer; border: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 14px; height: 14px;
+  border-radius: 50%; background: var(--ink); cursor: pointer;
+}
+.range-label {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  color: var(--accent); min-width: 80px; font-weight: 500;
+}
+
+/* TOGGLE */
+.toggle-group { display: flex; flex-direction: column; gap: 8px; }
+.toggle-row { display: flex; align-items: center; justify-content: space-between; }
+.toggle-text { font-size: 12px; color: var(--ink2); }
+.toggle-switch {
+  width: 32px; height: 18px; border-radius: 9px;
+  background: var(--bg4); border: 1px solid var(--border);
+  cursor: pointer; position: relative; transition: all .2s; flex-shrink: 0;
+}
+.toggle-switch.on { background: var(--ink); border-color: var(--ink); }
+.toggle-switch::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 12px; height: 12px; border-radius: 50%; background: #fff;
+  transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.3);
+}
+.toggle-switch.on::after { transform: translateX(14px); }
+
+/* CONSISTENCY PANEL */
+.consist-panel {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 4px; padding: 12px;
+}
+.consist-label {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--ink3); margin-bottom: 8px;
+}
+
+/* MAIN OUTPUT AREA */
+.main { padding: 28px 32px; }
+@media(max-width: 900px) { .main { padding: 20px 16px; } }
+
+/* TOP STATS */
+.stats-row {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 10px; margin-bottom: 24px;
+}
+@media(max-width:600px) { .stats-row { grid-template-columns: repeat(2,1fr); } }
+.stat-box {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 4px; padding: 12px 14px;
+}
+.stat-lbl { font-size: 10px; color: var(--ink3); text-transform: uppercase; letter-spacing: .07em; font-weight: 600; }
+.stat-val { font-family: 'Instrument Serif', serif; font-size: 26px; color: var(--ink); margin-top: 2px; }
+.stat-sub { font-size: 10px; color: var(--ink3); margin-top: 1px; }
+
+/* PROMPT OUTPUT */
+.output-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden; margin-bottom: 16px;
+}
+.output-header {
+  padding: 12px 18px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg3);
+}
+.output-title {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--ink2);
+  display: flex; align-items: center; gap: 8px;
+}
+.quality-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--ink3); transition: background .3s;
+}
+.quality-dot.good { background: var(--green); }
+.quality-dot.great { background: var(--gold); }
+.quality-dot.ultra { background: var(--accent); }
+.output-body {
+  padding: 18px;
+}
+.prompt-display {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; line-height: 1.8;
+  color: var(--ink);
+  white-space: pre-wrap; word-break: break-word;
+  min-height: 120px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px; padding: 14px 16px;
+  cursor: text;
+}
+.prompt-display:empty::before {
+  content: 'Fill in the fields on the left, then click Generate Prompt...';
+  color: var(--ink3); font-style: italic;
+}
+.prompt-meta {
+  display: flex; justify-content: space-between;
+  margin-top: 8px; font-size: 11px; color: var(--ink3);
+  font-family: 'DM Mono', monospace;
+}
+
+/* ADOBE METADATA */
+.meta-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden; margin-bottom: 16px;
+}
+.meta-header {
+  padding: 10px 18px; border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.meta-title {
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .08em; color: var(--ink2);
+}
+.meta-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; }
+.meta-row { display: grid; grid-template-columns: 100px 1fr; align-items: start; gap: 8px; }
+.meta-key { font-size: 11px; font-weight: 600; color: var(--ink3); padding-top: 9px; font-family: 'DM Mono', monospace; }
+.meta-val {
+  font-size: 12px; font-family: 'DM Mono', monospace;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 3px; padding: 7px 10px; color: var(--ink);
+  min-height: 34px; line-height: 1.6;
+  word-break: break-word;
+}
+.kw-box {
+  display: flex; flex-wrap: wrap; gap: 4px; padding: 8px;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 3px;
+  min-height: 40px;
+}
+.kw-pill {
+  padding: 2px 8px; border-radius: 2px;
+  background: var(--bg3); border: 1px solid var(--border);
+  font-size: 11px; color: var(--ink2); font-family: 'DM Mono', monospace;
+}
+
+/* ACTION BUTTONS */
+.action-strip {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;
+}
+.btn {
+  padding: 9px 20px; border-radius: 3px;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  letter-spacing: .03em; transition: all .15s;
+  border: 1px solid transparent;
+}
+.btn-primary {
+  background: var(--ink); color: #F7F5F0; border-color: var(--ink);
+}
+.btn-primary:hover { background: var(--accent); border-color: var(--accent); }
+.btn-outline {
+  background: transparent; color: var(--ink); border-color: var(--border2);
+}
+.btn-outline:hover { border-color: var(--ink); }
+.btn-red { background: var(--red); color: #fff; border-color: var(--red); }
+.btn-red:hover { opacity: .9; }
+
+/* HISTORY */
+.history-list { display: flex; flex-direction: column; gap: 6px; }
+.history-item {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 3px; padding: 9px 12px; cursor: pointer;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  color: var(--ink2); line-height: 1.5;
+  overflow: hidden; display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  transition: border-color .15s;
+}
+.history-item:hover { border-color: var(--accent); color: var(--ink); }
+
+/* WARN */
+.warn-box {
+  background: #FDECEA; border: 1px solid #E8B4B0;
+  border-radius: 4px; padding: 10px 14px;
+  font-size: 12px; color: #7A2020;
+  margin-bottom: 12px; display: none;
+}
+
+/* FORMULA */
+.formula-strip {
+  display: flex; gap: 4px; flex-wrap: wrap;
+  align-items: center; margin-bottom: 20px;
+  padding: 12px 14px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: 'DM Mono', monospace; font-size: 11px;
+}
+.f-part { padding: 3px 8px; border-radius: 2px; font-weight: 500; }
+.f-sep { color: var(--ink3); }
+.f-subject { background: #E8F0E8; color: var(--green); }
+.f-style { background: #E6EEFA; color: var(--blue); }
+.f-tech { background: #FDF6E3; color: var(--gold); }
+.f-adobe { background: #FDECEA; color: var(--red); }
+.f-consist { background: #F0EBF8; color: #6A3D9A; }
+
+/* CONSISTENCY MODE BADGE */
+.consist-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 2px;
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.consist-badge.model { background: #E8F0E8; color: var(--green); }
+.consist-badge.general { background: #FDF6E3; color: var(--gold); }
+
+/* VARIATIONS */
+.var-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.var-card {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 4px; padding: 10px 12px; cursor: pointer;
+  transition: border-color .15s;
+}
+.var-card:hover { border-color: var(--accent); }
+.var-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--ink3); margin-bottom: 4px; }
+.var-text { font-size: 11px; color: var(--ink2); line-height: 1.5; }
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+.section-head {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .09em; color: var(--ink3);
+  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+.section-head::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-brand">
+    <div>
+      <div class="header-logo">Vector<span>Studio</span></div>
+      <div class="header-tagline">Adobe Stock Vector Prompt Engine v3.0</div>
+    </div>
+  </div>
+  <div class="header-pills">
+    <button class="header-pill active" onclick="setMode('model',this)">Model Consistent</button>
+    <button class="header-pill" onclick="setMode('general',this)">General Prompt</button>
+    <button class="header-pill" onclick="setMode('batch',this)">Batch Series</button>
+  </div>
+</header>
+
+<div class="layout">
+
+<!-- ========= SIDEBAR ========= -->
+<aside class="sidebar">
+
+  <!-- SUBJECT -->
+  <div class="sidebar-section">
+    <span class="section-num">01</span>
+    <div class="section-title">
+      Subject & Theme
+      <span class="badge badge-req">Required</span>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Theme / Topic</label>
+      <input type="text" id="theme" placeholder="e.g. Australian animals, space weapons, food icons..." oninput="liveGen()">
+      <div class="field-hint">Be specific — "cute Australian animal faces" outperforms "animals"</div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Icon count</label>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" id="count" value="16" style="width:64px">
+        <div class="chip-group">
+          <button class="chip" onclick="document.getElementById('count').value=8;liveGen()">8</button>
+          <button class="chip" onclick="document.getElementById('count').value=16;liveGen()">16</button>
+          <button class="chip" onclick="document.getElementById('count').value=24;liveGen()">24</button>
+          <button class="chip" onclick="document.getElementById('count').value=32;liveGen()">32</button>
+          <button class="chip" onclick="document.getElementById('count').value=50;liveGen()">50</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="field" id="subjectListWrap">
+      <label class="field-label">Specific subjects (optional — for model consistency)</label>
+      <textarea id="subjectList" placeholder="List specific subjects, one per line:&#10;kangaroo&#10;koala&#10;wombat&#10;platypus&#10;echidna..." oninput="liveGen()" style="min-height:100px"></textarea>
+      <div class="field-hint">Leave empty to let AI decide the icon subjects</div>
+    </div>
+  </div>
+
+  <!-- STYLE -->
+  <div class="sidebar-section">
+    <span class="section-num">02</span>
+    <div class="section-title">
+      Visual Style
+      <span class="badge badge-req">Required</span>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Icon style</label>
+      <div class="style-grid" id="styleGrid">
+        <div class="style-card on" data-val="flat outlined, thin uniform stroke weight 2px" onclick="styleClick(this)">
+          <span class="sc-icon">◻</span><span class="sc-label">Flat Outlined</span>
+        </div>
+        <div class="style-card" data-val="filled solid flat, no outlines, clean silhouette" onclick="styleClick(this)">
+          <span class="sc-icon">◼</span><span class="sc-label">Filled Solid</span>
+        </div>
+        <div class="style-card" data-val="duotone two-color flat, foreground and accent color" onclick="styleClick(this)">
+          <span class="sc-icon">◧</span><span class="sc-label">Duotone</span>
+        </div>
+        <div class="style-card" data-val="minimal line art, single weight hairline strokes" onclick="styleClick(this)">
+          <span class="sc-icon">—</span><span class="sc-label">Line Art</span>
+        </div>
+        <div class="style-card" data-val="bold filled rounded corners, chunky friendly shapes" onclick="styleClick(this)">
+          <span class="sc-icon">▣</span><span class="sc-label">Bold Rounded</span>
+        </div>
+        <div class="style-card" data-val="isometric 3D flat, geometric depth, 45-degree projection" onclick="styleClick(this)">
+          <span class="sc-icon">⬡</span><span class="sc-label">Isometric</span>
+        </div>
+        <div class="style-card" data-val="cartoon illustration, expressive faces, playful proportions" onclick="styleClick(this)">
+          <span class="sc-icon">★</span><span class="sc-label">Cartoon</span>
+        </div>
+        <div class="style-card" data-val="sticker style, thick black outline, vibrant fill, drop shadow" onclick="styleClick(this)">
+          <span class="sc-icon">◉</span><span class="sc-label">Sticker</span>
+        </div>
+        <div class="style-card" data-val="pixel art retro 16-bit game style, aliased edges" onclick="styleClick(this)">
+          <span class="sc-icon">⊞</span><span class="sc-label">Pixel Art</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Rendering detail</label>
+      <div class="range-row">
+        <input type="range" min="1" max="5" value="3" id="detail" oninput="updateDetail(this.value);liveGen()">
+        <span class="range-label" id="detailLabel">Balanced</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- COLOR -->
+  <div class="sidebar-section">
+    <span class="section-num">03</span>
+    <div class="section-title">
+      Color System
+      <span class="badge badge-req">Required</span>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Background</label>
+      <div class="swatch-row" id="bgSwatches">
+        <div class="swatch on" data-bg="white" style="background:#fff;border-color:#ddd" onclick="setBg(this,'white')"></div>
+        <div class="swatch" data-bg="transparent" style="background:repeating-conic-gradient(#ddd 0% 25%,#fff 0% 50%) 0 0/12px 12px" onclick="setBg(this,'transparent background')"></div>
+        <div class="swatch" data-bg="#F5F4F0" style="background:#F5F4F0" onclick="setBg(this,'#F5F4F0 off-white')"></div>
+        <div class="swatch" data-bg="#1A1814" style="background:#1A1814" onclick="setBg(this,'#1A1814 dark')"></div>
+        <div class="swatch" data-bg="#E8F4FF" style="background:#E8F4FF" onclick="setBg(this,'#E8F4FF light blue')"></div>
+        <div class="swatch" data-bg="#FFF8E1" style="background:#FFF8E1" onclick="setBg(this,'#FFF8E1 warm cream')"></div>
+        <div class="swatch" data-bg="#F0F8F0" style="background:#F0F8F0" onclick="setBg(this,'#F0F8F0 mint')"></div>
+        <div class="swatch-custom" title="Custom color">
+          <input type="color" id="bgCustom" oninput="setBgCustom(this.value)">
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Color palette mood</label>
+      <div class="chip-group" id="paletteChips">
+        <button class="chip on" data-val="vibrant multicolor, warm and playful" onclick="chipSingle(this,'paletteChips')">Vibrant</button>
+        <button class="chip" data-val="pastel soft, muted saturation" onclick="chipSingle(this,'paletteChips')">Pastel</button>
+        <button class="chip" data-val="monochromatic single hue with tints and shades" onclick="chipSingle(this,'paletteChips')">Mono</button>
+        <button class="chip" data-val="earthy muted natural tones" onclick="chipSingle(this,'paletteChips')">Earthy</button>
+        <button class="chip" data-val="neon high-contrast bright" onclick="chipSingle(this,'paletteChips')">Neon</button>
+        <button class="chip" data-val="grayscale black white and grays" onclick="chipSingle(this,'paletteChips')">Grayscale</button>
+        <button class="chip" data-val="corporate professional blue and gray" onclick="chipSingle(this,'paletteChips')">Corporate</button>
+        <button class="chip" data-val="warm autumnal orange brown amber" onclick="chipSingle(this,'paletteChips')">Autumn</button>
+      </div>
+    </div>
+
+    <div class="field" id="customPaletteWrap">
+      <label class="field-label">Custom color palette (HEX codes)</label>
+      <input type="text" id="customPalette" placeholder="e.g. #FF6B6B, #4ECDC4, #45B7D1, #FFA07A" oninput="liveGen()">
+    </div>
+  </div>
+
+  <!-- CONSISTENCY MODEL -->
+  <div class="sidebar-section" id="consistencySection">
+    <span class="section-num">04</span>
+    <div class="section-title">
+      Consistency Model
+      <span class="badge badge-key">Key for Stock</span>
+    </div>
+
+    <div class="consist-panel">
+      <div class="consist-label">Active Mode: <span id="consistModeLabel" style="color:var(--green);font-weight:700">MODEL CONSISTENT</span></div>
+
+      <div class="field" style="margin-bottom:10px">
+        <label class="field-label">Model reference name</label>
+        <input type="text" id="modelName" placeholder="e.g. AustraliAnimal Series v1, SciFi Icons Pack..." oninput="liveGen()">
+        <div class="field-hint">Used as series identifier for batch consistency</div>
+      </div>
+
+      <div class="field" style="margin-bottom:10px">
+        <label class="field-label">Style DNA (what makes this series unique)</label>
+        <textarea id="styleDna" placeholder="e.g. rounded square face, large expressive eyes, minimal detail lines on fur, consistent nose shape, same ear proportions..." oninput="liveGen()" style="min-height:80px"></textarea>
+      </div>
+
+      <div class="field" style="margin-bottom:0">
+        <label class="field-label">Stroke & technical spec</label>
+        <input type="text" id="strokeSpec" placeholder="e.g. 2px uniform stroke, rounded caps, 8px corner radius" oninput="liveGen()">
+      </div>
+    </div>
+  </div>
+
+  <!-- TECHNICAL -->
+  <div class="sidebar-section">
+    <span class="section-num">05</span>
+    <div class="section-title">
+      Technical Specs
+      <span class="badge badge-key">Adobe Stock</span>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Canvas size</label>
+      <div class="chip-group" id="canvasChips">
+        <button class="chip on" data-val="512×512px canvas" onclick="chipSingle(this,'canvasChips')">512px</button>
+        <button class="chip" data-val="1024×1024px canvas" onclick="chipSingle(this,'canvasChips')">1024px</button>
+        <button class="chip" data-val="2048×2048px canvas" onclick="chipSingle(this,'canvasChips')">2048px</button>
+        <button class="chip" data-val="64×64px canvas" onclick="chipSingle(this,'canvasChips')">64px</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Output format</label>
+      <div class="chip-group" id="formatChips">
+        <button class="chip on" data-val="SVG vector, scalable" onclick="chipSingle(this,'formatChips')">SVG</button>
+        <button class="chip" data-val="Adobe Illustrator AI format" onclick="chipSingle(this,'formatChips')">Adobe AI</button>
+        <button class="chip" data-val="EPS vector format" onclick="chipSingle(this,'formatChips')">EPS</button>
+        <button class="chip" data-val="PNG transparent background" onclick="chipSingle(this,'formatChips')">PNG</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Padding / safe zone</label>
+      <div class="chip-group" id="paddingChips">
+        <button class="chip on" data-val="8px padding/safe zone around each icon" onclick="chipSingle(this,'paddingChips')">8px</button>
+        <button class="chip" data-val="12px padding/safe zone around each icon" onclick="chipSingle(this,'paddingChips')">12px</button>
+        <button class="chip" data-val="16px padding/safe zone around each icon" onclick="chipSingle(this,'paddingChips')">16px</button>
+        <button class="chip" data-val="no padding, full bleed" onclick="chipSingle(this,'paddingChips')">None</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Grid layout (for sprite sheet)</label>
+      <div class="chip-group" id="gridChips">
+        <button class="chip on" data-val="4×4 grid sprite sheet" onclick="chipSingle(this,'gridChips')">4×4</button>
+        <button class="chip" data-val="4×6 grid sprite sheet" onclick="chipSingle(this,'gridChips')">4×6</button>
+        <button class="chip" data-val="5×5 grid sprite sheet" onclick="chipSingle(this,'gridChips')">5×5</button>
+        <button class="chip" data-val="individual icons, no grid" onclick="chipSingle(this,'gridChips')">Individual</button>
+        <button class="chip" data-val="2×8 vertical grid sprite sheet" onclick="chipSingle(this,'gridChips')">2×8</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADOBE STOCK COMPLIANCE -->
+  <div class="sidebar-section">
+    <span class="section-num">06</span>
+    <div class="section-title">
+      Adobe Stock Compliance
+      <span class="badge badge-req">Required</span>
+    </div>
+
+    <div class="toggle-group">
+      <div class="toggle-row">
+        <span class="toggle-text">No real identifiable persons</span>
+        <div class="toggle-switch on" id="tog1" onclick="this.classList.toggle('on');liveGen()"></div>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-text">No trademarked characters/logos</span>
+        <div class="toggle-switch on" id="tog2" onclick="this.classList.toggle('on');liveGen()"></div>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-text">No watermarks or text overlays</span>
+        <div class="toggle-switch on" id="tog3" onclick="this.classList.toggle('on');liveGen()"></div>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-text">Declare AI-generated (required 2024+)</span>
+        <div class="toggle-switch on" id="tog4" onclick="this.classList.toggle('on');liveGen()"></div>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-text">Add "commercially safe" suffix</span>
+        <div class="toggle-switch on" id="tog5" onclick="this.classList.toggle('on');liveGen()"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXTRA -->
+  <div class="sidebar-section">
+    <span class="section-num">07</span>
+    <div class="section-title">
+      Extra Notes
+      <span class="badge badge-opt">Optional</span>
+    </div>
+    <textarea id="extra" placeholder="Any additional requirements... e.g. avoid cluttered details, keep icons minimal, no gradients, use rounded sans-serif feel..." oninput="liveGen()" style="min-height:72px"></textarea>
+  </div>
+
+</aside>
+
+<!-- ========= MAIN AREA ========= -->
+<main class="main">
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-lbl">Prompts Built</div><div class="stat-val" id="statBuilt">0</div><div class="stat-sub">this session</div></div>
+    <div class="stat-box"><div class="stat-lbl">Prompt Length</div><div class="stat-val" id="statLen">0</div><div class="stat-sub">characters</div></div>
+    <div class="stat-box"><div class="stat-lbl">Est. Icons</div><div class="stat-val" id="statIcons">16</div><div class="stat-sub">in this batch</div></div>
+    <div class="stat-box"><div class="stat-lbl">History</div><div class="stat-val" id="statHist">0</div><div class="stat-sub">saved prompts</div></div>
+  </div>
+
+  <!-- FORMULA -->
+  <div class="formula-strip" id="formulaStrip">
+    <span class="f-part f-subject">[SUBJECT + COUNT]</span>
+    <span class="f-sep">+</span>
+    <span class="f-part f-style">[STYLE + DETAIL]</span>
+    <span class="f-sep">+</span>
+    <span class="f-part f-tech">[COLOR + TECHNICAL]</span>
+    <span class="f-sep">+</span>
+    <span class="f-part f-consist">[CONSISTENCY MODEL]</span>
+    <span class="f-sep">+</span>
+    <span class="f-part f-adobe">[ADOBE COMPLIANCE]</span>
+  </div>
+
+  <!-- WARN -->
+  <div class="warn-box" id="warnBox"></div>
+
+  <!-- ACTIONS -->
+  <div class="action-strip">
+    <button class="btn btn-primary" onclick="buildPrompt()">Generate Prompt</button>
+    <button class="btn btn-outline" onclick="copyPrompt()">Copy Prompt</button>
+    <button class="btn btn-outline" onclick="generateVariations()">Generate 4 Variations</button>
+    <button class="btn btn-outline" onclick="randomize()">Randomize</button>
+    <button class="btn btn-outline" onclick="clearAll()">Clear</button>
+  </div>
+
+  <!-- MAIN OUTPUT -->
+  <div class="output-card">
+    <div class="output-header">
+      <div class="output-title">
+        <div class="quality-dot" id="qualDot"></div>
+        Generated Prompt
+        <span id="consistBadge" class="consist-badge model" style="margin-left:4px">Model Consistent</span>
+      </div>
+      <span style="font-size:11px;color:var(--ink3);font-family:'DM Mono',monospace" id="qualLabel">—</span>
+    </div>
+    <div class="output-body">
+      <div class="prompt-display" id="promptDisplay" contenteditable="true"></div>
+      <div class="prompt-meta">
+        <span id="promptMeta">0 chars · 0 words</span>
+        <span id="promptScore" style="color:var(--green)"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADOBE STOCK METADATA -->
+  <div class="meta-card" id="metaCard" style="display:none">
+    <div class="meta-header">
+      <div class="meta-title">Adobe Stock Metadata (auto-generated)</div>
+      <button class="btn btn-outline" style="padding:5px 12px;font-size:11px" onclick="copyMeta()">Copy all metadata</button>
+    </div>
+    <div class="meta-body">
+      <div class="meta-row">
+        <div class="meta-key">Title</div>
+        <div class="meta-val" id="metaTitle"></div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-key">Description</div>
+        <div class="meta-val" id="metaDesc"></div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-key">Category</div>
+        <div class="meta-val" id="metaCat"></div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-key">Keywords</div>
+        <div class="kw-box" id="metaKw"></div>
+      </div>
+      <div class="meta-row">
+        <div class="meta-key">AI Flag</div>
+        <div class="meta-val" id="metaAI" style="color:var(--red);font-weight:600">Generative AI — must declare on upload</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VARIATIONS -->
+  <div id="varSection" style="display:none">
+    <div class="section-head">4 Prompt Variations</div>
+    <div class="var-grid" id="varGrid"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- HISTORY -->
+  <div class="section-head">Prompt History</div>
+  <div class="history-list" id="historyList">
+    <div style="font-size:12px;color:var(--ink3);padding:8px 0">No prompts yet. Build your first prompt!</div>
+  </div>
+
+</main>
+</div>
+
+<script>
+let mode = 'model';
+let selectedBgVal = 'white background';
+let selectedStyle = 'flat outlined, thin uniform stroke weight 2px';
+let builtCount = 0;
+let history = [];
+
+const DETAIL_LABELS = ['Minimal — simple silhouette','Simple — basic shapes','Balanced — moderate detail','Detailed — rich features','Ultra — maximum detail, fine details'];
+const BLOCKED = [
+  { p: /\b(child|minor|kid|teen|underage).{0,20}(sex|nude|erotic|porn|explicit)\b/i, r: "Content involving minors in sexual contexts is prohibited." },
+  { p: /\b(terror|jihadist?|bomb.making|attack plan|extremis)\b/i, r: "Content facilitating violent extremism is prohibited." },
+  { p: /\b(porn|pornograph|hentai|explicit.nude|sexual gratif|xxx)\b/i, r: "Sexually explicit content is prohibited." },
+  { p: /\b(hate speech|racial slur|genocide propaganda|white supremac)\b/i, r: "Hate speech is prohibited." },
+];
+
+function setMode(m, el) {
+  mode = m;
+  document.querySelectorAll('.header-pill').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  const cs = document.getElementById('consistencySection');
+  const badge = document.getElementById('consistBadge');
+  const lbl = document.getElementById('consistModeLabel');
+  if (m === 'model') {
+    cs.style.display = '';
+    badge.textContent = 'Model Consistent';
+    badge.className = 'consist-badge model';
+    lbl.textContent = 'MODEL CONSISTENT';
+    lbl.style.color = 'var(--green)';
+  } else if (m === 'general') {
+    cs.style.display = 'none';
+    badge.textContent = 'General Prompt';
+    badge.className = 'consist-badge general';
+    lbl.textContent = 'GENERAL';
+    lbl.style.color = 'var(--gold)';
+  } else {
+    cs.style.display = '';
+    badge.textContent = 'Batch Series';
+    badge.className = 'consist-badge model';
+    lbl.textContent = 'BATCH SERIES';
+    lbl.style.color = 'var(--blue)';
+  }
+  liveGen();
+}
+
+function styleClick(el) {
+  document.querySelectorAll('.style-card').forEach(e => e.classList.remove('on'));
+  el.classList.add('on');
+  selectedStyle = el.dataset.val;
+  liveGen();
+}
+
+function chipSingle(el, groupId) {
+  document.querySelectorAll('#'+groupId+' .chip').forEach(e => e.classList.remove('on','on-red','on-gold','on-green','on-blue'));
+  el.classList.add('on');
+  liveGen();
+}
+
+function setBg(el, val) {
+  document.querySelectorAll('.swatch').forEach(e => e.classList.remove('on'));
+  el.classList.add('on');
+  selectedBgVal = val.includes('#') ? val + ' background' : val + ' background';
+  liveGen();
+}
+
+function setBgCustom(val) {
+  document.querySelectorAll('.swatch').forEach(e => e.classList.remove('on'));
+  selectedBgVal = val + ' custom background';
+  liveGen();
+}
+
+function updateDetail(v) {
+  document.getElementById('detailLabel').textContent = DETAIL_LABELS[v-1];
+}
+
+function getChip(groupId) {
+  const el = document.querySelector('#'+groupId+' .chip.on');
+  return el ? el.dataset.val : '';
+}
+
+function check(text) {
+  for (const b of BLOCKED) { if (b.p.test(text)) return b.r; }
+  return null;
+}
+
+function buildPrompt() {
+  const theme       = document.getElementById('theme').value.trim() || 'vector icons';
+  const count       = document.getElementById('count').value.trim() || '16';
+  const subjectList = document.getElementById('subjectList').value.trim();
+  const modelName   = document.getElementById('modelName').value.trim();
+  const styleDna    = document.getElementById('styleDna').value.trim();
+  const strokeSpec  = document.getElementById('strokeSpec').value.trim();
+  const customPal   = document.getElementById('customPalette').value.trim();
+  const extra       = document.getElementById('extra').value.trim();
+  const detail      = parseInt(document.getElementById('detail').value);
+  const palette     = getChip('paletteChips');
+  const canvas      = getChip('canvasChips');
+  const format      = getChip('formatChips');
+  const padding     = getChip('paddingChips');
+  const grid        = getChip('gridChips');
+
+  const tog1 = document.getElementById('tog1').classList.contains('on');
+  const tog2 = document.getElementById('tog2').classList.contains('on');
+  const tog3 = document.getElementById('tog3').classList.contains('on');
+  const tog4 = document.getElementById('tog4').classList.contains('on');
+  const tog5 = document.getElementById('tog5').classList.contains('on');
+
+  const warnEl = document.getElementById('warnBox');
+  const violation = check([theme, subjectList, extra, styleDna].join(' '));
+  if (violation) { warnEl.textContent = 'Policy violation: ' + violation; warnEl.style.display='block'; return; }
+  warnEl.style.display='none';
+
+  let lines = [];
+
+  // SUBJECT BLOCK
+  let subjectLine = `Create a cohesive set of ${count} vector icons on the theme of "${theme}"`;
+  if (mode === 'batch') subjectLine += `, designed as part of a commercial series for Adobe Stock`;
+  lines.push(subjectLine + '.');
+
+  if (subjectList) {
+    const subjects = subjectList.split('\n').map(s=>s.trim()).filter(Boolean);
+    lines.push(`\nSpecific subjects to include:\n${subjects.map((s,i)=>`${i+1}. ${s}`).join('\n')}`);
+  }
+
+  // STYLE BLOCK
+  lines.push(`\nVISUAL STYLE:`);
+  lines.push(`— Style: ${selectedStyle}`);
+  lines.push(`— Detail level: ${DETAIL_LABELS[detail-1]}`);
+
+  if (mode === 'model' || mode === 'batch') {
+    if (styleDna) lines.push(`— Style DNA / character model: ${styleDna}`);
+    if (strokeSpec) lines.push(`— Technical stroke spec: ${strokeSpec}`);
+    if (modelName) lines.push(`— Series name: ${modelName} (maintain strict visual consistency throughout)`);
+  }
+
+  // COLOR BLOCK
+  lines.push(`\nCOLOR & BACKGROUND:`);
+  lines.push(`— Color palette: ${customPal ? 'Custom palette: '+customPal : palette}`);
+  lines.push(`— Background: ${selectedBgVal}`);
+
+  // TECHNICAL BLOCK
+  lines.push(`\nTECHNICAL SPECIFICATIONS:`);
+  lines.push(`— Canvas: ${canvas}`);
+  lines.push(`— Format: ${format}`);
+  lines.push(`— Padding/safe zone: ${padding}`);
+  lines.push(`— Layout: ${grid}`);
+  lines.push(`— All icons centered within their canvas, optically balanced`);
+  lines.push(`— Consistent visual weight, spacing, and scale across all icons`);
+
+  // CONSISTENCY BLOCK
+  if (mode === 'model' || mode === 'batch') {
+    lines.push(`\nCONSISTENCY REQUIREMENTS:`);
+    lines.push(`— Every icon MUST share identical: stroke weight, corner radius, color language, style treatment`);
+    lines.push(`— Icons must feel like they belong to the same designer, same design system`);
+    lines.push(`— Avoid stylistic drift between icons in the same set`);
+    if (mode === 'batch') lines.push(`— This set will be extended in future batches — maintain strict reproducible style`);
+  }
+
+  // ADOBE STOCK COMPLIANCE
+  const compLines = [];
+  if (tog1) compLines.push('No real, identifiable, or living persons depicted');
+  if (tog2) compLines.push('No trademarked characters, logos, or intellectual property');
+  if (tog3) compLines.push('No watermarks, text overlays, or signatures');
+  if (tog4) compLines.push('Content is AI-generated — will be declared upon upload per Adobe Stock 2024 policy');
+  if (tog5) compLines.push('Commercially safe — appropriate for UI, print, and digital use');
+  if (compLines.length) {
+    lines.push(`\nADOBE STOCK COMPLIANCE:`);
+    compLines.forEach(c => lines.push(`— ${c}`));
+  }
+
+  // QUALITY SUFFIX
+  lines.push(`\nQUALITY REQUIREMENTS:`);
+  lines.push(`— Clean, crisp vectors with no artifacts or fuzzy edges`);
+  lines.push(`— Professional stock quality suitable for commercial licensing`);
+  lines.push(`— Each icon clearly represents its concept at small sizes (32px)`);
+  if (detail >= 4) lines.push(`— Maximum detail: include subtle highlights, shadows, and fine decorative elements`);
+
+  if (extra) lines.push(`\nADDITIONAL NOTES:\n${extra}`);
+
+  lines.push(`\nDeliver all icons as individual labeled vector assets${grid !== 'individual icons, no grid' ? ', also assembled into a '+grid : ''}.`);
+
+  const prompt = lines.join('\n');
+  document.getElementById('promptDisplay').textContent = prompt;
+  updatePromptStats(prompt);
+  generateMetadata(theme, count, palette, format);
+  document.getElementById('metaCard').style.display = '';
+  saveHistory(prompt);
+  builtCount++;
+  document.getElementById('statBuilt').textContent = builtCount;
+  document.getElementById('statIcons').textContent = count;
+}
+
+function liveGen() {
+  const el = document.getElementById('promptDisplay');
+  if (el.textContent.trim()) buildPrompt();
+}
+
+function updatePromptStats(text) {
+  const chars = text.length;
+  const words = text.trim().split(/\s+/).length;
+  document.getElementById('promptMeta').textContent = chars + ' chars · ' + words + ' words';
+  document.getElementById('statLen').textContent = chars;
+  const dot = document.getElementById('qualDot');
+  const lbl = document.getElementById('qualLabel');
+  const score = document.getElementById('promptScore');
+  if (chars < 100) { dot.className='quality-dot'; lbl.textContent='Weak'; score.textContent='Strengthen your prompt'; score.style.color='var(--red)'; }
+  else if (chars < 300) { dot.className='quality-dot good'; lbl.textContent='Good'; score.textContent='Solid prompt'; score.style.color='var(--green)'; }
+  else if (chars < 600) { dot.className='quality-dot great'; lbl.textContent='Great'; score.textContent='Well-structured prompt'; score.style.color='var(--gold)'; }
+  else { dot.className='quality-dot ultra'; lbl.textContent='Ultra'; score.textContent='Production-ready prompt'; score.style.color='var(--accent)'; }
+}
+
+function generateMetadata(theme, count, palette, format) {
+  const styleEl = document.querySelector('.style-card.on');
+  const styleName = styleEl ? styleEl.querySelector('.sc-label').textContent : 'Flat';
+  const cleanTheme = theme.replace(/[^a-zA-Z0-9 ]/g, '').trim();
+  const titleTheme = cleanTheme.split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
+
+  document.getElementById('metaTitle').textContent =
+    `${titleTheme} Vector Icon Set — ${count} ${styleName} Icons for ${format.split(' ')[0]}`;
+
+  document.getElementById('metaDesc').textContent =
+    `A cohesive set of ${count} professionally designed ${styleName.toLowerCase()} vector icons on the theme of ${cleanTheme}. `+
+    `${palette}. Clean, scalable vectors suitable for UI design, mobile apps, websites, infographics, and print. `+
+    `All icons share consistent style, weight, and visual language. AI-generated, commercially licensed.`;
+
+  document.getElementById('metaCat').textContent = 'Graphic Resources > Icons & Pictograms';
+
+  const kws = [
+    cleanTheme, 'vector icons', 'icon set', styleName.toLowerCase(), 'svg icons',
+    'flat icons', 'ui icons', 'vector clipart', 'commercial use', 'scalable vector',
+    'icon pack', cleanTheme+' icons', 'stock vector', 'graphic design',
+    'app icons', 'website icons', 'infographic icons', 'digital assets',
+    palette.split(',')[0].trim(), format.split(' ')[0].toLowerCase(),
+    'icon collection', 'symbol set', 'pictogram', 'design elements',
+    'transparent background', 'editable vector', 'professional icons'
+  ].filter((v,i,a)=>a.indexOf(v)===i).slice(0,30);
+
+  const kwBox = document.getElementById('metaKw');
+  kwBox.innerHTML = '';
+  kws.forEach(k => {
+    const pill = document.createElement('span');
+    pill.className = 'kw-pill';
+    pill.textContent = k;
+    kwBox.appendChild(pill);
+  });
+}
+
+function generateVariations() {
+  const base = document.getElementById('promptDisplay').textContent;
+  if (!base.trim()) { buildPrompt(); return; }
+  const theme = document.getElementById('theme').value.trim() || 'vector icons';
+  const mods = [
+    { label: 'Minimal version', mod: 'Minimize detail — ultra-clean, simplified shapes, maximum negative space. ' },
+    { label: 'Rich detail version', mod: 'Maximize detail — add subtle gradients, fine texture, shadow depth. ' },
+    { label: 'Dark mode version', mod: 'Dark mode variant — dark background, inverted colors, glowing outlines. ' },
+    { label: 'Alternative style', mod: 'Alternative style — try isometric 3D perspective with the same theme. ' },
+  ];
+  const grid = document.getElementById('varGrid');
+  grid.innerHTML = '';
+  mods.forEach((m, i) => {
+    const card = document.createElement('div');
+    card.className = 'var-card';
+    card.innerHTML = `<div class="var-num">Variation ${i+1} — ${m.label}</div><div class="var-text">${m.mod}${base.slice(0,120)}...</div>`;
+    card.onclick = () => { document.getElementById('promptDisplay').textContent = m.mod + base; updatePromptStats(m.mod + base); };
+    grid.appendChild(card);
+  });
+  document.getElementById('varSection').style.display = '';
+}
+
+function saveHistory(prompt) {
+  if (history[history.length-1] === prompt) return;
+  history.push(prompt);
+  if (history.length > 8) history.shift();
+  document.getElementById('statHist').textContent = history.length;
+  const list = document.getElementById('historyList');
+  list.innerHTML = '';
+  [...history].reverse().forEach(p => {
+    const d = document.createElement('div');
+    d.className = 'history-item';
+    d.textContent = p;
+    d.onclick = () => { document.getElementById('promptDisplay').textContent = p; updatePromptStats(p); };
+    list.appendChild(d);
+  });
+}
+
+function copyPrompt() {
+  const text = document.getElementById('promptDisplay').textContent;
+  if (!text.trim()) { buildPrompt(); return; }
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelectorAll('.action-strip .btn')[1];
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy Prompt', 2000);
+  });
+}
+
+function copyMeta() {
+  const title = document.getElementById('metaTitle').textContent;
+  const desc  = document.getElementById('metaDesc').textContent;
+  const cat   = document.getElementById('metaCat').textContent;
+  const kws   = Array.from(document.querySelectorAll('.kw-pill')).map(k=>k.textContent).join(', ');
+  const text  = `TITLE: ${title}\n\nDESCRIPTION: ${desc}\n\nCATEGORY: ${cat}\n\nKEYWORDS: ${kws}\n\nAI FLAG: Generative AI — declare on upload`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.meta-header button');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy all metadata', 2000);
+  });
+}
+
+function randomize() {
+  const themes = ['Australian animal faces','sci-fi space weapons','cute food emoji','fantasy RPG items','minimalist nature icons','tropical sea creatures','retro technology gadgets','yoga wellness poses','global street foods','ancient mythology symbols'];
+  document.getElementById('theme').value = themes[Math.floor(Math.random()*themes.length)];
+  const styles = document.querySelectorAll('.style-card');
+  styles.forEach(e=>e.classList.remove('on'));
+  styles[Math.floor(Math.random()*styles.length)].classList.add('on');
+  selectedStyle = document.querySelector('.style-card.on').dataset.val;
+  const paletteChips = document.querySelectorAll('#paletteChips .chip');
+  paletteChips.forEach(e=>e.classList.remove('on'));
+  paletteChips[Math.floor(Math.random()*paletteChips.length)].classList.add('on');
+  buildPrompt();
+}
+
+function clearAll() {
+  ['theme','count','subjectList','modelName','styleDna','strokeSpec','customPalette','extra'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.value = id==='count'?'16':'';
+  });
+  document.getElementById('promptDisplay').textContent = '';
+  document.getElementById('metaCard').style.display = 'none';
+  document.getElementById('varSection').style.display = 'none';
+  updatePromptStats('');
+}
+</script>
+</body>
+</html>

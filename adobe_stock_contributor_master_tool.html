@@ -1,0 +1,862 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --primary: #E8321A;
+  --primary-soft: #FFF0ED;
+  --gold: #C8860A;
+  --gold-soft: #FDF6E3;
+  --success: #1A7A3C;
+  --success-soft: #EAFAF0;
+  --nav-h: 52px;
+}
+
+body { font-family: var(--font-sans); }
+
+.app { min-height: 600px; }
+
+.nav {
+  display: flex; align-items: center; gap: 0;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 1rem;
+  background: var(--color-background-primary);
+  position: sticky; top: 0; z-index: 10;
+}
+.nav::-webkit-scrollbar { display: none; }
+.nav-tab {
+  padding: 0 16px; height: var(--nav-h); display: flex; align-items: center;
+  font-size: 13px; cursor: pointer; white-space: nowrap;
+  border-bottom: 2px solid transparent; color: var(--color-text-secondary);
+  transition: all 0.15s; background: none; border-top: none; border-left: none; border-right: none;
+  font-family: var(--font-sans);
+}
+.nav-tab:hover { color: var(--color-text-primary); }
+.nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 500; }
+
+.badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 2px 7px; border-radius: 20px; font-size: 11px; font-weight: 500;
+  margin-left: 6px;
+}
+.badge-red { background: #FFF0ED; color: var(--primary); }
+.badge-gold { background: #FDF6E3; color: var(--gold); }
+.badge-green { background: #EAFAF0; color: var(--success); }
+
+.page { display: none; padding: 1.5rem; }
+.page.active { display: block; }
+
+.section-title {
+  font-size: 11px; font-weight: 500; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--color-text-secondary);
+  margin-bottom: 1rem; margin-top: 1.5rem;
+}
+.section-title:first-child { margin-top: 0; }
+
+.cards-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px; margin-bottom: 1.5rem;
+}
+
+.metric-card {
+  background: var(--color-background-secondary);
+  border-radius: var(--border-radius-md);
+  padding: 1rem; position: relative;
+}
+.metric-card .label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px; }
+.metric-card .value { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+.metric-card .sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 4px; }
+.metric-card .dot {
+  position: absolute; top: 12px; right: 12px;
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.dot-green { background: #1A7A3C; }
+.dot-gold { background: var(--gold); }
+.dot-red { background: var(--primary); }
+
+.card {
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 1rem 1.25rem;
+  margin-bottom: 12px;
+}
+
+.step-row {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 0;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+.step-row:last-child { border-bottom: none; }
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--primary-soft); color: var(--primary);
+  font-size: 12px; font-weight: 500;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+.step-num.done { background: var(--success-soft); color: var(--success); }
+.step-content .step-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+.step-content .step-desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.6; }
+.step-content .step-link {
+  display: inline-block; margin-top: 6px;
+  font-size: 12px; color: var(--primary);
+  background: var(--primary-soft); padding: 3px 10px;
+  border-radius: 20px; text-decoration: none; cursor: pointer;
+}
+
+.form-group { margin-bottom: 1rem; }
+.form-label { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; display: block; }
+.form-hint { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 6px; display: block; }
+.form-input, .form-select, .form-textarea {
+  width: 100%; font-size: 14px; font-family: var(--font-sans);
+  background: var(--color-background-primary);
+}
+.form-textarea { min-height: 80px; resize: vertical; }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: var(--border-radius-md);
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  font-family: var(--font-sans); transition: all 0.15s;
+}
+.btn-primary {
+  background: var(--primary); color: #fff; border: none;
+}
+.btn-primary:hover { opacity: 0.9; }
+.btn-secondary {
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-secondary);
+  color: var(--color-text-primary);
+}
+.btn-secondary:hover { background: var(--color-background-secondary); }
+.btn-gold {
+  background: var(--gold); color: #fff; border: none;
+}
+.btn-gold:hover { opacity: 0.9; }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+
+.output-box {
+  background: var(--color-background-secondary);
+  border-radius: var(--border-radius-md);
+  padding: 1rem; margin-top: 1rem;
+  font-size: 13px; line-height: 1.7;
+  color: var(--color-text-primary);
+  white-space: pre-wrap; word-break: break-word;
+  min-height: 80px;
+  border: 0.5px solid var(--color-border-tertiary);
+}
+
+.keyword-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.kw-tag {
+  background: var(--color-background-secondary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: 20px; padding: 3px 10px;
+  font-size: 12px; color: var(--color-text-secondary);
+}
+
+.checklist-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0; border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+.checklist-item:last-child { border-bottom: none; }
+.checklist-item input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
+.checklist-item label { font-size: 13px; cursor: pointer; color: var(--color-text-primary); }
+.checklist-item.done label { text-decoration: line-through; color: var(--color-text-secondary); }
+
+.progress-bar {
+  height: 6px; background: var(--color-background-secondary);
+  border-radius: 3px; overflow: hidden; margin: 8px 0;
+}
+.progress-fill {
+  height: 100%; border-radius: 3px;
+  transition: width 0.4s ease;
+  background: var(--primary);
+}
+
+.income-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; border-bottom: 0.5px solid var(--color-border-tertiary);
+  font-size: 13px;
+}
+.income-row:last-child { border-bottom: none; }
+.income-label { color: var(--color-text-secondary); }
+.income-value { font-weight: 500; color: var(--color-text-primary); }
+.income-value.highlight { color: var(--success); }
+
+.alert {
+  padding: 10px 14px; border-radius: var(--border-radius-md);
+  font-size: 13px; margin-bottom: 12px; line-height: 1.6;
+}
+.alert-warning {
+  background: var(--gold-soft);
+  border-left: 3px solid var(--gold);
+  color: #5a3e00;
+}
+.alert-info {
+  background: #EEF5FF;
+  border-left: 3px solid #2B6CB0;
+  color: #1a3a5c;
+}
+.alert-success {
+  background: var(--success-soft);
+  border-left: 3px solid var(--success);
+  color: #0d3d1e;
+}
+.alert-danger {
+  background: var(--primary-soft);
+  border-left: 3px solid var(--primary);
+  color: #6b1a0e;
+}
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+
+.loader {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.copy-btn {
+  font-size: 11px; padding: 3px 10px;
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-secondary);
+  border-radius: 20px; cursor: pointer;
+  color: var(--color-text-secondary);
+  font-family: var(--font-sans);
+}
+.copy-btn:hover { color: var(--color-text-primary); }
+
+.tier-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 0; border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+.tier-row:last-child { border-bottom: none; }
+.tier-rank {
+  width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 500; flex-shrink: 0;
+}
+.tier-info { flex: 1; }
+.tier-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+.tier-detail { font-size: 12px; color: var(--color-text-secondary); }
+.tier-rate { font-size: 13px; font-weight: 500; }
+
+.api-tag {
+  display: inline-block; padding: 2px 8px;
+  border-radius: 4px; font-size: 11px; font-weight: 500;
+  font-family: var(--font-mono);
+}
+.tag-post { background: #EBF5EB; color: #1a6b1a; }
+.tag-get { background: #EBF0FF; color: #1a3ab5; }
+.tag-put { background: #FFF8E1; color: #8a5f00; }
+</style>
+
+<h2 class="sr-only">Adobe Stock Contributor Master Tool — setup guide, metadata generator, checklist, income calculator, dan API reference</h2>
+
+<div class="app">
+
+<nav class="nav">
+  <button class="nav-tab active" onclick="showPage('setup')">Setup Guide</button>
+  <button class="nav-tab" onclick="showPage('meta')">Metadata Generator <span class="badge badge-red">AI</span></button>
+  <button class="nav-tab" onclick="showPage('checklist')">Upload Checklist</button>
+  <button class="nav-tab" onclick="showPage('income')">Income Planner</button>
+  <button class="nav-tab" onclick="showPage('api')">API Reference</button>
+</nav>
+
+<!-- PAGE 1: SETUP -->
+<div class="page active" id="page-setup">
+  <div class="alert alert-info">Panduan lengkap dari nol hingga first sale. Ikuti setiap step secara berurutan.</div>
+
+  <div class="section-title">Fase 1 — Persiapan akun</div>
+  <div class="card">
+    <div class="step-row">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Daftar sebagai Adobe Stock Contributor</div>
+        <div class="step-desc">Buka contributor.stock.adobe.com → klik "Join Now" → gunakan Adobe ID yang ada atau buat baru. Gratis, tidak butuh portfolio awal.</div>
+        <span class="step-link" onclick="openLink('https://contributor.stock.adobe.com')">contributor.stock.adobe.com ↗</span>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">Lengkapi profil & tax info</div>
+        <div class="step-desc">Settings → Tax Information → isi W-8BEN (untuk WNI). Wajib sebelum bisa menerima pembayaran. Gunakan passport untuk verifikasi identitas.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">Hubungkan metode pembayaran</div>
+        <div class="step-desc">Adobe membayar via PayPal atau Skrill. Minimum payout $25. Pembayaran tiap tanggal 15 bulan berikutnya.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Fase 2 — Persiapan file AI-generated</div>
+  <div class="card">
+    <div class="step-row">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">Wajib declare "AI-generated content"</div>
+        <div class="step-desc">Sejak 2024, Adobe wajibkan semua konten AI harus di-declare. Saat upload, centang opsi "Generative AI". Tidak comply = rejection + akun bisa ditangguhkan.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <div class="step-title">Hapus watermark & bersihkan file</div>
+        <div class="step-desc">Gunakan Adobe Firefly Generative Fill atau Cleanup.pictures untuk remove watermark Gemini/MJ. File harus bebas logo tools pihak ketiga.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">6</div>
+      <div class="step-content">
+        <div class="step-title">Spesifikasi teknis file</div>
+        <div class="step-desc">Minimum 4MP untuk foto/ilustrasi. PNG dengan transparansi didukung untuk clipart/sticker. JPEG min quality 8/10. Max file size 45MB.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Fase 3 — Upload pertama (submission test)</div>
+  <div class="card">
+    <div class="step-row">
+      <div class="step-num">7</div>
+      <div class="step-content">
+        <div class="step-title">Upload 1–5 file sebagai test batch</div>
+        <div class="step-desc">Jangan langsung upload ratusan file. Mulai dengan 3-5 file terbaik untuk lihat acceptance rate. Review biasanya 1-3 hari kerja.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">8</div>
+      <div class="step-content">
+        <div class="step-title">Isi metadata dengan benar</div>
+        <div class="step-desc">Title: maks 200 karakter, deskriptif. Keywords: maks 50 keywords, pisahkan koma. Category pilih yang paling relevan. Gunakan tab Metadata Generator di atas!</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num done">✓</div>
+      <div class="step-content">
+        <div class="step-title">Monitor dashboard & iterasi</div>
+        <div class="step-desc">Setelah approved, track performa via Analytics. File dengan views tinggi tapi download rendah = perlu keyword improvement.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Rejection reasons yang paling umum</div>
+  <div class="alert alert-danger">Watermark / logo tools pihak ketiga terdeteksi</div>
+  <div class="alert alert-danger">Resolusi terlalu rendah (di bawah 4MP)</div>
+  <div class="alert alert-danger">Tidak declare AI-generated content</div>
+  <div class="alert alert-danger">Metadata tidak relevan / keyword stuffing</div>
+  <div class="alert alert-warning">Karakter / IP copyright milik orang lain (Disney, Marvel, dll)</div>
+</div>
+
+<!-- PAGE 2: METADATA GENERATOR -->
+<div class="page" id="page-meta">
+  <div class="alert alert-info">Isi detail gambarmu, AI akan generate title + 50 keywords yang dioptimasi untuk Adobe Stock search algorithm.</div>
+
+  <div class="two-col">
+    <div>
+      <div class="form-group">
+        <label class="form-label">Tipe konten</label>
+        <select class="form-select" id="contentType">
+          <option value="illustration">Illustration / Clipart</option>
+          <option value="sticker">Sticker / Die-cut</option>
+          <option value="photo">Photo / Photorealistic</option>
+          <option value="pattern">Pattern / Background</option>
+          <option value="infographic">Infographic</option>
+          <option value="logo">Logo / Icon</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Subjek utama</label>
+        <span class="form-hint">Deskripsikan karakter/objek utama</span>
+        <input class="form-input" type="text" id="subject" placeholder="cth: cyber teddy bear with bunny ears, neon armor" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Style / Mood</label>
+        <input class="form-input" type="text" id="style" placeholder="cth: neon, dark, kawaii, cyberpunk, holographic" />
+      </div>
+    </div>
+    <div>
+      <div class="form-group">
+        <label class="form-label">Warna dominan</label>
+        <input class="form-input" type="text" id="colors" placeholder="cth: purple, neon green, pink, dark" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Elemen tambahan</label>
+        <span class="form-hint">Background, props, efek</span>
+        <input class="form-input" type="text" id="elements" placeholder="cth: lightning bolts, stars, moon, transparent bg" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Use case / target buyer</label>
+        <select class="form-select" id="usecase">
+          <option value="tshirt">T-shirt / Merchandise print</option>
+          <option value="sticker">Sticker / Print-on-demand</option>
+          <option value="social">Social media content</option>
+          <option value="game">Game / App asset</option>
+          <option value="decoration">Decoration / Poster</option>
+          <option value="commercial">Commercial / Advertising</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <button class="btn btn-primary" id="genBtn" onclick="generateMeta()">
+      Generate metadata ↗
+    </button>
+    <button class="btn btn-secondary" onclick="clearMeta()">Reset</button>
+  </div>
+
+  <div id="metaOutput" style="display:none; margin-top:1.5rem;">
+    <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;">
+      <span>Title</span>
+      <button class="copy-btn" onclick="copyText('titleOut')">Copy</button>
+    </div>
+    <div class="output-box" id="titleOut"></div>
+
+    <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem;">
+      <span>Keywords (50 keywords, diurutkan dari yang paling relevan)</span>
+      <button class="copy-btn" onclick="copyText('kwOut')">Copy all</button>
+    </div>
+    <div class="output-box" id="kwOut"></div>
+    <div class="keyword-tags" id="kwTags"></div>
+
+    <div class="section-title" style="margin-top:1rem;">Category & tips</div>
+    <div class="output-box" id="catOut"></div>
+  </div>
+</div>
+
+<!-- PAGE 3: CHECKLIST -->
+<div class="page" id="page-checklist">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+    <div>
+      <div style="font-size:14px;font-weight:500;color:var(--color-text-primary);" id="checkProgress">0 / 18 selesai</div>
+      <div class="progress-bar" style="width:200px;"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="resetChecklist()">Reset</button>
+  </div>
+
+  <div class="card">
+    <div class="section-title" style="margin-top:0">File quality</div>
+    <div id="cl-quality"></div>
+  </div>
+  <div class="card">
+    <div class="section-title" style="margin-top:0">AI content compliance</div>
+    <div id="cl-ai"></div>
+  </div>
+  <div class="card">
+    <div class="section-title" style="margin-top:0">Metadata & copyright</div>
+    <div id="cl-meta"></div>
+  </div>
+  <div class="card">
+    <div class="section-title" style="margin-top:0">Upload process</div>
+    <div id="cl-upload"></div>
+  </div>
+</div>
+
+<!-- PAGE 4: INCOME PLANNER -->
+<div class="page" id="page-income">
+  <div class="alert alert-success">Simulasi pendapatan berdasarkan portofolio dan acceptance rate realistis.</div>
+
+  <div class="section-title">Parameter kamu</div>
+  <div class="card">
+    <div class="form-group" style="margin-bottom:0.75rem;">
+      <label class="form-label">Jumlah upload per bulan</label>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <input type="range" min="10" max="500" value="50" id="uploadsPerMonth" oninput="calcIncome()" style="flex:1;" />
+        <span style="font-size:14px;font-weight:500;min-width:40px;" id="uploadsVal">50</span>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:0.75rem;">
+      <label class="form-label">Acceptance rate (%)</label>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <input type="range" min="20" max="95" value="60" id="acceptRate" oninput="calcIncome()" step="5" style="flex:1;" />
+        <span style="font-size:14px;font-weight:500;min-width:40px;" id="acceptVal">60%</span>
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:0;">
+      <label class="form-label">Rata-rata download per file per bulan</label>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <input type="range" min="0.1" max="5" value="0.5" id="dlRate" oninput="calcIncome()" step="0.1" style="flex:1;" />
+        <span style="font-size:14px;font-weight:500;min-width:40px;" id="dlVal">0.5</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Proyeksi pendapatan</div>
+  <div class="cards-grid">
+    <div class="metric-card"><div class="dot dot-red"></div><div class="label">Bulan 1</div><div class="value" id="m1">$0</div><div class="sub" id="m1sub">portofolio awal</div></div>
+    <div class="metric-card"><div class="dot dot-gold"></div><div class="label">Bulan 6</div><div class="value" id="m6">$0</div><div class="sub" id="m6sub">portofolio tumbuh</div></div>
+    <div class="metric-card"><div class="dot dot-green"></div><div class="label">Bulan 12</div><div class="value" id="m12">$0</div><div class="sub" id="m12sub">passive income</div></div>
+    <div class="metric-card"><div class="dot dot-green"></div><div class="label">Year 2</div><div class="value" id="y2">$0</div><div class="sub">portofolio mature</div></div>
+  </div>
+
+  <div class="card">
+    <div class="income-row"><div class="income-label">Royalty per sub download</div><div class="income-value">$0.33</div></div>
+    <div class="income-row"><div class="income-label">Royalty per on-demand download</div><div class="income-value">$0.99 – $3.00</div></div>
+    <div class="income-row"><div class="income-label">File approved bulan 12</div><div class="income-value" id="totalFiles">0 files</div></div>
+    <div class="income-row"><div class="income-label">Download per bulan (estimasi)</div><div class="income-value" id="dlPerMonth">0</div></div>
+    <div class="income-row"><div class="income-label">Revenue bulan 12 (blended rate)</div><div class="income-value highlight" id="m12revenue">$0</div></div>
+  </div>
+
+  <div class="section-title">Tier royalty Adobe Stock</div>
+  <div class="card">
+    <div class="tier-row">
+      <div class="tier-rank" style="background:#FDF6E3;color:#8a5f00;">1</div>
+      <div class="tier-info"><div class="tier-name">Tier 1 (0–1 downloads)</div><div class="tier-detail">Level pemula</div></div>
+      <div class="tier-rate" style="color:var(--color-text-secondary);">15–25%</div>
+    </div>
+    <div class="tier-row">
+      <div class="tier-rank" style="background:#EBF0FF;color:#1a3ab5;">2</div>
+      <div class="tier-info"><div class="tier-name">Tier 2 (2–9 downloads)</div><div class="tier-detail">Contributor aktif</div></div>
+      <div class="tier-rate" style="color:var(--color-text-secondary);">25–33%</div>
+    </div>
+    <div class="tier-row">
+      <div class="tier-rank" style="background:#EBF5EB;color:#1a6b1a;">3</div>
+      <div class="tier-info"><div class="tier-name">Tier 3 (10+ downloads)</div><div class="tier-detail">Top contributor</div></div>
+      <div class="tier-rate" style="color:var(--success);">35–40%+</div>
+    </div>
+  </div>
+
+  <div class="alert alert-warning" style="margin-top:1rem;">Target $1,000/bulan realistis di bulan 10–14 dengan 500+ file approved dan niche yang tepat. Fokus pada niche low-competition (sticker, clipart, pattern).</div>
+</div>
+
+<!-- PAGE 5: API -->
+<div class="page" id="page-api">
+  <div class="alert alert-info">Adobe Stock API memungkinkan otomatisasi upload, batch metadata, dan monitoring performa portfolio.</div>
+
+  <div class="section-title">1. Setup Adobe Developer Console</div>
+  <div class="card">
+    <div class="step-row">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Buat project di Adobe Developer Console</div>
+        <div class="step-desc">Buka developer.adobe.com → My Projects → Create Project → Add API → Stock API. Pilih OAuth Server-to-Server credential.</div>
+        <span class="step-link" onclick="openLink('https://developer.adobe.com/console')">developer.adobe.com/console ↗</span>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">Simpan credentials</div>
+        <div class="step-desc">Copy Client ID dan Client Secret. Simpan di environment variable, JANGAN hardcode di script. Gunakan .env file atau secret manager.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">2. Endpoint penting</div>
+  <div class="card">
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="padding:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <span class="api-tag tag-post">POST</span>
+          <code style="font-size:12px;color:var(--color-text-primary);">/api/stock/v3/files</code>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-secondary);">Upload file baru ke contributor portal</div>
+      </div>
+      <div style="padding:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <span class="api-tag tag-put">PUT</span>
+          <code style="font-size:12px;color:var(--color-text-primary);">/api/stock/v3/files/{id}/metadata</code>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-secondary);">Update title, keywords, category</div>
+      </div>
+      <div style="padding:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <span class="api-tag tag-get">GET</span>
+          <code style="font-size:12px;color:var(--color-text-primary);">/api/stock/v3/files?status=approved</code>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-secondary);">List semua file yang approved</div>
+      </div>
+      <div style="padding:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <span class="api-tag tag-get">GET</span>
+          <code style="font-size:12px;color:var(--color-text-primary);">/api/stock/v1/stats/earnings</code>
+        </div>
+        <div style="font-size:12px;color:var(--color-text-secondary);">Earnings & download statistics</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">3. Contoh batch upload script (Python)</div>
+  <div class="output-box" style="font-family:var(--font-mono);font-size:12px;line-height:1.8;color:var(--color-text-primary);">import os, requests
+
+API_KEY = os.getenv("ADOBE_STOCK_API_KEY")
+BASE_URL = "https://contributor.stock.adobe.com"
+
+def upload_file(filepath, title, keywords):
+    headers = {
+        "x-api-key": API_KEY,
+        "Content-Type": "multipart/form-data"
+    }
+    with open(filepath, "rb") as f:
+        files = {"file": f}
+        data = {
+            "title": title,
+            "keywords": ",".join(keywords),
+            "is_ai_generated": "true",
+            "category": 1
+        }
+        r = requests.post(
+            f"{BASE_URL}/api/stock/v3/files",
+            headers=headers,
+            files=files, data=data
+        )
+    return r.json()
+
+# Batch loop dari folder
+for img in os.listdir("./ready_to_upload"):
+    if img.endswith(".png"):
+        result = upload_file(
+            f"./ready_to_upload/{img}",
+            title=f"Neon cyber sticker — {img}",
+            keywords=["neon","cyber","sticker","kawaii"]
+        )
+        print(f"Uploaded: {result}")</div>
+
+  <div class="section-title" style="margin-top:1.5rem;">4. Automation workflow yang direkomendasikan</div>
+  <div class="card">
+    <div class="step-row">
+      <div class="step-num" style="background:var(--gold-soft);color:var(--gold);">A</div>
+      <div class="step-content">
+        <div class="step-title">Generate → Clean → Rename</div>
+        <div class="step-desc">Gemini/MJ generate → remove watermark → rename file dengan naming convention: [niche]_[style]_[number].png</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num" style="background:var(--gold-soft);color:var(--gold);">B</div>
+      <div class="step-content">
+        <div class="step-title">Batch metadata via CSV</div>
+        <div class="step-desc">Buat CSV dengan kolom: filename, title, keywords, category. Import ke upload portal atau gunakan API untuk batch update.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num" style="background:var(--gold-soft);color:var(--gold);">C</div>
+      <div class="step-content">
+        <div class="step-title">Monitor & optimize weekly</div>
+        <div class="step-desc">Setiap minggu check: top performing files → replicate style. Low performer → update keywords atau archive.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function openLink(url) {
+  window.open(url, '_blank');
+}
+
+async function generateMeta() {
+  const subject = document.getElementById('subject').value.trim();
+  const style = document.getElementById('style').value.trim();
+  const colors = document.getElementById('colors').value.trim();
+  const elements = document.getElementById('elements').value.trim();
+  const contentType = document.getElementById('contentType').value;
+  const usecase = document.getElementById('usecase').value;
+
+  if (!subject) { alert('Isi subjek utama dulu ya!'); return; }
+
+  const btn = document.getElementById('genBtn');
+  btn.innerHTML = '<span class="loader"></span> Generating...';
+  btn.disabled = true;
+
+  const prompt = `You are an Adobe Stock metadata expert. Generate optimized metadata for Adobe Stock submission.
+
+Content: ${contentType}
+Subject: ${subject}
+Style/Mood: ${style}
+Colors: ${colors}
+Additional elements: ${elements}
+Use case: ${usecase}
+
+Generate:
+1. TITLE: Max 200 chars, descriptive, search-optimized, no brand names. Start with the most important keyword.
+2. KEYWORDS: Exactly 50 keywords separated by commas, ordered by relevance. Mix specific and broad terms. Include style, use case, mood, color, subject variations.
+3. CATEGORY: Recommended Adobe Stock category number and name.
+4. TIPS: 2-3 specific tips to maximize this file's sales.
+
+Format response as JSON:
+{
+  "title": "...",
+  "keywords": ["kw1","kw2",...],
+  "category": "...",
+  "tips": "..."
+}
+
+Return ONLY valid JSON, no markdown, no explanation.`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content.map(c => c.text || '').join('');
+    const clean = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+
+    document.getElementById('titleOut').textContent = parsed.title;
+    const kwText = parsed.keywords.join(', ');
+    document.getElementById('kwOut').textContent = kwText;
+    const tags = document.getElementById('kwTags');
+    tags.innerHTML = '';
+    parsed.keywords.slice(0, 15).forEach(k => {
+      const span = document.createElement('span');
+      span.className = 'kw-tag';
+      span.textContent = k;
+      tags.appendChild(span);
+    });
+    const more = document.createElement('span');
+    more.className = 'kw-tag';
+    more.style.color = 'var(--color-text-secondary)';
+    more.textContent = `+${parsed.keywords.length - 15} more`;
+    tags.appendChild(more);
+
+    document.getElementById('catOut').textContent = `Category: ${parsed.category}\n\n${parsed.tips}`;
+    document.getElementById('metaOutput').style.display = 'block';
+  } catch(e) {
+    document.getElementById('titleOut').textContent = 'Error generating. Cek koneksi atau coba lagi.';
+    document.getElementById('metaOutput').style.display = 'block';
+  }
+
+  btn.innerHTML = 'Generate metadata ↗';
+  btn.disabled = false;
+}
+
+function clearMeta() {
+  ['subject','style','colors','elements'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('metaOutput').style.display = 'none';
+}
+
+function copyText(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).catch(() => {});
+}
+
+const checks = {
+  quality: [
+    "File resolusi minimum 4MP (cth: 2000×2000px)",
+    "Format PNG atau JPEG — JPEG quality min 8/10",
+    "Tidak ada artifak kompresi, noise berlebihan, atau blur",
+    "Tidak ada watermark, logo, atau branding tools AI",
+    "PNG dengan transparansi: background checkerboard bersih"
+  ],
+  ai: [
+    "Sudah declare 'Generative AI' saat upload",
+    "Tidak ada karakter atau IP copyright (Disney, Marvel, dll)",
+    "Tidak ada wajah identifiable tanpa model release",
+    "Tidak ada trademark / brand terkenal dalam gambar",
+    "Sudah review ulang seluruh gambar untuk elemen sensitif"
+  ],
+  meta: [
+    "Title: deskriptif, 50–200 karakter, keyword di depan",
+    "Keywords: tepat 50 kata, terurut dari paling relevan",
+    "Category: sudah dipilih yang paling spesifik",
+    "Tidak ada keyword stuffing atau keyword tidak relevan",
+    "Tidak menyebut brand atau tools AI dalam metadata"
+  ],
+  upload: [
+    "File sudah di-rename dengan nama deskriptif",
+    "Sudah cek preview thumbnail terlihat menarik",
+    "Pilih 'AI-generated' pada opsi content type",
+    "Submit review — jangan langsung upload 100+ file"
+  ]
+};
+
+function buildChecklist() {
+  const sections = { quality: 'cl-quality', ai: 'cl-ai', meta: 'cl-meta', upload: 'cl-upload' };
+  Object.entries(sections).forEach(([key, divId]) => {
+    const div = document.getElementById(divId);
+    div.innerHTML = '';
+    checks[key].forEach((text, i) => {
+      const id = `chk-${key}-${i}`;
+      const item = document.createElement('div');
+      item.className = 'checklist-item';
+      item.id = 'item-' + id;
+      item.innerHTML = `<input type="checkbox" id="${id}" onchange="updateCheck('${id}')" /><label for="${id}">${text}</label>`;
+      div.appendChild(item);
+    });
+  });
+  updateProgress();
+}
+
+function updateCheck(id) {
+  const cb = document.getElementById(id);
+  const item = document.getElementById('item-' + id);
+  item.className = 'checklist-item' + (cb.checked ? ' done' : '');
+  updateProgress();
+}
+
+function updateProgress() {
+  const all = document.querySelectorAll('.checklist-item input');
+  const done = document.querySelectorAll('.checklist-item input:checked');
+  const total = all.length;
+  const cnt = done.length;
+  document.getElementById('checkProgress').textContent = `${cnt} / ${total} selesai`;
+  document.getElementById('progressFill').style.width = Math.round(cnt / total * 100) + '%';
+}
+
+function resetChecklist() {
+  document.querySelectorAll('.checklist-item input').forEach(cb => { cb.checked = false; });
+  document.querySelectorAll('.checklist-item').forEach(item => item.classList.remove('done'));
+  updateProgress();
+}
+
+function calcIncome() {
+  const uploads = parseInt(document.getElementById('uploadsPerMonth').value);
+  const accept = parseInt(document.getElementById('acceptRate').value) / 100;
+  const dlRate = parseFloat(document.getElementById('dlRate').value);
+  const royalty = 0.38;
+
+  document.getElementById('uploadsVal').textContent = uploads;
+  document.getElementById('acceptVal').textContent = Math.round(accept * 100) + '%';
+  document.getElementById('dlVal').textContent = dlRate.toFixed(1);
+
+  const approvedPerMonth = Math.round(uploads * accept);
+  function rev(months) {
+    const totalFiles = approvedPerMonth * months;
+    const dl = totalFiles * dlRate;
+    return dl * royalty;
+  }
+
+  const m1Files = approvedPerMonth;
+  const m6Files = approvedPerMonth * 6;
+  const m12Files = approvedPerMonth * 12;
+  const y2Files = approvedPerMonth * 24;
+
+  document.getElementById('m1').textContent = '$' + Math.round(m1Files * dlRate * royalty);
+  document.getElementById('m1sub').textContent = m1Files + ' files approved';
+  document.getElementById('m6').textContent = '$' + Math.round(m6Files * dlRate * royalty);
+  document.getElementById('m6sub').textContent = m6Files + ' files approved';
+  document.getElementById('m12').textContent = '$' + Math.round(m12Files * dlRate * royalty);
+  document.getElementById('m12sub').textContent = m12Files + ' files approved';
+  document.getElementById('y2').textContent = '$' + Math.round(y2Files * dlRate * royalty);
+
+  document.getElementById('totalFiles').textContent = m12Files + ' files';
+  document.getElementById('dlPerMonth').textContent = Math.round(m12Files * dlRate) + ' downloads';
+  document.getElementById('m12revenue').textContent = '$' + Math.round(m12Files * dlRate * royalty);
+}
+
+buildChecklist();
+calcIncome();
+</script>

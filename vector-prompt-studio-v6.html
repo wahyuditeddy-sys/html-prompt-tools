@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vector Prompt Studio v6</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F8F6F2;--bg2:#FFFFFF;--bg3:#F2EFE9;--bg4:#E8E4DC;
+  --ink:#1A1816;--ink2:#5A5450;--ink3:#9A9490;
+  --border:#DDD9D3;--border2:#C8C4BC;
+  --acc:#2A7A5A;--acc2:#E8652A;--acc3:#1A4A8A;
+  --gold:#B8860B;
+  --shadow:rgba(26,24,22,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:'Outfit',sans-serif;font-size:13px;line-height:1.5;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle,var(--border) 1px,transparent 1px);background-size:26px 26px;pointer-events:none;z-index:0;opacity:.45}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:200;background:var(--ink);height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:12px}
+.brand{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.brand-dot{width:22px;height:22px;background:var(--acc2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff}
+.brand-name{font-size:13px;font-weight:700;color:#F8F6F2;letter-spacing:-.01em}
+.brand-name span{color:#FF7744;font-style:italic}
+.brand-ver{font-family:'JetBrains Mono',monospace;font-size:8px;color:#666;letter-spacing:.1em;margin-top:1px}
+.mode-tabs{display:flex;gap:3px;background:rgba(255,255,255,.07);padding:3px;border-radius:7px}
+.mtab{padding:4px 12px;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;border:none;background:transparent;color:rgba(255,255,255,.45);font-family:'Outfit',sans-serif;letter-spacing:.03em;transition:all .15s;text-transform:uppercase}
+.mtab:hover{color:rgba(255,255,255,.8)}
+.mtab.on{background:var(--acc);color:#fff}
+.mtab.clay-tab.on{background:#E8652A}
+.topbar-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.tpill{padding:3px 10px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.5);background:transparent;font-family:'Outfit',sans-serif;transition:all .15s}
+.tpill:hover{color:#fff;border-color:rgba(255,255,255,.5)}
+
+/* LAYOUT */
+.shell{position:relative;z-index:1;display:grid;grid-template-columns:320px 1fr;min-height:calc(100vh - 46px)}
+@media(max-width:860px){.shell{grid-template-columns:1fr}}
+
+/* SIDEBAR */
+.sb{background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;max-height:calc(100vh - 46px);position:sticky;top:46px}
+@media(max-width:860px){.sb{max-height:none;position:static}}
+.sb::-webkit-scrollbar{width:3px}.sb::-webkit-scrollbar-thumb{background:var(--border2)}
+.sb-sec{border-bottom:1px solid var(--border);padding:14px 16px}
+.sb-num{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--ink3);letter-spacing:.14em;margin-bottom:3px;display:block}
+.sb-title{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:11px;display:flex;align-items:center;justify-content:space-between}
+
+/* FIELDS */
+.field{margin-bottom:10px}.field:last-child{margin-bottom:0}
+.flabel{font-size:9px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between}
+.fhint{font-size:10px;color:var(--ink3);margin-top:3px;line-height:1.5}
+.fok{font-size:10px;color:var(--acc);margin-top:3px;padding:3px 8px;background:rgba(42,122,90,.08);border-left:2px solid var(--acc);line-height:1.5;border-radius:0 3px 3px 0}
+input[type=text],input[type=number],textarea,select{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;color:var(--ink);font-family:'JetBrains Mono',monospace;font-size:11px;padding:7px 10px;outline:none;transition:border-color .2s}
+input:focus,textarea:focus,select:focus{border-color:var(--acc);background:var(--bg)}
+textarea{resize:vertical;line-height:1.6}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{padding:4px 9px;border-radius:3px;font-size:10px;font-weight:600;cursor:pointer;border:1px solid var(--border2);color:var(--ink2);background:var(--bg3);transition:all .12s;font-family:'Outfit',sans-serif}
+.chip:hover{border-color:var(--acc);color:var(--acc)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#F8F6F2}
+
+/* STYLE CARDS */
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.sc{border:1px solid var(--border2);border-radius:5px;padding:7px 5px;cursor:pointer;text-align:center;background:var(--bg3);transition:all .15s}
+.sc:hover{border-color:var(--ink2)}
+.sc.on{border-color:var(--acc);background:rgba(42,122,90,.08)}
+.sc.on .scl{color:var(--acc)}
+.sc.clay-on{border-color:var(--acc2)!important;background:rgba(232,101,42,.07)!important}
+.sc.clay-on .scl{color:var(--acc2)!important}
+.sci{font-size:15px;margin-bottom:2px;display:block;line-height:1}
+.scl{font-size:8px;font-weight:700;color:var(--ink3);letter-spacing:.04em;text-transform:uppercase}
+
+/* BG SWATCHES */
+.sw-row{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.sw{width:22px;height:22px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:transform .15s;flex-shrink:0}
+.sw:hover{transform:scale(1.15)}
+.sw.on{outline:2px solid var(--acc);outline-offset:2px}
+
+/* TAGS */
+.stag-area{min-height:60px;background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:6px;display:flex;flex-wrap:wrap;gap:4px;align-items:flex-start;cursor:text;transition:border-color .2s}
+.stag-area:focus-within{border-color:var(--acc)}
+.stag{display:flex;align-items:center;gap:2px;background:var(--ink);color:#F8F6F2;border-radius:2px;padding:2px 6px;font-size:9px;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.stag-del{cursor:pointer;color:rgba(255,255,255,.5);font-size:10px}.stag-del:hover{color:#fff}
+.stag-inp{border:none;background:transparent;color:var(--ink);font-family:'JetBrains Mono',monospace;font-size:10px;outline:none;min-width:60px;flex:1}
+.qf-wrap{position:relative}
+.qf-dd{display:none;position:absolute;top:calc(100%+3px);left:0;right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:4px;z-index:80;max-height:180px;overflow-y:auto;box-shadow:0 4px 16px var(--shadow)}
+.qf-dd.open{display:block}
+.qf-item{padding:8px 10px;cursor:pointer;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--ink2);border-bottom:1px solid var(--border);line-height:1.4;transition:background .1s}
+.qf-item:last-child{border-bottom:none}
+.qf-item:hover{background:var(--bg3);color:var(--ink)}
+.qf-item strong{display:block;color:var(--ink);font-size:10px;margin-bottom:1px}
+.qf-btn{font-size:9px;padding:2px 7px;border-radius:3px;background:var(--bg4);border:1px dashed var(--border2);color:var(--ink3);cursor:pointer;font-family:'Outfit',sans-serif;transition:all .12s}
+.qf-btn:hover{border-color:var(--acc);color:var(--acc)}
+
+/* TOGGLES */
+.tog-group{display:flex;flex-direction:column;gap:6px}
+.tog-row{display:flex;align-items:center;justify-content:space-between}
+.tog-txt{font-size:10px;color:var(--ink2)}
+.tog{width:28px;height:15px;border-radius:8px;background:var(--bg4);border:1px solid var(--border2);cursor:pointer;position:relative;transition:all .2s;flex-shrink:0}
+.tog.on{background:var(--acc);border-color:var(--acc)}
+.tog::after{content:'';position:absolute;top:1px;left:1px;width:11px;height:11px;border-radius:50%;background:#fff;transition:transform .2s}
+.tog.on::after{transform:translateX(13px)}
+
+/* TAGS (badge) */
+.tag{display:inline-flex;align-items:center;padding:1px 6px;border-radius:2px;font-size:8px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-family:'JetBrains Mono',monospace}
+.t-g{background:rgba(42,122,90,.12);color:var(--acc)}
+.t-r{background:rgba(232,101,42,.12);color:var(--acc2)}
+.t-b{background:rgba(26,74,138,.12);color:var(--acc3)}
+.t-gold{background:rgba(184,134,11,.12);color:var(--gold)}
+
+/* TEMPLATE GRID */
+.tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.tpl-card{border:1px solid var(--border2);border-radius:5px;padding:8px 10px;cursor:pointer;transition:all .15s;background:var(--bg3)}
+.tpl-card:hover{border-color:var(--acc)}
+.tpl-card.on{border-color:var(--acc);background:rgba(42,122,90,.07)}
+.tpl-card.clay-active.on{border-color:var(--acc2)!important;background:rgba(232,101,42,.06)!important}
+.tc-name{font-size:10px;font-weight:700;color:var(--ink);margin-bottom:1px}
+.tc-sub{font-size:9px;color:var(--ink3);font-family:'JetBrains Mono',monospace}
+
+/* CLAY DNA STRIP */
+.clay-dna{background:rgba(232,101,42,.07);border:1px solid rgba(232,101,42,.25);border-radius:5px;padding:8px 10px;font-size:10px;color:var(--acc2);line-height:1.6;margin-top:8px;font-family:'JetBrains Mono',monospace;display:none}
+.clay-dna.show{display:block}
+
+/* MAIN */
+.main{padding:20px 24px 60px}
+@media(max-width:860px){.main{padding:14px}}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-bottom:18px}
+@media(max-width:600px){.stats{grid-template-columns:repeat(3,1fr)}}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:9px 11px}
+.sl{font-size:8px;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:2px}
+.sv{font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--ink);font-weight:600}
+.sv.cg{color:var(--acc)}.sv.cr{color:var(--acc2)}.sv.cb{color:var(--acc3)}
+
+/* TABS */
+.tabs{display:flex;gap:1px;background:var(--border);border-radius:5px;padding:2px;width:fit-content;margin-bottom:14px}
+.tab{padding:5px 13px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;color:var(--ink3);background:transparent;border:none;font-family:'Outfit',sans-serif;letter-spacing:.02em;transition:all .15s}
+.tab.on{background:var(--bg2);color:var(--ink)}
+
+/* ACTION ROW */
+.actions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.btn{padding:8px 15px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.02em;transition:all .15s;border:1px solid transparent}
+.btn-g{background:var(--acc);color:#fff;border-color:var(--acc)}.btn-g:hover{opacity:.88}
+.btn-clay{background:var(--acc2);color:#fff;border-color:var(--acc2)}.btn-clay:hover{opacity:.9}
+.btn-o{background:transparent;color:var(--ink);border-color:var(--border2)}.btn-o:hover{border-color:var(--acc);color:var(--acc)}
+
+/* OUT CARD */
+.out-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:12px}
+.oh{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg3)}
+.ot{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink2);display:flex;align-items:center;gap:7px}
+.qdot{width:6px;height:6px;border-radius:50%;background:var(--ink3);transition:background .3s}
+.qdot.q2{background:var(--gold)}.qdot.q3{background:var(--acc)}.qdot.q4{background:var(--acc3)}
+.ob{padding:13px 14px}
+.pbox{font-family:'JetBrains Mono',monospace;font-size:11px;line-height:1.85;color:var(--ink);background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:12px;min-height:110px;white-space:pre-wrap;word-break:break-word;outline:none;cursor:text}
+.pbox:focus{border-color:var(--acc)}
+.pbox:empty::before{content:attr(data-ph);color:var(--ink3);font-style:italic}
+.pmeta{display:flex;justify-content:space-between;margin-top:5px;font-size:9px;font-family:'JetBrains Mono',monospace;color:var(--ink3)}
+
+/* 30 VARIATIONS */
+.vars-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.vars-title{font-size:11px;font-weight:700;color:var(--ink)}
+.vars-count{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--ink3);background:var(--bg3);padding:2px 8px;border-radius:3px;border:1px solid var(--border)}
+.var-section{margin-bottom:16px}
+.var-sec-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:7px;padding:4px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.var-sec-count{font-family:'JetBrains Mono',monospace;font-size:8px;background:var(--bg3);padding:1px 6px;border-radius:2px;color:var(--ink3)}
+.var30-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+@media(max-width:600px){.var30-grid{grid-template-columns:1fr}}
+.vc{background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:10px 12px;transition:border-color .15s}
+.vc:hover{border-color:var(--border2)}
+.v-num{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--ink3);letter-spacing:.08em;margin-bottom:3px}
+.v-name{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.v-note{font-size:10px;color:var(--ink3);line-height:1.5;margin-bottom:8px}
+.v-tag{display:inline-block;padding:1px 6px;border-radius:2px;font-size:8px;font-weight:700;font-family:'JetBrains Mono',monospace;margin-bottom:6px}
+.vt-bg{background:rgba(42,122,90,.1);color:var(--acc)}
+.vt-style{background:rgba(26,74,138,.1);color:var(--acc3)}
+.vt-mood{background:rgba(184,134,11,.1);color:var(--gold)}
+.vt-grid{background:rgba(232,101,42,.1);color:var(--acc2)}
+.vt-clay{background:rgba(232,101,42,.15);color:var(--acc2)}
+.vt-special{background:rgba(83,74,183,.1);color:#534AB7}
+
+/* META */
+.meta-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.mr{display:grid;grid-template-columns:72px 1fr;gap:6px;align-items:start}
+.mk{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--ink3);padding-top:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.mv{font-family:'JetBrains Mono',monospace;font-size:10px;background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:6px 9px;color:var(--ink);line-height:1.6;min-height:28px;word-break:break-word}
+.kw-box{display:flex;flex-wrap:wrap;gap:3px;padding:5px;background:var(--bg3);border:1px solid var(--border);border-radius:3px}
+.kw{padding:2px 5px;border-radius:2px;background:var(--bg4);border:1px solid var(--border);font-size:9px;color:var(--ink2);font-family:'JetBrains Mono',monospace}
+
+/* HIST */
+.hi{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:7px 9px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink2);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;transition:border-color .15s;margin-bottom:5px}
+.hi:hover{border-color:var(--acc);color:var(--ink)}
+
+/* DELIVERY */
+.delivery-card{background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:12px 14px;margin-bottom:8px}
+.dc-title{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.dc-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px}
+.dc-row:last-child{border-bottom:none}
+.dc-label{color:var(--ink3);font-size:10px}
+.dc-val{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--ink)}
+.dc-val.g{color:var(--acc)}.dc-val.r{color:var(--acc2)}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;z-index:999;background:var(--ink);color:#F8F6F2;padding:8px 14px;border-radius:4px;font-size:11px;font-weight:700;font-family:'Outfit',sans-serif;transform:translateY(10px);opacity:0;transition:all .25s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ALERT */
+.alert{padding:8px 11px;border-radius:5px;font-size:10px;line-height:1.6;margin-bottom:10px}
+.ag{background:rgba(42,122,90,.08);border-left:2px solid var(--acc);color:var(--acc)}
+.ab{background:rgba(26,74,138,.08);border-left:2px solid var(--acc3);color:var(--acc3)}
+.ao{background:rgba(232,101,42,.08);border-left:2px solid var(--acc2);color:var(--acc2)}
+
+/* PALETTE PREVIEW */
+.pal-strip{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:5px}
+.ps{width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(0,0,0,.08);flex-shrink:0}
+.pl{font-size:9px;color:var(--ink3);font-family:'JetBrains Mono',monospace}
+.pal-sep{color:var(--border2);font-size:10px;margin:0 2px}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-dot">V</div>
+    <div>
+      <div class="brand-name">Vector<span>Studio</span></div>
+      <div class="brand-ver">v6.0 · Combined Edition</div>
+    </div>
+  </div>
+  <div class="mode-tabs">
+    <button class="mtab on" onclick="setMode('general',this)">General</button>
+    <button class="mtab clay-tab" onclick="setMode('clay',this)">Clay 3D</button>
+    <button class="mtab" onclick="setMode('batch',this)">Batch Series</button>
+    <button class="mtab" onclick="setMode('grid',this)">Grid Slice</button>
+  </div>
+  <div class="topbar-right">
+    <button class="tpill" onclick="randomizeAll()">Randomize</button>
+    <button class="tpill" onclick="clearAll()">Clear</button>
+  </div>
+</header>
+
+<div class="shell">
+<aside class="sb">
+
+  <!-- TEMPLATES -->
+  <div class="sb-sec">
+    <span class="sb-num">00</span>
+    <div class="sb-title">Templates <span class="tag t-g" id="tplCountTag">15 ready</span></div>
+    <div class="tpl-grid" id="tplGrid"></div>
+  </div>
+
+  <!-- THEME & COUNT -->
+  <div class="sb-sec">
+    <span class="sb-num">01</span>
+    <div class="sb-title">Theme & Count</div>
+    <div class="field">
+      <div class="flabel">Theme / subject matter</div>
+      <input type="text" id="theme" placeholder="e.g. fintech, RPG game, kawaii animals..." oninput="scheduleGen()">
+    </div>
+    <div class="field">
+      <div class="flabel">Icon count <span id="countHint" style="font-size:9px;color:var(--ink3)">24</span></div>
+      <div class="chips" id="countChips">
+        <button class="chip" data-val="16" onclick="setCount(16,this)">16</button>
+        <button class="chip on" data-val="24" onclick="setCount(24,this)">24</button>
+        <button class="chip" data-val="25" onclick="setCount(25,this)">25</button>
+        <button class="chip" data-val="32" onclick="setCount(32,this)">32</button>
+        <button class="chip" data-val="36" onclick="setCount(36,this)">36</button>
+      </div>
+    </div>
+    <div class="field">
+      <div class="flabel" style="justify-content:space-between">
+        Subjects <span><button class="qf-btn" onclick="toggleDD()" id="ddBtn">Quick fill ▾</button></span>
+      </div>
+      <div class="qf-wrap">
+        <div class="qf-dd" id="qfDD"></div>
+      </div>
+      <div class="stag-area" id="stagArea" onclick="focusTI()">
+        <input class="stag-inp" id="stagInp" placeholder="Type + Enter..." onkeydown="tagKey(event)">
+      </div>
+      <div class="fhint" id="subCount">0 subjects</div>
+    </div>
+  </div>
+
+  <!-- STYLE -->
+  <div class="sb-sec">
+    <span class="sb-num">02</span>
+    <div class="sb-title">Visual Style</div>
+    <div class="field">
+      <div class="sgrid" id="styleGrid">
+        <div class="sc on" data-val="flat outlined, thin uniform 2px stroke, dark outline on light background" onclick="sClick(this)"><span class="sci">◻</span><span class="scl">Flat Line</span></div>
+        <div class="sc" data-val="filled solid flat, clean silhouette, no outlines" onclick="sClick(this)"><span class="sci">◼</span><span class="scl">Filled</span></div>
+        <div class="sc" data-val="duotone two-color flat design, foreground plus accent color" onclick="sClick(this)"><span class="sci">◧</span><span class="scl">Duotone</span></div>
+        <div class="sc" data-val="minimal hairline line art, single-weight strokes on white" onclick="sClick(this)"><span class="sci">—</span><span class="scl">Hairline</span></div>
+        <div class="sc" data-val="bold filled rounded corners, chunky friendly shapes" onclick="sClick(this)"><span class="sci">▣</span><span class="scl">Bold Round</span></div>
+        <div class="sc" data-val="isometric 3D flat, 45° projection, geometric depth" onclick="sClick(this)"><span class="sci">⬡</span><span class="scl">Isometric</span></div>
+        <div class="sc" data-val="cartoon illustration, expressive, playful proportions, thick outline" onclick="sClick(this)"><span class="sci">★</span><span class="scl">Cartoon</span></div>
+        <div class="sc" data-val="sticker style, thick black outline, vibrant fill, white background" onclick="sClick(this)"><span class="sci">◉</span><span class="scl">Sticker</span></div>
+        <div class="sc" data-val="clay 3D render, soft volumetric, matte pastel surface, top-left light" onclick="sClick(this)" id="clayStyleCard"><span class="sci">◍</span><span class="scl">Clay 3D</span></div>
+        <div class="sc" data-val="pixel art retro 16-bit, aliased crisp edges, limited palette" onclick="sClick(this)"><span class="sci">▦</span><span class="scl">Pixel Art</span></div>
+        <div class="sc" data-val="gradient filled, smooth color transitions, modern app icon style" onclick="sClick(this)"><span class="sci">◐</span><span class="scl">Gradient</span></div>
+        <div class="sc" data-val="glassmorphism frosted, translucent panels, light backdrop" onclick="sClick(this)"><span class="sci">◯</span><span class="scl">Glass</span></div>
+      </div>
+      <!-- Clay DNA shown when clay mode active -->
+      <div class="clay-dna" id="clayDnaStrip"></div>
+    </div>
+
+    <div class="field">
+      <div class="flabel">Color palette</div>
+      <div class="chips" id="palChips">
+        <button class="chip on" data-val="vibrant multicolor, warm and playful, high contrast on white" onclick="cOne(this,'palChips')">Vibrant</button>
+        <button class="chip" data-val="pastel soft colors, muted saturation, gentle on white background" onclick="cOne(this,'palChips')">Pastel</button>
+        <button class="chip" data-val="electric tech blue violet teal, dark outlines for light bg compatibility" onclick="cOne(this,'palChips')">Tech Blue</button>
+        <button class="chip" data-val="corporate blue gray professional, dark lines on white" onclick="cOne(this,'palChips')">Corporate</button>
+        <button class="chip" data-val="earthy muted natural organic tones, readable on light background" onclick="cOne(this,'palChips')">Earthy</button>
+        <button class="chip" data-val="monochromatic single hue, tints and shades, works on white" onclick="cOne(this,'palChips')">Mono</button>
+        <button class="chip" data-val="tropical warm vibrant SEA colors, high saturation" onclick="cOne(this,'palChips')">Tropical</button>
+        <button class="chip" data-val="gold and red festive warm palette" onclick="cOne(this,'palChips')">Gold Festive</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="flabel">Palette preview</div>
+      <div class="pal-strip" id="palPreview"></div>
+    </div>
+  </div>
+
+  <!-- BACKGROUND -->
+  <div class="sb-sec">
+    <span class="sb-num">03</span>
+    <div class="sb-title">Background <span class="tag t-g">Data-backed</span></div>
+    <div class="field">
+      <div class="sw-row" id="bgPicker">
+        <div class="sw on" data-bg="pure white #FFFFFF" style="background:#fff;border-color:#ddd" onclick="pickBg(this)" title="White"></div>
+        <div class="sw" data-bg="transparent" style="background:repeating-conic-gradient(#ccc 0% 25%,#fff 0% 50%) 0 0/10px 10px" onclick="pickBg(this)" title="Transparent"></div>
+        <div class="sw" data-bg="#F5F4F0 off-white" style="background:#F5F4F0;border-color:#ddd" onclick="pickBg(this)" title="Off-white"></div>
+        <div class="sw" data-bg="#E8F4FF light blue" style="background:#E8F4FF;border-color:#acd" onclick="pickBg(this)" title="Light blue"></div>
+        <div class="sw" data-bg="#FFF8F0 warm cream" style="background:#FFF8F0;border-color:#ddb" onclick="pickBg(this)" title="Warm cream"></div>
+        <div class="sw" data-bg="#F0F8F0 mint green" style="background:#F0F8F0;border-color:#aca" onclick="pickBg(this)" title="Mint"></div>
+        <div class="sw" data-bg="#FDF8F0 parchment" style="background:#FDF8F0;border-color:#E8D8B8" onclick="pickBg(this)" title="Parchment"></div>
+        <div class="sw" data-bg="#F8F0FF soft lavender" style="background:#F8F0FF;border-color:#D8B8E8" onclick="pickBg(this)" title="Lavender"></div>
+      </div>
+      <div class="fok" style="margin-top:5px">60% top-seller Adobe: transparent atau white. NO dark background.</div>
+    </div>
+  </div>
+
+  <!-- GRID & FORMAT -->
+  <div class="sb-sec">
+    <span class="sb-num">04</span>
+    <div class="sb-title">Canvas & Format</div>
+    <div class="field">
+      <div class="flabel">Grid layout</div>
+      <div class="chips" id="gridChips">
+        <button class="chip on" data-cols="6" data-rows="4" onclick="setGrid(6,4,this)">6×4 (24)</button>
+        <button class="chip" data-cols="4" data-rows="4" onclick="setGrid(4,4,this)">4×4 (16)</button>
+        <button class="chip" data-cols="5" data-rows="5" onclick="setGrid(5,5,this)">5×5 (25)</button>
+        <button class="chip" data-cols="8" data-rows="4" onclick="setGrid(8,4,this)">8×4 (32)</button>
+        <button class="chip" data-cols="6" data-rows="6" onclick="setGrid(6,6,this)">6×6 (36)</button>
+      </div>
+    </div>
+    <div class="field">
+      <div class="flabel">Output format</div>
+      <div class="chips" id="fmtChips">
+        <button class="chip on" data-val="SVG" onclick="cOne(this,'fmtChips')">SVG</button>
+        <button class="chip" data-val="AI" onclick="cOne(this,'fmtChips')">AI</button>
+        <button class="chip" data-val="EPS" onclick="cOne(this,'fmtChips')">EPS</button>
+        <button class="chip" data-val="PNG" onclick="cOne(this,'fmtChips')">PNG</button>
+      </div>
+    </div>
+    <div class="field">
+      <div class="flabel">Style DNA lock (override)</div>
+      <textarea id="styleDna" rows="2" placeholder="Optional — paste or edit Style DNA..." oninput="scheduleGen()"></textarea>
+    </div>
+    <div class="field">
+      <div class="flabel">Batch number</div>
+      <input type="number" id="batchNum" value="1" min="1" max="99" oninput="scheduleGen()" style="width:70px">
+    </div>
+    <div class="field" style="margin-top:8px">
+      <div class="tog-group">
+        <div class="tog-row"><span class="tog-txt">Grid spec (auto-sliceable)</span><div class="tog on" id="togGrid" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+        <div class="tog-row"><span class="tog-txt">Adobe Stock compliance</span><div class="tog on" id="togAdobe" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+        <div class="tog-row"><span class="tog-txt">Delivery instructions</span><div class="tog on" id="togDel" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+        <div class="tog-row"><span class="tog-txt">Verification checklist</span><div class="tog on" id="togVerify" onclick="this.classList.toggle('on');scheduleGen()"></div></div>
+      </div>
+    </div>
+  </div>
+
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <div class="stats">
+    <div class="stat"><div class="sl">Mode</div><div class="sv cg" id="sMode" style="font-size:13px">General</div></div>
+    <div class="stat"><div class="sl">Chars</div><div class="sv cb" id="sChars">0</div></div>
+    <div class="stat"><div class="sl">Subjects</div><div class="sv cg" id="sSubs">0</div></div>
+    <div class="stat"><div class="sl">Grid</div><div class="sv" id="sGrid">6×4</div></div>
+    <div class="stat"><div class="sl">Icons</div><div class="sv cr" id="sIcons">24</div></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" onclick="swTab('prompt',this)">Prompt</button>
+    <button class="tab" onclick="swTab('vars',this)">30 Variasi</button>
+    <button class="tab" onclick="swTab('meta',this)">Metadata</button>
+    <button class="tab" onclick="swTab('subjects',this)">Subjects</button>
+    <button class="tab" onclick="swTab('delivery',this)">Delivery Plan</button>
+    <button class="tab" onclick="swTab('hist',this)">History</button>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-g" id="buildBtn" onclick="buildPrompt()">Build Prompt</button>
+    <button class="btn btn-o" onclick="copyPrompt()">Copy</button>
+    <button class="btn btn-o" onclick="build30Vars()">Build 30 Variasi</button>
+    <button class="btn btn-o" onclick="copyAll30()">Copy Bundle</button>
+  </div>
+
+  <!-- TAB: PROMPT -->
+  <div id="tab-prompt">
+    <div class="out-card">
+      <div class="oh">
+        <div class="ot"><div class="qdot" id="qdot"></div><span id="promptLabel">Main Prompt</span><span style="font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 7px;background:rgba(42,122,90,.1);color:var(--acc);border-radius:2px" id="gridTag">6×4 · 24 icons</span></div>
+        <span style="font-size:8px;font-family:'JetBrains Mono',monospace;color:var(--ink3)" id="qlabel">—</span>
+      </div>
+      <div class="ob">
+        <div class="pbox" id="pbox" contenteditable="true" data-ph="Choose template or fill fields → Build Prompt..."></div>
+        <div class="pmeta"><span id="pmeta">0 chars · 0 words</span><span id="pscore"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: 30 VARS -->
+  <div id="tab-vars" style="display:none">
+    <div class="alert ab">30 variasi untuk 1 tema yang sama. TIDAK ada dark background. Semua light-friendly dan Adobe Stock compliant. Klik "Copy" untuk copy prompt variasi tersebut.</div>
+    <div class="vars-header">
+      <div class="vars-title">30 Variasi Prompt</div>
+      <div class="vars-count" id="varCountBadge">Build prompt dulu</div>
+    </div>
+    <div id="var30Container"><div style="font-size:11px;color:var(--ink3);font-family:'JetBrains Mono',monospace;padding:12px">Klik "Build 30 Variasi" untuk generate semua variasi.</div></div>
+  </div>
+
+  <!-- TAB: META -->
+  <div id="tab-meta" style="display:none">
+    <div class="out-card">
+      <div class="oh">
+        <div class="ot">Adobe Stock Metadata</div>
+        <button class="btn btn-o" style="padding:4px 10px;font-size:10px" onclick="copyMeta()">Copy all</button>
+      </div>
+      <div class="meta-body">
+        <div class="mr"><div class="mk">Title</div><div class="mv" id="mTitle">—</div></div>
+        <div class="mr"><div class="mk">Description</div><div class="mv" id="mDesc">—</div></div>
+        <div class="mr"><div class="mk">Category</div><div class="mv">Graphic Resources &gt; Icons &amp; Pictograms</div></div>
+        <div class="mr"><div class="mk">Keywords</div><div class="kw-box" id="mKw"></div></div>
+        <div class="mr"><div class="mk">AI flag</div><div class="mv" style="color:var(--acc2);font-weight:600">Generative AI — declare on upload</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: SUBJECTS -->
+  <div id="tab-subjects" style="display:none">
+    <div class="out-card">
+      <div class="oh">
+        <div class="ot">Subject List</div>
+        <button class="btn btn-o" style="padding:4px 10px;font-size:10px" onclick="copySubjects()">Copy list</button>
+      </div>
+      <div class="ob">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0" id="subjGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: DELIVERY -->
+  <div id="tab-delivery" style="display:none">
+    <div class="delivery-card">
+      <div class="dc-title" id="delTitle">Delivery Plan</div>
+      <div class="dc-row"><div class="dc-label">Mode</div><div class="dc-val g" id="delMode">General</div></div>
+      <div class="dc-row"><div class="dc-label">Canvas</div><div class="dc-val" id="delCanvas">1536×1024 px</div></div>
+      <div class="dc-row"><div class="dc-label">Cell size</div><div class="dc-val" id="delCell">256×256 px</div></div>
+      <div class="dc-row"><div class="dc-label">Total icons</div><div class="dc-val r" id="delIcons">24</div></div>
+      <div class="dc-row"><div class="dc-label">Background</div><div class="dc-val" id="delBg">White #FFFFFF</div></div>
+      <div class="dc-row"><div class="dc-label">Format</div><div class="dc-val" id="delFmt">SVG</div></div>
+      <div class="dc-row"><div class="dc-label">Version A (primary)</div><div class="dc-val g">Transparent PNG + SVG</div></div>
+      <div class="dc-row"><div class="dc-label">Version B</div><div class="dc-val">White background</div></div>
+      <div class="dc-row"><div class="dc-label">Sprite sheet</div><div class="dc-val" id="delSprite">6×4 assembled</div></div>
+      <div class="dc-row"><div class="dc-label">Individual files</div><div class="dc-val" id="delIndiv">24 labeled files</div></div>
+      <div class="dc-row"><div class="dc-label">Batch number</div><div class="dc-val" id="delBatch">Batch 01</div></div>
+      <div class="dc-row"><div class="dc-label">Upload priority</div><div class="dc-val g">Transparent first</div></div>
+    </div>
+    <button class="btn btn-o" onclick="copyDelivery()">Copy delivery plan</button>
+  </div>
+
+  <!-- TAB: HIST -->
+  <div id="tab-hist" style="display:none">
+    <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--ink3);margin-bottom:8px">History (last 8)</div>
+    <div id="histList"><div style="font-size:11px;color:var(--ink3);font-family:'JetBrains Mono',monospace;padding:8px">No prompts yet.</div></div>
+  </div>
+
+</main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════
+   DATA — TEMPLATES (v5 + Clay3D combined)
+══════════════════════════════════════════ */
+const TEMPLATES = [
+  // ── GENERAL ──
+  {name:'Australian Animals',badge:'hot',mode:'general',theme:'cute Australian animal faces',count:24,subjects:['kangaroo','koala','wombat','platypus','echidna','quokka','Tasmanian devil','kookaburra','cockatoo','wallaby','possum','dingo','emu','cassowary','sugar glider','numbat','bilby','bandicoot','frilled lizard','saltwater crocodile','blue-tongue lizard','thorny devil','sea eagle','dugong'],style:'cartoon illustration, expressive, playful proportions, thick outline',palette:'vibrant multicolor, warm and playful, high contrast on white',bg:'pure white #FFFFFF',dna:'rounded square face shape, large expressive circular eyes, small button nose, consistent ear proportions, minimal fur texture lines, friendly expression, same scale and visual weight'},
+  {name:'Agentic AI Tech',badge:'new',mode:'general',theme:'Agentic AI technology icons',count:24,subjects:['AI agent brain core','autonomous robot arm','multi-agent network mesh','LLM language model chip','neural pathway circuit','agent task queue pipeline','decision tree node','reinforcement learning loop','memory vector database','tool calling API connector','orchestration workflow engine','AI model inference server','agent observation sensor','reward signal optimizer','planning module CPU','environment simulation grid','policy gradient chip','embedding space cluster','attention mechanism head','transformer block unit','agent spawner controller','human-in-the-loop gate','feedback loop circuit','autonomous deployment pod'],style:'flat outlined, thin uniform 2px stroke, dark outline on light background',palette:'electric tech blue violet teal, dark outlines for light bg compatibility',bg:'#E8F4FF light blue',dna:'flat isometric 3D style, electric blue #4A9EFF primary, teal #00D4AA accent, dark navy #1A2040 outlines, 2px stroke, clean geometric shapes, no glow, no dark fill'},
+  {name:'AI Tech Server',badge:'',mode:'general',theme:'AI tech hardware and servers',count:24,subjects:['CPU processor chip','GPU graphics card','RAM memory module','SSD storage drive','server rack unit','network switch','fiber optic cable','cooling fan','motherboard circuit','power supply unit','data center tower','ethernet port','USB hub connector','heat sink','PCIe slot','NVMe drive','BIOS chip','liquid cooling','bandwidth wave','cloud node','firewall shield','router antenna','quantum processor','RAID array'],style:'flat outlined, thin uniform 2px stroke, dark outline on light background',palette:'corporate blue gray professional, dark lines on white',bg:'pure white #FFFFFF',dna:'technical blueprint aesthetic, precise 2px lines, metallic silver, electric blue accent, clean geometric, white background'},
+  {name:'Fantasy RPG Items',badge:'hot',mode:'general',theme:'Fantasy RPG game items and weapons',count:24,subjects:['iron sword','magic staff','healing potion','mana potion blue','dragon scale shield','enchanted bow','fire spell scroll','leather armor','iron helmet','ring of power','treasure chest','magic wand','ancient tome','crystal ball','grappling rope','lantern torch','silver axe','crossbow','throwing daggers','emerald amulet','shadow cloak','battle hammer','poison vial','golden crown'],style:'cartoon illustration, expressive, playful proportions, thick outline',palette:'vibrant multicolor, warm and playful, high contrast on white',bg:'transparent',dna:'game item icon style, thick 3px black outline, vibrant saturated colors, subtle inner highlight, consistent icon size, same visual weight per icon'},
+  {name:'Food & Cuisine',badge:'',mode:'general',theme:'international street food and cuisine',count:24,subjects:['sushi roll','ramen bowl','tacos','pizza slice','burger','banh mi','pad thai','dim sum basket','shawarma wrap','paella','bao bun','empanada','jerk chicken','falafel wrap','pho bowl','curry bowl','crepe','churros','mango sticky rice','dumplings','fish and chips','lobster roll','biryani','kimchi bowl'],style:'cartoon illustration, expressive, playful proportions, thick outline',palette:'vibrant multicolor, warm and playful, high contrast on white',bg:'pure white #FFFFFF',dna:'cute food illustration, slight top-down view, steam on hot food, consistent drop shadow, warm inviting colors, same rounded style per item'},
+  {name:'Space & Astronomy',badge:'',mode:'general',theme:'space exploration and astronomy',count:24,subjects:['rocket launch','astronaut helmet','space station','black hole','supernova','moon base','mars rover','telescope','satellite dish','asteroid belt','comet','nebula cloud','space shuttle','alien planet','space suit glove','milky way galaxy','solar flare','meteor shower','space debris','wormhole portal','quantum drive','cryo sleep pod','space beacon','planetary rings'],style:'flat outlined, thin uniform 2px stroke, dark outline on light background',palette:'electric tech blue violet teal, dark outlines for light bg compatibility',bg:'#E8F4FF light blue',dna:'cosmic aesthetic, blue and purple highlights, light blue background, no dark fill, consistent 2px dark outlines'},
+  {name:'Finance & Fintech',badge:'',mode:'general',theme:'finance and fintech digital banking',count:24,subjects:['crypto wallet','bitcoin coin','stock chart uptrend','bank building','credit card','digital payment QR','gold bar stack','piggy bank','investment graph','loan document','insurance shield','forex exchange','yield farming','DeFi protocol','NFT frame','digital vault','wire transfer','compound interest','tax document','portfolio pie chart','fund management','blockchain chain','savings jar','financial report'],style:'flat outlined, thin uniform 2px stroke, dark outline on light background',palette:'corporate blue gray professional, dark lines on white',bg:'pure white #FFFFFF',dna:'clean fintech aesthetic, 2px dark stroke, blue primary, minimal geometric, professional trustworthy feel'},
+  {name:'Health & Medical',badge:'',mode:'general',theme:'health wellness and medical icons',count:24,subjects:['stethoscope','heart rate monitor','DNA strand','pill capsule','syringe vaccine','medical cross','brain scan','lung organ','blood drop test','ambulance','hospital bed','x-ray scan','surgical tools','microscope','first aid kit','tooth dental','eye ophthalmology','kidney organ','liver organ','spine bone','ECG waveform','medical app','nutrition plate','meditation pose'],style:'flat outlined, thin uniform 2px stroke, dark outline on light background',palette:'pastel soft colors, muted saturation, gentle on white background',bg:'pure white #FFFFFF',dna:'clean medical aesthetic, 2px stroke, soft pastel colors, clinical feel, consistent rounded shapes'},
+  {name:'Nature & Ecology',badge:'',mode:'general',theme:'nature ecology and environment',count:24,subjects:['oak tree','solar panel','wind turbine','recycling arrows','water droplet','leaf sprout','coral reef','bee honeycomb','mountain peak','river flow','compost pile','electric car','carbon footprint','rainforest canopy','polar ice cap','wildfire alert','ocean wave','seed germination','bamboo stalk','butterfly','soil layers','water filtration','green energy','earth globe'],style:'bold filled rounded corners, chunky friendly shapes',palette:'earthy muted natural organic tones, readable on light background',bg:'#F0F8F0 mint green',dna:'organic rounded shapes, earthy green and brown palette, friendly, consistent thick rounded corners'},
+  {name:'Architecture & Design',badge:'new',mode:'general',theme:'architecture interior design and construction',count:24,subjects:['blueprint floor plan','modern house','skyscraper tower','bridge structure','window frame','interior sofa','kitchen island','bathroom sink','ceiling beam','door handle','architectural column','spiral staircase','rooftop terrace','open floor plan','material samples','paint roller','measuring tape','CAD drawing tool','foundation layer','green roof','skylight','modular shelving','outdoor deck','facade panels'],style:'minimal hairline line art, single-weight strokes on white',palette:'monochromatic single hue, tints and shades, works on white',bg:'pure white #FFFFFF',dna:'architectural blueprint aesthetic, precise 1px hairline strokes, technical drawing feel, white background, blue accent elements only'},
+  // ── CLAY 3D ──
+  {name:'Clay · Fintech',badge:'trend',mode:'clay',theme:'fintech and digital payment — clay 3D style',count:24,subjects:['crypto wallet','bitcoin coin','stock chart rising','bank building','credit card tap','QR code payment','gold bar stack','piggy bank savings','investment graph','loan document','insurance shield','forex exchange','yield farm plant','DeFi protocol node','NFT digital frame','digital vault lock','wire transfer arrow','compound interest loop','tax return document','portfolio pie chart','fund manager briefcase','blockchain chain link','savings glass jar','financial report clipboard'],style:'clay 3D render, soft volumetric, matte pastel surface, top-left light',palette:'pastel soft colors, muted saturation, gentle on white background',bg:'pure white #FFFFFF',dna:'soft clay 3D render, matte pastel surface with subtle specular highlight top-left 45°, rounded puffy volumetric shapes, no sharp edges, same light source all icons, soft ambient shadow bottom-right, pastel mint #B2EBD4 and soft lavender #C8B8F0 with coral accent #F4A68C, icons feel tactile like molded clay'},
+  {name:'Clay · Health',badge:'trend',mode:'clay',theme:'health wellness medical — clay 3D style',count:24,subjects:['stethoscope','heart rate monitor','DNA double helix','pill capsule','syringe vaccine','medical cross','brain organ','lung pair','blood drop test','ambulance vehicle','hospital bed','x-ray scan frame','surgical scissors','microscope lab','first aid kit box','tooth molar','eye pupil','kidney organ','liver organ','spine column','ECG waveform','nutrition apple','yoga lotus pose','meditation figure'],style:'clay 3D render, soft volumetric, matte pastel surface, top-left light',palette:'pastel soft colors, muted saturation, gentle on white background',bg:'pure white #FFFFFF',dna:'soft clay 3D render, matte surface gentle specular highlight, rounded puffy medical shapes, no sharp edges, consistent top-left 45° light, same soft shadow bottom-right, pastel blue #B8D9F0 and soft green #A8E6CF with blush pink #F4B8C8, clinical yet warm and approachable'},
+  {name:'Clay · AI Tech',badge:'trend',mode:'clay',theme:'AI technology digital tools — clay 3D style',count:24,subjects:['AI brain chip','robot head','neural network nodes','cloud server rack','smartphone device','laptop computer','wifi signal','database cylinder','CPU processor','GPU card','code brackets','API connector','algorithm flowchart','machine learning gear','data chart bar','security shield lock','VR headset','drone quadcopter','satellite dish','smart home hub','fingerprint scanner','voice wave','3D printer','electric circuit board'],style:'clay 3D render, soft volumetric, matte pastel surface, top-left light',palette:'pastel soft colors, muted saturation, gentle on white background',bg:'pure white #FFFFFF',dna:'soft clay 3D render, matte cool-toned pastel surface, rounded puffy tech shapes, electric blue #A8C8F0 and soft purple #C4B0E8 with teal #8EDDD4, consistent top-left light, same scale, approachable yet futuristic'},
+  {name:'Clay · Food',badge:'',mode:'clay',theme:'food cafe beverage — clay 3D style',count:24,subjects:['coffee cup steam','espresso shot','croissant pastry','cake slice','burger bun','pizza slice','salad bowl','avocado half','sushi roll','ramen bowl','matcha latte','smoothie cup','donut ring','waffle stack','pancake stack','french fries','ice cream scoop','boba tea cup','croissant basket','sandwich wrap','pasta bowl','taco shell','cupcake frosted','juice glass'],style:'clay 3D render, soft volumetric, matte pastel surface, top-left light',palette:'pastel soft colors, muted saturation, gentle on white background',bg:'pure white #FFFFFF',dna:'soft clay 3D render, warm pastel surface texture, rounded puffy food shapes, warm cream #F5E6C8 and terracotta #E8A87C with golden yellow #F0D060, appetizing slightly oversized cute proportions'},
+  {name:'Clay · Nature',badge:'',mode:'clay',theme:'nature ecology environment — clay 3D style',count:24,subjects:['oak tree round','leaf sprout','sunflower bloom','mountain peak','ocean wave','raindrop water','snowflake crystal','sun rays circle','moon crescent','butterfly wings','bee body','mushroom cap','cactus plant','tropical palm','wheat stalk','apple fruit','strawberry','acorn seed','pinecone','coral reef','turtle shell','fox sitting','bear face','rabbit ears'],style:'clay 3D render, soft volumetric, matte pastel surface, top-left light',palette:'pastel soft colors, muted saturation, gentle on white background',bg:'pure white #FFFFFF',dna:'soft clay 3D render, organic rounded shapes, natural pastel surface, botanical green #A8D8B0 and sky blue #B0D4E8 with warm peach #F0C4A0, all shapes feel touchable like clay nature sculptures'},
+];
+
+/* ══ 30 VARIATIONS (all light-bg, no dark) ══ */
+const VARS30 = [
+  // ── BACKGROUND (6) ──
+  {cat:'Background',num:1,name:'Transparent background',tag:'vt-bg',note:'Fully transparent, no fill. Primary upload version — Adobe official recommends transparent for icon sheets. Buyer places over any background.'},
+  {cat:'Background',num:2,name:'Pure white #FFFFFF',tag:'vt-bg',note:'Flat pure white background. #2 best seller on Adobe Stock. Clean, universal, works for any buyer use case.'},
+  {cat:'Background',num:3,name:'Off-white #F5F4F0',tag:'vt-bg',note:'Warm off-white background. Slightly premium feel. Works well for lifestyle, wellness, food, and editorial brands.'},
+  {cat:'Background',num:4,name:'Light blue #E8F4FF',tag:'vt-bg',note:'Soft light blue tint. Best for tech, AI, medical, and corporate icon sets. Creates a clinical-yet-approachable feel.'},
+  {cat:'Background',num:5,name:'Warm cream #FFF8F0',tag:'vt-bg',note:'Warm golden cream background. Best for food, lifestyle, wellness, and cultural icon sets. Feels artisanal and premium.'},
+  {cat:'Background',num:6,name:'Mint #F0F8F0',tag:'vt-bg',note:'Fresh pale mint background. Eco, health, and nature themes. Organic and fresh without being too colorful.'},
+  // ── STYLE (8) ──
+  {cat:'Style',num:7,name:'Flat outlined (main style)',tag:'vt-style',note:'Default. Thin uniform 2px stroke, dark outline, white background. Most versatile and highest sell rate on Adobe Stock.'},
+  {cat:'Style',num:8,name:'Filled solid (no outline)',tag:'vt-style',note:'Remove outline completely. Fill each shape with solid color. Higher visual weight, good for app icon use at small sizes.'},
+  {cat:'Style',num:9,name:'Duotone two-color',tag:'vt-style',note:'Exactly two colors per icon — primary foreground shape plus a lighter accent. Clean, modern, minimal aesthetic.'},
+  {cat:'Style',num:10,name:'Bold rounded friendly',tag:'vt-style',note:'Chunkier, heavier shapes. Same subjects but with extra rounded corners and bolder proportions. Great for children\'s content.'},
+  {cat:'Style',num:11,name:'Hairline line art',tag:'vt-style',note:'Ultra-thin single-weight hairline strokes. No fill. Architectural, editorial, luxury feel. Works well on white or cream.'},
+  {cat:'Style',num:12,name:'Cartoon expressive',tag:'vt-style',note:'Exaggerated proportions, playful emotions, thicker outline. Same subjects but with personality and character added.'},
+  {cat:'Style',num:13,name:'Sticker style (thick outline)',tag:'vt-style',note:'Extra thick 4px black outline, vibrant fill, white background. Social media sticker pack aesthetic. High download rate.'},
+  {cat:'Style',num:14,name:'Clay 3D render',tag:'vt-clay',note:'Soft volumetric clay render, matte pastel surface, top-left light source. 2026 trend style. Low supply on Adobe Stock.'},
+  // ── COLOR MOOD (6) ──
+  {cat:'Color Mood',num:15,name:'Vibrant high saturation',tag:'vt-mood',note:'Maximum saturation and brightness. Bold, energetic, eye-catching. Best for marketing materials, children apps, social media.'},
+  {cat:'Color Mood',num:16,name:'Pastel soft muted',tag:'vt-mood',note:'Reduce saturation 50%, add white. Gentle and approachable. Best for health, wellness, baby products, feminine brands.'},
+  {cat:'Color Mood',num:17,name:'Earthy natural tones',tag:'vt-mood',note:'Warm muted browns, greens, terracotta. Organic, sustainable, artisanal feel. Works for food, nature, culture topics.'},
+  {cat:'Color Mood',num:18,name:'Corporate blue-gray',tag:'vt-mood',note:'Professional and trustworthy. Blue and gray palette. Best for fintech, SaaS, B2B, enterprise software marketing.'},
+  {cat:'Color Mood',num:19,name:'Tropical warm vibrant',tag:'vt-mood',note:'Warm tropical tones — orange, yellow, coral, teal. High energy, vacation feel. SEA brands, travel, food delivery apps.'},
+  {cat:'Color Mood',num:20,name:'Monochromatic single hue',tag:'vt-mood',note:'One hue family — tints and shades only. Ultra-clean, brand-friendly. Buyer can swap the hue to match their brand color.'},
+  // ── DETAIL LEVEL (3) ──
+  {cat:'Detail Level',num:21,name:'Minimal silhouette',tag:'vt-style',note:'Strip to absolute minimum. Essential shape only, no detail, maximum negative space. For app icons at 32–64px.'},
+  {cat:'Detail Level',num:22,name:'Balanced (standard)',tag:'vt-style',note:'Default detail level. Enough detail to be recognizable, not too much to be noisy. Most broadly sellable version.'},
+  {cat:'Detail Level',num:23,name:'Ultra-detailed',tag:'vt-style',note:'Maximum detail — inner shadows, texture, subtle highlights, micro-patterns. For editorial, print, and large-format use.'},
+  // ── GRID FORMAT (4) ──
+  {cat:'Grid Format',num:24,name:'4×4 grid (16 icons)',tag:'vt-grid',note:'16 icons on 1024×1024 canvas. Each cell 256×256px. Best for single-theme focused packs. Faster to produce per batch.'},
+  {cat:'Grid Format',num:25,name:'6×4 grid (24 icons)',tag:'vt-grid',note:'24 icons on 1536×1024 canvas. Each cell 256×256px. Standard Adobe Stock icon sheet. Most common top-seller format.'},
+  {cat:'Grid Format',num:26,name:'5×5 grid (25 icons)',tag:'vt-grid',note:'25 icons on 1280×1280 canvas. Square canvas — easier for thumbnail preview. Good for round number collections.'},
+  {cat:'Grid Format',num:27,name:'8×4 grid (32 icons)',tag:'vt-grid',note:'32 icons on 2048×1024 canvas. High-volume sheet. Better perceived value for buyer. Title: "32-icon bundle set".'},
+  // ── SPECIAL (3) ──
+  {cat:'Special',num:28,name:'Two-version delivery (transparent + white)',tag:'vt-special',note:'Generate both transparent and white background version in one prompt. One batch = two uploadable assets. Double efficiency.'},
+  {cat:'Special',num:29,name:'Batch 2 continuation',tag:'vt-special',note:'Second batch in same style series. Extends your first set — buyer who bought batch 1 will buy batch 2. Consistent Style DNA required.'},
+  {cat:'Special',num:30,name:'Print-ready high detail',tag:'vt-special',note:'Ultra-high detail, 300dpi equivalent, CMYK-safe colors. For editorial, print-on-demand, branding package buyers. Higher price license.'},
+];
+
+/* ══ QUICK FILL SUBJECTS ══ */
+const QUICK_SUBJECTS = {
+  'Tech / AI': ['AI chip','robot','neural network','cloud server','CPU','GPU','database','API connector','VR headset','drone','circuit board','fingerprint scanner','code brackets','smart home'],
+  'Fintech':   ['bitcoin','crypto wallet','stock chart','bank building','credit card','QR payment','gold bar','piggy bank','investment graph','DeFi','NFT','blockchain','insurance shield','forex'],
+  'Health':    ['stethoscope','pill capsule','DNA strand','syringe','brain scan','heart monitor','ambulance','x-ray','microscope','first aid kit','yoga pose','nutrition plate','ECG wave'],
+  'Food':      ['coffee cup','burger','pizza slice','sushi roll','ramen bowl','croissant','cake slice','donut','taco','boba tea','avocado','smoothie','ice cream','waffle'],
+  'Animals':   ['kangaroo','koala','fox','rabbit','bear','owl','cat face','dog face','penguin','deer','elephant','lion','tiger','panda'],
+  'RPG Game':  ['sword','shield','potion','magic staff','dragon','treasure chest','armor','spell scroll','bow','helmet','amulet','crystal orb','dungeon key','cursed ring'],
+};
+
+/* ══ STATE ══ */
+let currentMode = 'general', subjects = [], currentStyle = 'flat outlined, thin uniform 2px stroke, dark outline on light background';
+let currentBg = 'pure white #FFFFFF', cols = 6, rows = 4, genCount = 0, history = [];
+let currentTemplate = null;
+
+/* ══ INIT ══ */
+function init() {
+  buildTplGrid();
+  buildQuickDD();
+  renderPalPreview();
+  updateDelivery();
+}
+
+function buildTplGrid() {
+  const g = document.getElementById('tplGrid');
+  g.innerHTML = '';
+  const filtered = currentMode === 'general'
+    ? TEMPLATES.filter(t => t.mode === 'general')
+    : currentMode === 'clay'
+    ? TEMPLATES.filter(t => t.mode === 'clay')
+    : TEMPLATES;
+  document.getElementById('tplCountTag').textContent = filtered.length + ' ready';
+  filtered.forEach((t, i) => {
+    const el = document.createElement('div');
+    el.className = 'tpl-card' + (t.mode === 'clay' ? ' clay-mode' : '');
+    el.innerHTML = `<div class="tc-name">${t.name}${t.badge ? ` <span class="tag ${t.badge==='hot'?'t-r':t.badge==='new'?'t-b':'t-gold'}">${t.badge}</span>` : ''}</div><div class="tc-sub">${t.count} icons · ${t.mode}</div>`;
+    el.onclick = () => loadTemplate(t, el);
+    g.appendChild(el);
+  });
+}
+
+function loadTemplate(t, el) {
+  currentTemplate = t;
+  document.querySelectorAll('.tpl-card').forEach(c => c.classList.remove('on','clay-active'));
+  el.classList.add('on');
+  if (t.mode === 'clay') el.classList.add('clay-active');
+  document.getElementById('theme').value = t.theme;
+  subjects = []; document.querySelectorAll('.stag').forEach(e => e.remove());
+  t.subjects.forEach(addTag);
+  setStyleByVal(t.style);
+  chipOneByVal('palChips', t.palette);
+  setBgByVal(t.bg);
+  // Set grid from template
+  const gc = parseInt(t.grid?.match(/(\d+)×/)?.[1] || '6');
+  const gr = parseInt(t.grid?.match(/×(\d+)/)?.[1] || '4');
+  setGrid(gc, gr, null);
+  // Set count chip
+  setCount(t.count, null);
+  // Set style DNA if template has dna
+  if (t.dna) document.getElementById('styleDna').value = t.dna;
+  // Clay DNA strip
+  updateClayDNA(t);
+  // Auto-set mode
+  if (t.mode === 'clay' && currentMode !== 'clay') {
+    const clayBtn = document.querySelector('.clay-tab');
+    setMode('clay', clayBtn);
+  }
+  renderPalPreview();
+  buildPrompt();
+  toast(`Loaded: ${t.name}`);
+}
+
+function updateClayDNA(t) {
+  const strip = document.getElementById('clayDnaStrip');
+  if (t && t.mode === 'clay') {
+    strip.textContent = 'Clay DNA: ' + (t.dna || '').substring(0, 120) + '...';
+    strip.classList.add('show');
+  } else {
+    strip.classList.remove('show');
+  }
+}
+
+function buildQuickDD() {
+  const dd = document.getElementById('qfDD');
+  dd.innerHTML = '';
+  Object.entries(QUICK_SUBJECTS).forEach(([cat, items]) => {
+    const d = document.createElement('div');
+    d.className = 'qf-item';
+    d.innerHTML = `<strong>${cat}</strong>${items.slice(0, 5).join(', ')}...`;
+    d.onclick = () => { items.forEach(addTag); closeDD(); updateSubCount(); scheduleGen(); };
+    dd.appendChild(d);
+  });
+}
+
+/* ══ TAGS ══ */
+function addTag(val) {
+  val = val.trim();
+  if (!val || subjects.includes(val.toLowerCase())) return;
+  subjects.push(val.toLowerCase());
+  const area = document.getElementById('stagArea'), inp = document.getElementById('stagInp');
+  const t = document.createElement('div');
+  t.className = 'stag'; t.dataset.val = val;
+  t.innerHTML = `${val}<span class="stag-del" onclick="removeTag('${val.replace(/'/g,"\\'")}',this.parentNode)">×</span>`;
+  area.insertBefore(t, inp);
+  updateSubCount();
+}
+function removeTag(val, el) { subjects = subjects.filter(s => s !== val.toLowerCase()); el.remove(); updateSubCount(); scheduleGen(); }
+function tagKey(e) {
+  if (e.key === 'Enter') { e.preventDefault(); const v = e.target.value.trim(); if (v) { addTag(v); e.target.value = ''; scheduleGen(); } }
+  if (e.key === 'Backspace' && !e.target.value) { const tt = document.querySelectorAll('.stag'); if (tt.length) { const l = tt[tt.length-1]; removeTag(l.dataset.val, l); } }
+}
+function focusTI() { document.getElementById('stagInp').focus(); }
+function toggleDD() { document.getElementById('qfDD').classList.toggle('open'); }
+function closeDD() { document.getElementById('qfDD').classList.remove('open'); }
+document.addEventListener('click', e => { if (!e.target.closest('.qf-wrap') && !e.target.closest('#ddBtn')) closeDD(); });
+function updateSubCount() {
+  const n = subjects.length, target = cols * rows;
+  const el = document.getElementById('subCount');
+  el.textContent = n + ' subjects' + (n > 0 ? ` (need ${target})` : '');
+  el.style.color = n === target ? 'var(--acc)' : n > target ? 'var(--acc2)' : 'var(--ink3)';
+  document.getElementById('sSubs').textContent = n;
+}
+
+/* ══ STYLE ══ */
+function sClick(el) {
+  document.querySelectorAll('.sc').forEach(e => { e.classList.remove('on','clay-on'); });
+  el.classList.add(currentMode === 'clay' ? 'clay-on' : 'on');
+  currentStyle = el.dataset.val;
+  scheduleGen();
+}
+function setStyleByVal(val) {
+  document.querySelectorAll('.sc').forEach(e => { e.classList.remove('on','clay-on'); if (e.dataset.val === val) { e.classList.add(currentMode === 'clay' ? 'clay-on' : 'on'); currentStyle = val; } });
+}
+function cOne(el, gid) { document.querySelectorAll('#'+gid+' .chip').forEach(e => e.classList.remove('on')); el.classList.add('on'); if (gid === 'palChips') renderPalPreview(); scheduleGen(); }
+function chipOneByVal(gid, val) {
+  const chips = document.querySelectorAll('#'+gid+' .chip');
+  chips.forEach(e => e.classList.remove('on'));
+  const t = Array.from(chips).find(c => c.dataset.val === val);
+  if (t) t.classList.add('on');
+  if (gid === 'palChips') renderPalPreview();
+}
+function getChip(gid) { const el = document.querySelector('#'+gid+' .chip.on'); return el ? el.dataset.val : ''; }
+function pickBg(el) { document.querySelectorAll('.sw').forEach(e => e.classList.remove('on')); el.classList.add('on'); currentBg = el.dataset.bg; scheduleGen(); updateDelivery(); }
+function setBgByVal(val) {
+  document.querySelectorAll('.sw').forEach(e => e.classList.remove('on'));
+  currentBg = val;
+  const t = Array.from(document.querySelectorAll('.sw')).find(s => s.dataset.bg && val.startsWith(s.dataset.bg.split(' ')[0]));
+  if (t) t.classList.add('on'); else document.querySelector('.sw').classList.add('on');
+}
+function setGrid(c, r, el) {
+  cols = c; rows = r;
+  const total = c * r;
+  document.querySelectorAll('#gridChips .chip').forEach(ch => ch.classList.remove('on'));
+  if (el) el.classList.add('on');
+  else { const t = Array.from(document.querySelectorAll('#gridChips .chip')).find(ch => parseInt(ch.dataset.cols)===c && parseInt(ch.dataset.rows)===r); if(t) t.classList.add('on'); }
+  document.getElementById('sGrid').textContent = c+'×'+r;
+  document.getElementById('sIcons').textContent = total;
+  document.getElementById('gridTag').textContent = c+'×'+r+' · '+total+' icons';
+  updateSubCount(); updateDelivery(); scheduleGen();
+}
+function setCount(n, el) {
+  document.querySelectorAll('#countChips .chip').forEach(c => c.classList.remove('on'));
+  if (el) el.classList.add('on');
+  else { const t = Array.from(document.querySelectorAll('#countChips .chip')).find(c => parseInt(c.dataset.val)===n); if(t) t.classList.add('on'); }
+  document.getElementById('countHint').textContent = n;
+  scheduleGen();
+}
+
+function renderPalPreview() {
+  const PALS = {
+    'vibrant multicolor, warm and playful, high contrast on white': [{c:'#FF6B6B',l:'Red'},{c:'#FFD93D',l:'Yellow'},{c:'#6BCB77',l:'Green'},{c:'#4D96FF',l:'Blue'}],
+    'pastel soft colors, muted saturation, gentle on white background': [{c:'#FFB3BA',l:'Rose'},{c:'#FFDFBA',l:'Peach'},{c:'#FFFFBA',l:'Lemon'},{c:'#BAE1FF',l:'Sky'}],
+    'electric tech blue violet teal, dark outlines for light bg compatibility': [{c:'#4A9EFF',l:'Blue'},{c:'#9B6DFF',l:'Violet'},{c:'#00D4AA',l:'Teal'},{c:'#1A2040',l:'Navy'}],
+    'corporate blue gray professional, dark lines on white': [{c:'#4A9EFF',l:'Blue'},{c:'#6C757D',l:'Gray'},{c:'#343A40',l:'Dark'},{c:'#E9ECEF',l:'Light'}],
+    'earthy muted natural organic tones, readable on light background': [{c:'#8B5E3C',l:'Umber'},{c:'#6B8E23',l:'Olive'},{c:'#D4A96A',l:'Tan'},{c:'#5F7A61',l:'Sage'}],
+    'monochromatic single hue, tints and shades, works on white': [{c:'#185FA5',l:'Main'},{c:'#4A9EFF',l:'Light'},{c:'#0A3A6A',l:'Dark'},{c:'#D0E8FF',l:'Tint'}],
+    'tropical warm vibrant SEA colors, high saturation': [{c:'#FF6B2B',l:'Orange'},{c:'#FFD700',l:'Gold'},{c:'#00B4D8',l:'Teal'},{c:'#FF006E',l:'Coral'}],
+    'gold and red festive warm palette': [{c:'#D4A017',l:'Gold'},{c:'#CC3300',l:'Red'},{c:'#8B0000',l:'Deep'},{c:'#FFD700',l:'Bright'}],
+  };
+  const pal = getChip('palChips');
+  const strip = document.getElementById('palPreview');
+  strip.innerHTML = '';
+  const swatches = PALS[pal] || [];
+  swatches.forEach((s, i) => {
+    const sw = document.createElement('div'); sw.className = 'ps'; sw.style.background = s.c;
+    const lb = document.createElement('span'); lb.className = 'pl'; lb.textContent = s.l;
+    strip.appendChild(sw); strip.appendChild(lb);
+    if (i < swatches.length - 1) { const sep = document.createElement('span'); sep.className = 'pal-sep'; sep.textContent = '·'; strip.appendChild(sep); }
+  });
+}
+
+/* ══ MODE ══ */
+function setMode(m, el) {
+  currentMode = m;
+  document.querySelectorAll('.mtab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('sMode').textContent = m.charAt(0).toUpperCase() + m.slice(1);
+  buildTplGrid();
+  // Update build btn color
+  const bb = document.getElementById('buildBtn');
+  bb.className = m === 'clay' ? 'btn btn-clay' : 'btn btn-g';
+  bb.textContent = m === 'clay' ? 'Build Clay 3D Prompt' : 'Build Prompt';
+  scheduleGen();
+}
+
+/* ══ BUILD PROMPT ══ */
+function buildPrompt() {
+  const theme = document.getElementById('theme').value.trim() || 'vector icons';
+  const total = cols * rows;
+  const cellW = Math.round(1536 / cols), cellH = Math.round(1024 / rows);
+  const canvasW = cellW * cols, canvasH = cellH * rows;
+  const palette = getChip('palChips');
+  const fmt = getChip('fmtChips');
+  const dnaOverride = document.getElementById('styleDna').value.trim();
+  const batchNum = document.getElementById('batchNum').value || '1';
+  const useGrid = document.getElementById('togGrid').classList.contains('on');
+  const useAdobe = document.getElementById('togAdobe').classList.contains('on');
+  const useDel = document.getElementById('togDel').classList.contains('on');
+  const useVerify = document.getElementById('togVerify').classList.contains('on');
+  const isClay = currentMode === 'clay' || currentStyle.includes('clay');
+  const subList = subjects.length > 0 ? subjects : (currentTemplate ? currentTemplate.subjects.slice(0, total) : []);
+
+  const lines = [];
+
+  // Grid header
+  if (useGrid) {
+    lines.push(`IMPORTANT: Draw exactly ${total} icons in a strict ${cols}-column × ${rows}-row grid. Auto-sliceable — zero gap between cells.\n`);
+  }
+
+  // Theme line
+  lines.push(`Create a cohesive set of ${total} ${isClay ? 'clay 3D render ' : ''}vector icons — theme: "${theme}".\n`);
+
+  // Style block
+  lines.push(`STYLE:`);
+  lines.push(`  Render:     ${currentStyle}`);
+  lines.push(`  Palette:    ${palette}`);
+  lines.push(`  Background: ${currentBg}`);
+  lines.push(`  Format:     ${fmt}`);
+  if (isClay) {
+    lines.push(`  Clay light: top-left 45°, consistent across all ${total} icons`);
+    lines.push(`  Clay shadow: soft ambient bottom-right, same intensity all icons`);
+  }
+  lines.push('');
+
+  // Style DNA
+  const dna = dnaOverride || (currentTemplate?.dna) || '';
+  if (dna) {
+    lines.push(`STYLE DNA (maintain across all icons):`);
+    lines.push(`  ${dna}`);
+    lines.push('');
+  }
+
+  // Grid spec
+  if (useGrid) {
+    lines.push(`GRID SPEC:`);
+    lines.push(`  Canvas:   ${canvasW}×${canvasH} px`);
+    lines.push(`  Grid:     ${cols}×${rows} = ${total} cells`);
+    lines.push(`  Cell:     ${cellW}×${cellH} px each`);
+    lines.push(`  Gutter:   0 px — edge-to-edge, no gaps`);
+    lines.push(`  Labels:   none — no numbers or borders between cells`);
+    lines.push('');
+  }
+
+  // Subjects
+  if (subList.length > 0) {
+    lines.push(`SUBJECTS (${total} icons, left-to-right, top-to-bottom):`);
+    const filled = subList.slice(0, total);
+    while (filled.length < total) filled.push(`[auto-select ${theme}-related icon]`);
+    filled.forEach((s, i) => lines.push(`  ${String(i+1).padStart(2,'0')}. ${s}`));
+  } else {
+    lines.push(`SUBJECTS: Select ${total} distinct ${theme}-related icons — one unique subject per cell.`);
+  }
+  lines.push('');
+
+  // Consistency
+  lines.push(`CONSISTENCY:`);
+  lines.push(`  — Identical stroke weight, corner radius, and style treatment across all ${total} icons`);
+  lines.push(`  — Same visual weight — no icon dominates or appears too small`);
+  lines.push(`  — No stylistic drift between first and last icon`);
+  if (isClay) {
+    lines.push(`  — All clay icons: identical matte texture, light direction, shadow depth`);
+  }
+  lines.push('');
+
+  // Adobe compliance
+  if (useAdobe) {
+    lines.push(`ADOBE STOCK COMPLIANCE:`);
+    lines.push(`  — No real persons, no trademarks, no watermarks`);
+    lines.push(`  — AI-generated — declare on upload`);
+    lines.push(`  — Commercially safe for UI, web, print, digital`);
+    if (batchNum !== '1') lines.push(`  — Batch ${String(batchNum).padStart(2,'0')} of ongoing series`);
+    lines.push('');
+  }
+
+  // Delivery
+  if (useDel) {
+    lines.push(`DELIVERY:`);
+    lines.push(`  Version A (primary): transparent background ${fmt}`);
+    lines.push(`  Version B: ${currentBg.includes('transparent') ? 'white #FFFFFF' : currentBg} version`);
+    lines.push(`  Assembled as ${cols}×${rows} sprite sheet + ${total} individual labeled files`);
+    lines.push('');
+  }
+
+  // Verify
+  if (useVerify) {
+    lines.push(`VERIFY before finishing:`);
+    lines.push(`  ✓ Count: ${cols} columns × ${rows} rows = exactly ${total} icons`);
+    lines.push(`  ✓ Canvas: ${canvasW}×${canvasH} px${useGrid ? ', zero gap between cells' : ''}`);
+    lines.push(`  ✓ Background: ${currentBg.includes('transparent') ? 'transparent' : currentBg}`);
+    lines.push(`  ✓ All icons share the same ${isClay ? 'clay 3D ' : ''}style, palette, and stroke weight`);
+  }
+
+  const prompt = lines.join('\n').trim();
+  document.getElementById('pbox').textContent = prompt;
+  updateStats(prompt);
+  genMeta(theme, total, palette, fmt);
+  renderSubjectTab(subList.slice(0, total));
+  updateDelivery();
+  saveHist(prompt);
+  genCount++;
+}
+
+function updateStats(txt) {
+  const chars = txt.length, words = txt.trim() ? txt.trim().split(/\s+/).length : 0;
+  document.getElementById('pmeta').textContent = chars + ' chars · ' + words + ' words';
+  document.getElementById('sChars').textContent = chars;
+  const dot = document.getElementById('qdot'), lbl = document.getElementById('qlabel'), sc = document.getElementById('pscore');
+  if (chars < 200) { dot.className='qdot'; lbl.textContent='Minimal'; sc.textContent=''; }
+  else if (chars < 500) { dot.className='qdot q2'; lbl.textContent='Good'; sc.textContent='Solid'; sc.style.color='var(--gold)'; }
+  else if (chars < 900) { dot.className='qdot q3'; lbl.textContent='Great'; sc.textContent='Production-ready'; sc.style.color='var(--acc)'; }
+  else { dot.className='qdot q4'; lbl.textContent='Ultra'; sc.textContent='Maximum detail'; sc.style.color='var(--acc3)'; }
+}
+
+/* ══ 30 VARIATIONS ══ */
+function build30Vars() {
+  const base = document.getElementById('pbox').textContent;
+  if (!base.trim()) { buildPrompt(); }
+  const container = document.getElementById('var30Container');
+  container.innerHTML = '';
+  document.getElementById('varCountBadge').textContent = '30 variasi ready';
+
+  const cats = [...new Set(VARS30.map(v => v.cat))];
+  cats.forEach(cat => {
+    const vs = VARS30.filter(v => v.cat === cat);
+    const sec = document.createElement('div');
+    sec.className = 'var-section';
+    sec.innerHTML = `<div class="var-sec-label">${cat} <span class="var-sec-count">${vs.length} variasi</span></div>`;
+    const grid = document.createElement('div');
+    grid.className = 'var30-grid';
+    vs.forEach(v => {
+      const el = document.createElement('div');
+      el.className = 'vc';
+      el.innerHTML = `
+        <div class="v-num">VARIASI ${String(v.num).padStart(2,'0')}</div>
+        <span class="v-tag ${v.tag}">${cat}</span>
+        <div class="v-name">${v.name}</div>
+        <div class="v-note">${v.note}</div>
+        <button class="btn btn-o" style="font-size:10px;padding:4px 10px;border-radius:3px" onclick="copyVar30(${v.num-1})">Copy var ${v.num}</button>
+      `;
+      grid.appendChild(el);
+    });
+    sec.appendChild(grid);
+    container.appendChild(sec);
+  });
+  swTab('vars', document.querySelectorAll('.tab')[1]);
+  toast('30 variasi built!');
+}
+
+function getVar30Prompt(idx) {
+  const base = document.getElementById('pbox').textContent;
+  if (!base.trim()) return '';
+  const v = VARS30[idx];
+  // Build override prefix based on category
+  let override = '';
+  const cat = v.cat;
+  if (cat === 'Background') {
+    const bgMap = {1:'transparent',2:'pure white #FFFFFF',3:'#F5F4F0 off-white',4:'#E8F4FF light blue',5:'#FFF8F0 warm cream',6:'#F0F8F0 mint'};
+    override = `VARIATION ${v.num}: ${v.name}\nOVERRIDE BACKGROUND: ${bgMap[v.num] || v.name}. All other settings same as main prompt.\n\n`;
+  } else if (cat === 'Style') {
+    const styleMap = {7:'flat outlined, thin uniform 2px stroke, dark outline on light background',8:'filled solid flat, clean silhouette, no outlines',9:'duotone two-color flat design, foreground plus accent',10:'bold filled rounded corners, chunky friendly shapes',11:'minimal hairline line art, single-weight strokes on white',12:'cartoon illustration, expressive, playful proportions, thick outline',13:'sticker style, thick 4px black outline, vibrant fill, white background',14:'clay 3D render, soft volumetric, matte pastel surface, top-left 45° light source',21:'ultra-minimal silhouette, essential shape only, maximum negative space, no detail',22:'standard balanced detail level',23:'ultra-detailed, inner shadows, texture, subtle highlights, micro-patterns'};
+    override = `VARIATION ${v.num}: ${v.name}\nOVERRIDE STYLE: ${styleMap[v.num] || currentStyle}. Color palette and background unchanged.\n\n`;
+  } else if (cat === 'Color Mood') {
+    const moodMap = {15:'vibrant high saturation, bold energetic colors, maximum brightness',16:'pastel soft muted, reduce saturation 50%, add white, gentle palette',17:'earthy natural tones, warm muted browns greens terracotta',18:'corporate blue-gray professional, trustworthy palette',19:'tropical warm vibrant, orange yellow coral teal, high energy',20:'monochromatic single hue, tints and shades only, one color family'};
+    override = `VARIATION ${v.num}: ${v.name}\nOVERRIDE COLOR MOOD: ${moodMap[v.num] || v.name}. Style and background unchanged.\n\n`;
+  } else if (cat === 'Grid Format') {
+    const gridMap = {24:{c:4,r:4},25:{c:6,r:4},26:{c:5,r:5},27:{c:8,r:4}};
+    const g = gridMap[v.num];
+    if (g) {
+      const cW = Math.round(1536/g.c), cH = Math.round(1024/g.r);
+      const ttl = g.c*g.r;
+      override = `VARIATION ${v.num}: ${v.name}\nOVERRIDE GRID: ${g.c}×${g.r} grid = ${ttl} icons. Canvas: ${cW*g.c}×${cH*g.r}px. Cell: ${cW}×${cH}px. Add or remove subjects to match ${ttl} icons. All other settings same.\n\n`;
+    }
+  } else if (cat === 'Special') {
+    const specMap = {
+      28:'Generate BOTH versions in one output:\n  Version A: transparent background\n  Version B: pure white #FFFFFF background\n  Label files: icon-[name]-transparent.svg and icon-[name]-white.svg',
+      29:'This is BATCH 2 of an ongoing series. Must maintain IDENTICAL style DNA as Batch 1. Same stroke weight, same corner radius, same palette — only subjects are new. Append "-batch02" to all filenames.',
+      30:'PRINT-READY version. Ultra-high detail, 300dpi equivalent output, CMYK-safe colors only. Add inner shadows, subtle texture, and depth. No neon or screen-only colors. Target use: editorial, branding, print-on-demand.'
+    };
+    override = `VARIATION ${v.num}: ${v.name}\nSPECIAL INSTRUCTIONS:\n${specMap[v.num]||v.note}\n\n`;
+  }
+  return override + base;
+}
+
+function copyVar30(idx) {
+  const prompt = getVar30Prompt(idx);
+  if (!prompt) { buildPrompt(); toast('Build main prompt first'); return; }
+  navigator.clipboard.writeText(prompt).then(() => toast(`Variasi ${idx+1} copied!`));
+}
+
+function copyAll30() {
+  const base = document.getElementById('pbox').textContent;
+  if (!base.trim()) { buildPrompt(); }
+  const parts = [base];
+  VARS30.forEach((v, i) => {
+    const p = getVar30Prompt(i);
+    parts.push(`\n${'━'.repeat(54)}\nVARIASI ${String(v.num).padStart(2,'0')}: ${v.name}\n${'━'.repeat(54)}\n${p}`);
+  });
+  navigator.clipboard.writeText(parts.join('\n\n')).then(() => toast('Full bundle (31 prompts) copied!'));
+}
+
+/* ══ META ══ */
+function genMeta(theme, total, palette, fmt) {
+  const sEl = document.querySelector('.sc.on, .sc.clay-on');
+  const sname = sEl ? sEl.querySelector('.scl').textContent : 'Flat';
+  const tc = theme.split(' ').slice(0,4).map(w=>w[0]?.toUpperCase()+w.slice(1)).join(' ');
+  document.getElementById('mTitle').textContent = `${tc} Vector Icon Set — ${total} ${sname} Icons | ${fmt}`;
+  document.getElementById('mDesc').textContent = `A cohesive set of ${total} ${sname.toLowerCase()} vector icons on the theme of ${theme}. ${palette}. Consistent style, stroke weight, and visual language across all ${total} icons. Delivered as ${cols}×${rows} sprite sheet and individual ${fmt} files. White and transparent background versions included. AI-generated, commercially licensed for UI, web, print, and digital.`;
+  const kws = [...new Set([theme, 'vector icons', 'icon set', sname.toLowerCase()+' icons', fmt.toLowerCase()+' icons', 'transparent background', 'white background', 'commercial use', 'SVG icons', 'Adobe Stock', 'icon pack', theme+' icons', 'flat design', 'app icons', 'ui icons', 'website icons', 'graphic design', 'royalty free', 'editable vector', 'icon collection', cols+'x'+rows+' grid', total+' icons', 'scalable vector', 'digital assets', 'stock vector', 'symbol set', 'clipart', 'illustration set', 'pictogram', 'line icons'])].slice(0,40);
+  const kwBox = document.getElementById('mKw'); kwBox.innerHTML = '';
+  kws.forEach(k => { const s = document.createElement('span'); s.className = 'kw'; s.textContent = k; kwBox.appendChild(s); });
+}
+
+/* ══ SUBJECTS TAB ══ */
+function renderSubjectTab(subs) {
+  const grid = document.getElementById('subjGrid');
+  grid.innerHTML = '';
+  subs.forEach((s, i) => {
+    const d = document.createElement('div');
+    d.style.cssText = 'display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);font-size:11px;color:var(--ink2);font-family:\'JetBrains Mono\',monospace';
+    d.innerHTML = `<span style="font-size:10px;color:var(--ink3);min-width:20px">${String(i+1).padStart(2,'0')}</span><span>${s}</span>`;
+    grid.appendChild(d);
+  });
+}
+
+/* ══ DELIVERY ══ */
+function updateDelivery() {
+  const total = cols * rows;
+  const cellW = Math.round(1536/cols), cellH = Math.round(1024/rows);
+  const canvasW = cellW*cols, canvasH = cellH*rows;
+  const fmt = getChip('fmtChips');
+  const batch = document.getElementById('batchNum')?.value || '1';
+  document.getElementById('delMode').textContent = currentMode.charAt(0).toUpperCase()+currentMode.slice(1);
+  document.getElementById('delCanvas').textContent = canvasW+'×'+canvasH+' px';
+  document.getElementById('delCell').textContent = cellW+'×'+cellH+' px';
+  document.getElementById('delIcons').textContent = total;
+  document.getElementById('delBg').textContent = currentBg;
+  document.getElementById('delFmt').textContent = fmt;
+  document.getElementById('delSprite').textContent = cols+'×'+rows+' assembled';
+  document.getElementById('delIndiv').textContent = total+' labeled files';
+  document.getElementById('delBatch').textContent = 'Batch '+String(batch).padStart(2,'0');
+}
+
+/* ══ HISTORY ══ */
+function saveHist(p) {
+  if (history[history.length-1] === p) return;
+  history.push(p); if (history.length > 8) history.shift();
+  const list = document.getElementById('histList');
+  list.innerHTML = '';
+  [...history].reverse().forEach(h => {
+    const d = document.createElement('div'); d.className = 'hi'; d.textContent = h;
+    d.onclick = () => { document.getElementById('pbox').textContent = h; updateStats(h); swTab('prompt', document.querySelector('.tab')); toast('Loaded from history'); };
+    list.appendChild(d);
+  });
+}
+
+/* ══ TAB / COPY / MISC ══ */
+function swTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on')); el.classList.add('on');
+  ['prompt','vars','meta','subjects','delivery','hist'].forEach(t => document.getElementById('tab-'+t).style.display = t===name?'':'none');
+  if (name === 'delivery') updateDelivery();
+}
+function copyPrompt() { const t = document.getElementById('pbox').textContent; if (!t.trim()) { buildPrompt(); return; } navigator.clipboard.writeText(t).then(() => toast('Prompt copied!')); }
+function copySubjects() {
+  const cells = document.querySelectorAll('#subjGrid div');
+  const lines = Array.from(cells).map(c => c.textContent.trim()).filter(Boolean);
+  navigator.clipboard.writeText(lines.join('\n')).then(() => toast('Subjects copied!'));
+}
+function copyMeta() {
+  const t = document.getElementById('mTitle').textContent, d = document.getElementById('mDesc').textContent;
+  const kws = Array.from(document.querySelectorAll('.kw')).map(k=>k.textContent).join(', ');
+  navigator.clipboard.writeText(`TITLE: ${t}\n\nDESCRIPTION: ${d}\n\nCATEGORY: Graphic Resources > Icons & Pictograms\n\nKEYWORDS: ${kws}\n\nAI FLAG: Generative AI — declare on upload`).then(() => toast('Metadata copied!'));
+}
+function copyDelivery() {
+  const rows2 = Array.from(document.querySelectorAll('.dc-row')).map(r => r.querySelector('.dc-label').textContent.trim()+': '+r.querySelector('.dc-val').textContent.trim()).join('\n');
+  navigator.clipboard.writeText('DELIVERY PLAN\n'+('─'.repeat(40))+'\n'+rows2).then(() => toast('Delivery plan copied!'));
+}
+function randomizeAll() {
+  const themes = ['kawaii animal faces','medieval fantasy RPG','street food icons','ocean creatures','smart city','vintage technology','yoga wellness','cyberpunk city','botanical plants','musical instruments'];
+  document.getElementById('theme').value = themes[Math.floor(Math.random()*themes.length)];
+  const scs = document.querySelectorAll('.sc'); scs.forEach(e => e.classList.remove('on','clay-on'));
+  const sc = scs[Math.floor(Math.random()*scs.length)]; sc.classList.add('on'); currentStyle = sc.dataset.val;
+  const mcs = document.querySelectorAll('#palChips .chip'); mcs.forEach(e => e.classList.remove('on'));
+  mcs[Math.floor(Math.random()*mcs.length)].classList.add('on');
+  renderPalPreview(); buildPrompt(); toast('Randomized!');
+}
+function clearAll() {
+  document.getElementById('theme').value = ''; document.getElementById('styleDna').value = '';
+  subjects = []; document.querySelectorAll('.stag').forEach(e=>e.remove());
+  document.getElementById('pbox').textContent = '';
+  document.querySelectorAll('.tpl-card').forEach(c=>c.classList.remove('on','clay-active'));
+  updateSubCount(); toast('Cleared');
+}
+let schedTimer = null;
+function scheduleGen() { clearTimeout(schedTimer); schedTimer = setTimeout(() => { if (document.getElementById('pbox').textContent.trim()) buildPrompt(); }, 400); }
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2200); }
+
+init();
+</script>
+</body>
+</html>

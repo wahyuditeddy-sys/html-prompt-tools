@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEO Global Prompt Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080a0f;
+  --bg2: #0d1117;
+  --bg3: #111620;
+  --bg4: #161c28;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.12);
+  --accent: #00e5cc;
+  --accent2: #7c5cfc;
+  --accent3: #ff6b35;
+  --text: #e8eaf0;
+  --text2: #8891a8;
+  --text3: #505870;
+  --green: #00d084;
+  --yellow: #ffd166;
+  --red: #ff4d6d;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* GRID BG */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,229,204,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,204,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
+
+/* HEADER */
+header {
+  padding: 40px 0 32px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 32px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.logo-icon {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.logo-text { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; }
+.logo-text span { color: var(--accent); }
+.header-sub { font-size: 13px; color: var(--text2); margin-top: 3px; font-weight: 400; }
+.mode-tabs {
+  display: flex; gap: 4px;
+  background: var(--bg3);
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.mode-tab {
+  padding: 7px 16px; border-radius: 7px; font-size: 12px; font-weight: 600;
+  cursor: pointer; border: none; background: transparent; color: var(--text2);
+  font-family: 'Syne', sans-serif; transition: all .2s; letter-spacing: .03em;
+}
+.mode-tab.active { background: var(--accent); color: #000; }
+
+/* LAYOUT */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 20px;
+  align-items: start;
+}
+@media(max-width: 820px) { .main-grid { grid-template-columns: 1fr; } }
+
+/* PANEL */
+.panel {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.panel-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.panel-title {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--text2);
+}
+.panel-body { padding: 18px; }
+
+/* FIELD */
+.field { margin-bottom: 18px; }
+.field:last-child { margin-bottom: 0; }
+.field-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--text3); margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.field-label .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+}
+.field-label .dot.pur { background: var(--accent2); }
+.field-label .dot.org { background: var(--accent3); }
+.field-label .dot.grn { background: var(--green); }
+.field-label .dot.yel { background: var(--yellow); }
+
+input[type="text"], textarea, select {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  -webkit-appearance: none;
+}
+input[type="text"]:focus, textarea:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(0,229,204,0.1);
+}
+textarea { min-height: 70px; resize: vertical; line-height: 1.6; }
+select option { background: var(--bg3); }
+
+/* CHIPS */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
+  cursor: pointer; border: 1px solid var(--border2); color: var(--text2);
+  background: var(--bg3); transition: all .15s; font-family: 'Syne', sans-serif;
+  letter-spacing: .01em;
+}
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+.chip.sel { background: rgba(0,229,204,0.12); border-color: var(--accent); color: var(--accent); }
+.chip.sel-pur { background: rgba(124,92,252,0.12); border-color: var(--accent2); color: var(--accent2); }
+.chip.sel-org { background: rgba(255,107,53,0.12); border-color: var(--accent3); color: var(--accent3); }
+.chip[data-multi="true"] { position: relative; }
+
+/* RANGE */
+.range-row { display: flex; align-items: center; gap: 12px; }
+input[type="range"] {
+  flex: 1; -webkit-appearance: none; height: 4px;
+  background: var(--bg4); border-radius: 2px; outline: none; border: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--accent); cursor: pointer;
+  box-shadow: 0 0 0 3px rgba(0,229,204,0.2);
+}
+.range-val {
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500;
+  color: var(--accent); min-width: 36px; text-align: right;
+}
+
+/* TOGGLE */
+.toggle-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.toggle-label { font-size: 13px; color: var(--text2); }
+.toggle {
+  width: 36px; height: 20px; border-radius: 10px;
+  background: var(--bg4); border: 1px solid var(--border2);
+  cursor: pointer; position: relative; transition: all .2s;
+}
+.toggle.on { background: var(--accent); border-color: var(--accent); }
+.toggle::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 14px; height: 14px; border-radius: 50%; background: #fff;
+  transition: transform .2s;
+}
+.toggle.on::after { transform: translateX(16px); }
+
+/* OUTPUT */
+.output-wrap { position: relative; }
+.output-box {
+  width: 100%; min-height: 160px;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; line-height: 1.8;
+  padding: 16px;
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+}
+.output-box:focus { border-color: var(--accent); }
+
+.output-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 8px; font-size: 11px; color: var(--text3);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ACTIONS */
+.actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.btn {
+  padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 700;
+  cursor: pointer; border: none; font-family: 'Syne', sans-serif;
+  letter-spacing: .03em; transition: all .15s; flex: 1; min-width: 120px;
+}
+.btn-main {
+  background: linear-gradient(135deg, var(--accent), #00bfa8);
+  color: #000;
+}
+.btn-main:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,229,204,0.3); }
+.btn-main:active { transform: translateY(0); }
+.btn-sec {
+  background: var(--bg3); color: var(--text); border: 1px solid var(--border2);
+}
+.btn-sec:hover { border-color: var(--accent2); color: var(--accent2); }
+.btn-pur {
+  background: rgba(124,92,252,0.15); color: var(--accent2); border: 1px solid var(--accent2);
+}
+.btn-pur:hover { background: rgba(124,92,252,0.25); }
+
+/* HISTORY */
+.history-item {
+  padding: 10px 12px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--bg3);
+  margin-bottom: 8px; transition: all .15s;
+  font-size: 12px; color: var(--text2);
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.5;
+  overflow: hidden; display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+}
+.history-item:hover { border-color: var(--accent); color: var(--text); }
+
+/* STAT STRIP */
+.stat-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 10px; margin-bottom: 20px;
+}
+.stat-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px 14px;
+}
+.stat-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+.stat-val { font-size: 20px; font-weight: 800; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+.stat-val.pur { color: var(--accent2); }
+.stat-val.org { color: var(--accent3); }
+.stat-val.grn { color: var(--green); }
+
+/* BADGE */
+.badge {
+  display: inline-block; padding: 2px 8px; border-radius: 20px;
+  font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+}
+.badge-teal { background: rgba(0,229,204,0.12); color: var(--accent); }
+.badge-pur { background: rgba(124,92,252,0.12); color: var(--accent2); }
+.badge-org { background: rgba(255,107,53,0.12); color: var(--accent3); }
+
+/* DIVIDER */
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+/* COPY TOAST */
+.toast {
+  position: fixed; bottom: 32px; right: 32px; z-index: 999;
+  background: var(--accent); color: #000;
+  padding: 12px 20px; border-radius: 10px;
+  font-size: 13px; font-weight: 700; font-family: 'Syne', sans-serif;
+  transform: translateY(20px); opacity: 0;
+  transition: all .3s; pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* SECTION NAV */
+.sec-nav { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; }
+.sec-btn {
+  padding: 5px 13px; border-radius: 6px; font-size: 11px; font-weight: 700;
+  letter-spacing: .05em; text-transform: uppercase; cursor: pointer;
+  border: 1px solid var(--border2); background: transparent; color: var(--text3);
+  font-family: 'Syne', sans-serif; transition: all .15s;
+}
+.sec-btn:hover { color: var(--text); border-color: var(--border2); }
+.sec-btn.active { background: var(--bg3); color: var(--text); border-color: var(--accent); }
+
+/* GLOW LINE */
+.glow-line {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), var(--accent2), transparent);
+  margin-bottom: 24px;
+  border-radius: 1px;
+  opacity: 0.4;
+}
+
+.preset-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 8px; margin-bottom: 16px; }
+.preset-card {
+  padding: 10px 12px; border-radius: 10px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--bg3);
+  transition: all .15s;
+}
+.preset-card:hover { border-color: var(--accent); }
+.preset-card.active { border-color: var(--accent); background: rgba(0,229,204,0.06); }
+.preset-name { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.preset-desc { font-size: 11px; color: var(--text3); }
+
+.formula-box {
+  background: var(--bg); border: 1px solid var(--border2);
+  border-radius: 10px; padding: 12px 14px;
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  line-height: 2; color: var(--text2);
+  margin-top: 10px;
+}
+.f-subj { color: var(--accent); }
+.f-act { color: var(--accent2); }
+.f-cam { color: var(--accent3); }
+.f-env { color: var(--green); }
+.f-fx { color: var(--yellow); }
+.f-style { color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<header>
+  <div>
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+      <div>
+        <div class="logo-text">VEO <span>Prompt</span> Engine</div>
+        <div class="header-sub">Global AI Video Prompt Generator — Veo 3.1 / Flow</div>
+      </div>
+    </div>
+  </div>
+  <div class="mode-tabs">
+    <button class="mode-tab active" onclick="setMode('image-video',this)">Image → Video</button>
+    <button class="mode-tab" onclick="setMode('text-video',this)">Text → Video</button>
+    <button class="mode-tab" onclick="setMode('text-image',this)">Text → Image</button>
+  </div>
+</header>
+
+<div class="stat-strip">
+  <div class="stat-card"><div class="stat-label">Generated</div><div class="stat-val" id="statGen">0</div></div>
+  <div class="stat-card"><div class="stat-label">Prompt Length</div><div class="stat-val pur" id="statLen">0</div></div>
+  <div class="stat-card"><div class="stat-label">Words</div><div class="stat-val org" id="statWords">0</div></div>
+  <div class="stat-card"><div class="stat-label">History</div><div class="stat-val grn" id="statHist">0</div></div>
+</div>
+
+<div class="glow-line"></div>
+
+<!-- PRESET QUICK LOAD -->
+<div class="panel" style="margin-bottom:20px">
+  <div class="panel-header">
+    <span class="panel-title">Quick Presets</span>
+    <span class="badge badge-teal">10 styles</span>
+  </div>
+  <div class="panel-body">
+    <div class="preset-grid" id="presetGrid"></div>
+    <div style="font-size:11px;color:var(--text3);margin-top:4px">Klik preset untuk load otomatis → lalu customize sesuai kebutuhan</div>
+  </div>
+</div>
+
+<div class="main-grid">
+
+  <!-- LEFT: BUILDER -->
+  <div style="display:flex;flex-direction:column;gap:16px">
+
+    <!-- SUBJECT -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">01 — Subject & Context</span>
+        <span class="badge badge-teal">Core</span>
+      </div>
+      <div class="panel-body">
+        <div class="field">
+          <div class="field-label"><span class="dot"></span> Subject (siapa/apa)</div>
+          <input type="text" id="subject" placeholder="cth: cyberpunk samurai warrior, cute robot, ancient dragon, fashion model..." oninput="liveUpdate()">
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="dot pur"></span> Setting / Environment</div>
+          <input type="text" id="environment" placeholder="cth: neon-lit Tokyo alley, futuristic lab, enchanted forest at sunset..." oninput="liveUpdate()">
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="dot org"></span> Action / Motion</div>
+          <input type="text" id="action" placeholder="cth: slashing with katana, floating in zero gravity, walking in slow motion..." oninput="liveUpdate()">
+        </div>
+      </div>
+    </div>
+
+    <!-- CAMERA -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">02 — Camera & Composition</span>
+        <span class="badge badge-pur">Cinematics</span>
+      </div>
+      <div class="panel-body">
+        <div class="field">
+          <div class="field-label"><span class="dot pur"></span> Camera angle</div>
+          <div class="chips" id="chips-angle">
+            <button class="chip sel" data-val="eye-level shot" onclick="chipSelect(this,'chips-angle')">Eye level</button>
+            <button class="chip" data-val="low angle upshot" onclick="chipSelect(this,'chips-angle')">Low angle</button>
+            <button class="chip" data-val="top-down bird's eye view" onclick="chipSelect(this,'chips-angle')">Bird's eye</button>
+            <button class="chip" data-val="extreme close-up" onclick="chipSelect(this,'chips-angle')">Extreme CU</button>
+            <button class="chip" data-val="wide establishing shot" onclick="chipSelect(this,'chips-angle')">Wide shot</button>
+            <button class="chip" data-val="dutch angle tilt" onclick="chipSelect(this,'chips-angle')">Dutch angle</button>
+            <button class="chip" data-val="over-the-shoulder" onclick="chipSelect(this,'chips-angle')">OTS</button>
+            <button class="chip" data-val="drone aerial shot" onclick="chipSelect(this,'chips-angle')">Drone aerial</button>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="dot pur"></span> Camera movement</div>
+          <div class="chips" id="chips-movement">
+            <button class="chip sel" data-val="slow push in" onclick="chipSelect(this,'chips-movement')">Push in</button>
+            <button class="chip" data-val="orbital 360 rotate" onclick="chipSelect(this,'chips-movement')">Orbital 360</button>
+            <button class="chip" data-val="smooth pull back" onclick="chipSelect(this,'chips-movement')">Pull back</button>
+            <button class="chip" data-val="whip pan" onclick="chipSelect(this,'chips-movement')">Whip pan</button>
+            <button class="chip" data-val="handheld shaky cam" onclick="chipSelect(this,'chips-movement')">Handheld</button>
+            <button class="chip" data-val="static locked off" onclick="chipSelect(this,'chips-movement')">Static</button>
+            <button class="chip" data-val="tracking dolly shot" onclick="chipSelect(this,'chips-movement')">Dolly track</button>
+            <button class="chip" data-val="crane jib up" onclick="chipSelect(this,'chips-movement')">Crane up</button>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="dot pur"></span> Lens / focal</div>
+          <div class="chips" id="chips-lens">
+            <button class="chip" data-val="wide angle lens, 24mm" onclick="chipSelect(this,'chips-lens')">24mm wide</button>
+            <button class="chip sel" data-val="cinematic 50mm lens" onclick="chipSelect(this,'chips-lens')">50mm cine</button>
+            <button class="chip" data-val="telephoto 85mm portrait lens" onclick="chipSelect(this,'chips-lens')">85mm portrait</button>
+            <button class="chip" data-val="macro extreme close-up lens" onclick="chipSelect(this,'chips-lens')">Macro</button>
+            <button class="chip" data-val="fisheye 8mm ultra wide" onclick="chipSelect(this,'chips-lens')">Fisheye</button>
+            <button class="chip" data-val="anamorphic widescreen" onclick="chipSelect(this,'chips-lens')">Anamorphic</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIGHTING -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">03 — Lighting & Atmosphere</span>
+        <span class="badge badge-org">Visual</span>
+      </div>
+      <div class="panel-body">
+        <div class="field">
+          <div class="field-label"><span class="dot org"></span> Lighting style</div>
+          <div class="chips" id="chips-light">
+            <button class="chip sel" data-val="neon rim lighting" onclick="chipSelect(this,'chips-light')">Neon rim</button>
+            <button class="chip" data-val="golden hour sunlight" onclick="chipSelect(this,'chips-light')">Golden hour</button>
+            <button class="chip" data-val="dark moody underexposed" onclick="chipSelect(this,'chips-light')">Dark moody</button>
+            <button class="chip" data-val="harsh studio strobe" onclick="chipSelect(this,'chips-light')">Studio strobe</button>
+            <button class="chip" data-val="soft diffused natural light" onclick="chipSelect(this,'chips-light')">Soft natural</button>
+            <button class="chip" data-val="bioluminescent glow" onclick="chipSelect(this,'chips-light')">Bioluminescent</button>
+            <button class="chip" data-val="volumetric god rays" onclick="chipSelect(this,'chips-light')">God rays</button>
+            <button class="chip" data-val="candlelight warm flicker" onclick="chipSelect(this,'chips-light')">Candlelight</button>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="dot org"></span> Time of day / weather</div>
+          <div class="chips" id="chips-time">
+            <button class="chip" data-val="rainy night" onclick="chipSelect(this,'chips-time')">Rainy night</button>
+            <button class="chip sel" data-val="midnight" onclick="chipSelect(this,'chips-time')">Midnight</button>
+            <button class="chip" data-val="golden dusk" onclick="chipSelect(this,'chips-time')">Golden dusk</button>
+            <button class="chip" data-val="foggy morning" onclick="chipSelect(this,'chips-time')">Foggy morning</button>
+            <button class="chip" data-val="noon harsh sunlight" onclick="chipSelect(this,'chips-time')">Noon harsh</button>
+            <button class="chip" data-val="stormy overcast" onclick="chipSelect(this,'chips-time')">Stormy</button>
+            <button class="chip" data-val="aurora borealis night sky" onclick="chipSelect(this,'chips-time')">Aurora</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STYLE -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">04 — Visual Style & FX</span>
+        <span class="badge badge-teal">Style</span>
+      </div>
+      <div class="panel-body">
+        <div class="field">
+          <div class="field-label"><span class="dot grn"></span> Art style</div>
+          <div class="chips" id="chips-artstyle">
+            <button class="chip sel" data-val="cinematic photorealistic" onclick="chipSelect(this,'chips-artstyle')">Photorealistic</button>
+            <button class="chip" data-val="anime style, 2D animated" onclick="chipSelect(this,'chips-artstyle')">Anime 2D</button>
+            <button class="chip" data-val="pixel art retro game style" onclick="chipSelect(this,'chips-artstyle')">Pixel art</button>
+            <button class="chip" data-val="3D CGI render, Pixar style" onclick="chipSelect(this,'chips-artstyle')">3D CGI</button>
+            <button class="chip" data-val="comic book graphic novel style" onclick="chipSelect(this,'chips-artstyle')">Comic book</button>
+            <button class="chip" data-val="watercolor painting style" onclick="chipSelect(this,'chips-artstyle')">Watercolor</button>
+            <button class="chip" data-val="claymation stop motion" onclick="chipSelect(this,'chips-artstyle')">Claymation</button>
+            <button class="chip" data-val="oil painting masterpiece style" onclick="chipSelect(this,'chips-artstyle')">Oil painting</button>
+            <button class="chip" data-val="glitch art digital corruption" onclick="chipSelect(this,'chips-artstyle')">Glitch art</button>
+            <button class="chip" data-val="sticker flat design" onclick="chipSelect(this,'chips-artstyle')">Sticker flat</button>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="dot grn"></span> Special effects (multi-select)</div>
+          <div class="chips" id="chips-fx">
+            <button class="chip" data-val="motion blur trails" data-multi="true" onclick="chipMulti(this)">Motion blur</button>
+            <button class="chip" data-val="particle effects" data-multi="true" onclick="chipMulti(this)">Particles</button>
+            <button class="chip" data-val="shockwave ripple" data-multi="true" onclick="chipMulti(this)">Shockwave</button>
+            <button class="chip" data-val="lens flare" data-multi="true" onclick="chipMulti(this)">Lens flare</button>
+            <button class="chip" data-val="slow motion 240fps" data-multi="true" onclick="chipMulti(this)">Slo-mo</button>
+            <button class="chip" data-val="time lapse" data-multi="true" onclick="chipMulti(this)">Time lapse</button>
+            <button class="chip" data-val="depth of field bokeh" data-multi="true" onclick="chipMulti(this)">Bokeh DOF</button>
+            <button class="chip" data-val="chromatic aberration" data-multi="true" onclick="chipMulti(this)">Chromatic</button>
+            <button class="chip" data-val="volumetric smoke and fog" data-multi="true" onclick="chipMulti(this)">Smoke fog</button>
+            <button class="chip" data-val="neon light trails" data-multi="true" onclick="chipMulti(this)">Neon trails</button>
+            <button class="chip" data-val="screen shake impact" data-multi="true" onclick="chipMulti(this)">Screen shake</button>
+            <button class="chip" data-val="afterimage ghost effect" data-multi="true" onclick="chipMulti(this)">Afterimage</button>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="dot yel"></span> Color grade / mood</div>
+          <div class="chips" id="chips-grade">
+            <button class="chip sel" data-val="teal and orange blockbuster grade" onclick="chipSelect(this,'chips-grade')">Teal & Orange</button>
+            <button class="chip" data-val="cold blue desaturated" onclick="chipSelect(this,'chips-grade')">Cold blue</button>
+            <button class="chip" data-val="warm golden vintage" onclick="chipSelect(this,'chips-grade')">Warm gold</button>
+            <button class="chip" data-val="high contrast noir black and white" onclick="chipSelect(this,'chips-grade')">Noir B&W</button>
+            <button class="chip" data-val="neon cyberpunk pink purple" onclick="chipSelect(this,'chips-grade')">Cyber neon</button>
+            <button class="chip" data-val="matrix green monochrome" onclick="chipSelect(this,'chips-grade')">Matrix green</button>
+            <button class="chip" data-val="pastel soft dreamy" onclick="chipSelect(this,'chips-grade')">Pastel dreamy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOOD & PACE -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">05 — Pacing & Mood</span>
+        <span class="badge badge-pur">Direction</span>
+      </div>
+      <div class="panel-body">
+        <div class="field">
+          <div class="field-label"><span class="dot pur"></span> Pacing</div>
+          <div class="chips" id="chips-pace">
+            <button class="chip" data-val="slow atmospheric tension building" onclick="chipSelect(this,'chips-pace')">Slow tension</button>
+            <button class="chip sel" data-val="intense fast-paced action" onclick="chipSelect(this,'chips-pace')">Fast action</button>
+            <button class="chip" data-val="rhythmic medium pacing" onclick="chipSelect(this,'chips-pace')">Medium rhythm</button>
+            <button class="chip" data-val="ethereal dreamlike pace" onclick="chipSelect(this,'chips-pace')">Ethereal</button>
+            <button class="chip" data-val="urgent hyper-kinetic" onclick="chipSelect(this,'chips-pace')">Hyper-kinetic</button>
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="dot pur"></span> Emotion / tone</div>
+          <div class="chips" id="chips-tone">
+            <button class="chip sel" data-val="epic and heroic" onclick="chipSelect(this,'chips-tone')">Epic heroic</button>
+            <button class="chip" data-val="dark and ominous" onclick="chipSelect(this,'chips-tone')">Dark ominous</button>
+            <button class="chip" data-val="mysterious and eerie" onclick="chipSelect(this,'chips-tone')">Mysterious</button>
+            <button class="chip" data-val="joyful and uplifting" onclick="chipSelect(this,'chips-tone')">Joyful</button>
+            <button class="chip" data-val="melancholic and nostalgic" onclick="chipSelect(this,'chips-tone')">Melancholic</button>
+            <button class="chip" data-val="tense and suspenseful" onclick="chipSelect(this,'chips-tone')">Suspenseful</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADVANCED -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">06 — Advanced & Style Lock</span>
+        <span class="badge badge-org">Pro</span>
+      </div>
+      <div class="panel-body">
+        <div class="field">
+          <div class="field-label"><span class="dot org"></span> Custom style lock (opsional)</div>
+          <textarea id="styleLock" placeholder="Tambahkan style lock khusus untuk jaga konsistensi karakter... cth: consistent character design, pixel art sticker style, thick black outline..." oninput="liveUpdate()"></textarea>
+        </div>
+        <div class="field">
+          <div class="field-label"><span class="dot org"></span> Negative prompt (apa yang TIDAK diinginkan)</div>
+          <input type="text" id="negative" placeholder="cth: blurry, low quality, watermark, extra limbs, distorted face..." oninput="liveUpdate()">
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="toggle-row">
+          <span class="toggle-label">Tambahkan quality suffix (4K, cinematic, high detail)</span>
+          <div class="toggle on" id="tog-quality" onclick="this.classList.toggle('on'); liveUpdate()"></div>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Tambahkan "consistent character design throughout"</span>
+          <div class="toggle on" id="tog-consist" onclick="this.classList.toggle('on'); liveUpdate()"></div>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-label">Tambahkan negative prompt di output</span>
+          <div class="toggle" id="tog-neg" onclick="this.classList.toggle('on'); liveUpdate()"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field">
+          <div class="field-label"><span class="dot org"></span> Intensity (detail level)</div>
+          <div class="range-row">
+            <input type="range" min="1" max="5" value="3" id="intensity" oninput="document.getElementById('intensityVal').textContent=this.value+'  ('+['Minimal','Balanced','Rich','Detailed','Ultra-verbose'][this.value-1]+')'; liveUpdate()">
+            <span class="range-val" id="intensityVal">3  (Rich)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end left -->
+
+  <!-- RIGHT: OUTPUT -->
+  <div style="display:flex;flex-direction:column;gap:16px">
+
+    <!-- OUTPUT -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Generated Prompt</span>
+        <span class="badge badge-teal" id="modeLabel">Image → Video</span>
+      </div>
+      <div class="panel-body">
+        <textarea class="output-box" id="output" placeholder="Klik Build Prompt atau isi field di kiri..."></textarea>
+        <div class="output-meta">
+          <span id="charCount">0 chars / 0 words</span>
+          <span id="qualityScore" style="color:var(--green)">Quality: —</span>
+        </div>
+        <div class="actions">
+          <button class="btn btn-main" onclick="buildPrompt()">Build Prompt</button>
+          <button class="btn btn-pur" onclick="copyOutput()">Copy</button>
+        </div>
+        <div class="actions">
+          <button class="btn btn-sec" onclick="randomize()">Randomize All</button>
+          <button class="btn btn-sec" onclick="clearAll()">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORMULA -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Formula Structure</span>
+      </div>
+      <div class="panel-body">
+        <div class="formula-box" id="formulaBox">
+          <span class="f-subj">[SUBJECT]</span> is <span class="f-act">[ACTION]</span>, <span class="f-cam">[CAMERA + MOVEMENT]</span>, set in <span class="f-env">[ENVIRONMENT + LIGHTING]</span>, with <span class="f-fx">[FX + GRADE]</span>, <span class="f-style">[MOOD + PACE + STYLE LOCK]</span>.
+        </div>
+        <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:5px;font-size:11px">
+          <span style="color:var(--accent)">■ Subject</span>
+          <span style="color:var(--accent2)">■ Action</span>
+          <span style="color:var(--accent3)">■ Camera</span>
+          <span style="color:var(--green)">■ Environment</span>
+          <span style="color:var(--yellow)">■ FX</span>
+          <span style="color:var(--text2)">■ Style</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- VEO SETTINGS -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">VEO Settings Guide</span>
+      </div>
+      <div class="panel-body" id="veoGuide">
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:12px">
+          <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)">
+            <span style="color:var(--text2)">Mode</span><span style="color:var(--accent);font-family:'JetBrains Mono',monospace">Frames (img→vid)</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)">
+            <span style="color:var(--text2)">Ratio terbaik</span><span style="font-weight:700;color:var(--text)">16:9 landscape</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)">
+            <span style="color:var(--text2)">Output per run</span><span style="color:var(--accent2);font-family:'JetBrains Mono',monospace">x4 (80 credits)</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)">
+            <span style="color:var(--text2)">Model</span><span style="font-weight:700;color:var(--text)">Veo 3.1 Fast</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:7px 0">
+            <span style="color:var(--text2)">Credit per video</span><span style="color:var(--accent3);font-family:'JetBrains Mono',monospace">20 credits</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">History</span>
+        <button onclick="clearHistory()" style="font-size:11px;background:none;border:none;color:var(--text3);cursor:pointer;font-family:'Syne',sans-serif">Clear all</button>
+      </div>
+      <div class="panel-body" id="historyPanel">
+        <div style="font-size:12px;color:var(--text3);text-align:center;padding:16px 0">Belum ada history. Generate prompt pertamamu!</div>
+      </div>
+    </div>
+
+  </div><!-- end right -->
+
+</div><!-- end main-grid -->
+
+</div><!-- end app -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+let genCount = 0;
+let history = [];
+let currentMode = 'image-video';
+
+const PRESETS = [
+  { name: 'Cyberpunk Warrior', desc: 'Samurai + neon city', subject: 'cyberpunk samurai warrior with glowing armor', environment: 'neon-lit Tokyo alleyway at midnight with holographic signs', action: 'slashing katana in dynamic combat stance releasing energy shockwave', styleLock: 'pixel art sticker style, dark navy palette, teal and violet neon highlights, thick black outline, consistent character design', angle: 'low angle upshot', movement: 'slow push in', light: 'neon rim lighting', time: 'rainy night', artstyle: 'pixel art retro game style', grade: 'neon cyberpunk pink purple', pace: 'intense fast-paced action', tone: 'epic and heroic', fxList: ['motion blur trails','neon light trails','shockwave ripple'] },
+  { name: 'Fantasy Dragon', desc: 'Epic dragon flight', subject: 'ancient dragon with iridescent scales', environment: 'volcanic mountain range at sunset with lava flows', action: 'soaring through stormy clouds breathing fire', styleLock: '', angle: 'drone aerial shot', movement: 'orbital 360 rotate', light: 'volumetric god rays', time: 'stormy overcast', artstyle: 'cinematic photorealistic', grade: 'teal and orange blockbuster grade', pace: 'slow atmospheric tension building', tone: 'epic and heroic', fxList: ['volumetric smoke and fog','lens flare','depth of field bokeh'] },
+  { name: 'Sci-Fi Astronaut', desc: 'Space exploration', subject: 'lone astronaut in futuristic space suit', environment: 'alien planet surface with twin moons and purple nebula', action: 'floating weightlessly discovering alien artifact', styleLock: '', angle: 'wide establishing shot', movement: 'slow push in', light: 'bioluminescent glow', time: 'midnight', artstyle: 'cinematic photorealistic', grade: 'cold blue desaturated', pace: 'slow atmospheric tension building', tone: 'mysterious and eerie', fxList: ['depth of field bokeh','particle effects','lens flare'] },
+  { name: 'Anime Fighter', desc: 'High-speed combat', subject: 'anime girl fighter with energy powers', environment: 'destroyed city rooftop arena', action: 'releasing massive energy beam attack', styleLock: 'anime style, dynamic linework, cel shading', angle: 'dutch angle tilt', movement: 'whip pan', light: 'neon rim lighting', time: 'midnight', artstyle: 'anime style, 2D animated', grade: 'neon cyberpunk pink purple', pace: 'intense fast-paced action', tone: 'epic and heroic', fxList: ['motion blur trails','shockwave ripple','chromatic aberration','screen shake impact'] },
+  { name: 'Gothic Horror', desc: 'Dark atmosphere', subject: 'Victorian vampire countess in elegant black gown', environment: 'crumbling gothic castle with fog-filled moat', action: 'descending grand staircase as bats swirl around', styleLock: '', angle: 'low angle upshot', movement: 'smooth pull back', light: 'candlelight warm flicker', time: 'rainy night', artstyle: 'cinematic photorealistic', grade: 'cold blue desaturated', pace: 'slow atmospheric tension building', tone: 'dark and ominous', fxList: ['volumetric smoke and fog','depth of field bokeh'] },
+  { name: 'Nature Macro', desc: 'Micro world', subject: 'dewdrop on spider web in morning forest', environment: 'ancient forest floor with moss and mushrooms', action: 'dewdrop slowly falling in ultra slow motion', styleLock: '', angle: 'extreme close-up', movement: 'static locked off', light: 'soft diffused natural light', time: 'foggy morning', artstyle: 'cinematic photorealistic', grade: 'warm golden vintage', pace: 'slow atmospheric tension building', tone: 'melancholic and nostalgic', fxList: ['slow motion 240fps','depth of field bokeh'] },
+  { name: 'Urban Dancer', desc: 'Street performance', subject: 'breakdancer in streetwear', environment: 'colorful graffiti wall in Brooklyn at dusk', action: 'executing complex breakdance freeze with head spin', styleLock: '', angle: 'eye-level shot', movement: 'orbital 360 rotate', light: 'golden hour sunlight', time: 'golden dusk', artstyle: 'cinematic photorealistic', grade: 'teal and orange blockbuster grade', pace: 'rhythmic medium pacing', tone: 'joyful and uplifting', fxList: ['motion blur trails','lens flare'] },
+  { name: 'Ocean Depths', desc: 'Underwater world', subject: 'bioluminescent jellyfish swarm', environment: 'deep ocean abyss at 1000 meters depth', action: 'pulsating and drifting in formation creating patterns', styleLock: '', angle: 'wide establishing shot', movement: 'slow push in', light: 'bioluminescent glow', time: 'midnight', artstyle: 'cinematic photorealistic', grade: 'cold blue desaturated', pace: 'ethereal dreamlike pace', tone: 'mysterious and eerie', fxList: ['particle effects','depth of field bokeh'] },
+  { name: 'Mecha Battle', desc: '3D robot warfare', subject: 'giant mech suit piloted by teenage girl', environment: 'destroyed futuristic cityscape with burning buildings', action: 'activating rocket thrusters and charging at enemy mech', styleLock: '3D CGI render, highly detailed mechanical parts, realistic materials', angle: 'low angle upshot', movement: 'tracking dolly shot', light: 'harsh studio strobe', time: 'stormy overcast', artstyle: '3D CGI render, Pixar style', grade: 'teal and orange blockbuster grade', pace: 'urgent hyper-kinetic', tone: 'tense and suspenseful', fxList: ['shockwave ripple','screen shake impact','motion blur trails','volumetric smoke and fog'] },
+  { name: 'Food ASMR', desc: 'Luxury food video', subject: 'glistening chocolate lava cake being cut open', environment: 'minimalist white marble luxury restaurant table', action: 'knife slowly cutting through center as molten chocolate flows', styleLock: '', angle: 'extreme close-up', movement: 'slow push in', light: 'soft diffused natural light', time: 'noon harsh sunlight', artstyle: 'cinematic photorealistic', grade: 'warm golden vintage', pace: 'slow atmospheric tension building', tone: 'joyful and uplifting', fxList: ['slow motion 240fps','depth of field bokeh'] },
+];
+
+function initPresets() {
+  const grid = document.getElementById('presetGrid');
+  PRESETS.forEach((p, i) => {
+    const d = document.createElement('div');
+    d.className = 'preset-card';
+    d.innerHTML = `<div class="preset-name">${p.name}</div><div class="preset-desc">${p.desc}</div>`;
+    d.onclick = () => loadPreset(i, d);
+    grid.appendChild(d);
+  });
+}
+
+function loadPreset(i, el) {
+  document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  const p = PRESETS[i];
+  document.getElementById('subject').value = p.subject;
+  document.getElementById('environment').value = p.environment;
+  document.getElementById('action').value = p.action;
+  document.getElementById('styleLock').value = p.styleLock || '';
+  document.getElementById('negative').value = '';
+
+  chipSelectByVal('chips-angle', p.angle);
+  chipSelectByVal('chips-movement', p.movement);
+  chipSelectByVal('chips-light', p.light);
+  chipSelectByVal('chips-time', p.time);
+  chipSelectByVal('chips-artstyle', p.artstyle);
+  chipSelectByVal('chips-grade', p.grade);
+  chipSelectByVal('chips-pace', p.pace);
+  chipSelectByVal('chips-tone', p.tone);
+
+  document.querySelectorAll('#chips-fx .chip').forEach(c => { c.className = 'chip'; c.dataset.multi = 'true'; });
+  if (p.fxList) {
+    p.fxList.forEach(fx => {
+      const chip = Array.from(document.querySelectorAll('#chips-fx .chip')).find(c => c.dataset.val === fx);
+      if (chip) chip.className = 'chip sel';
+    });
+  }
+  buildPrompt();
+}
+
+function chipSelectByVal(groupId, val) {
+  const chips = document.querySelectorAll('#' + groupId + ' .chip');
+  chips.forEach(c => { c.className = 'chip'; });
+  const target = Array.from(chips).find(c => c.dataset.val === val);
+  if (target) target.className = 'chip sel';
+}
+
+function chipSelect(el, groupId) {
+  document.querySelectorAll('#' + groupId + ' .chip').forEach(c => { c.className = 'chip'; });
+  el.className = 'chip sel';
+  liveUpdate();
+}
+
+function chipMulti(el) {
+  el.className = el.classList.contains('sel') ? 'chip' : 'chip sel';
+  el.dataset.multi = 'true';
+  liveUpdate();
+}
+
+function getChip(groupId) {
+  const sel = document.querySelector('#' + groupId + ' .chip.sel');
+  return sel ? sel.dataset.val : '';
+}
+
+function getMultiChips(groupId) {
+  return Array.from(document.querySelectorAll('#' + groupId + ' .chip.sel')).map(c => c.dataset.val).filter(Boolean);
+}
+
+function buildPrompt() {
+  const subject    = document.getElementById('subject').value.trim();
+  const environment= document.getElementById('environment').value.trim();
+  const action     = document.getElementById('action').value.trim();
+  const styleLock  = document.getElementById('styleLock').value.trim();
+  const negative   = document.getElementById('negative').value.trim();
+
+  const angle    = getChip('chips-angle');
+  const movement = getChip('chips-movement');
+  const lens     = getChip('chips-lens');
+  const light    = getChip('chips-light');
+  const time     = getChip('chips-time');
+  const artstyle = getChip('chips-artstyle');
+  const grade    = getChip('chips-grade');
+  const pace     = getChip('chips-pace');
+  const tone     = getChip('chips-tone');
+  const fxList   = getMultiChips('chips-fx');
+
+  const intensity = parseInt(document.getElementById('intensity').value);
+  const addQuality = document.getElementById('tog-quality').classList.contains('on');
+  const addConsist = document.getElementById('tog-consist').classList.contains('on');
+  const addNeg     = document.getElementById('tog-neg').classList.contains('on');
+
+  if (!subject) { showToast('Isi Subject dulu ya!'); return; }
+
+  let parts = [];
+
+  // Mode prefix
+  if (currentMode === 'image-video') parts.push('Animate the reference image:');
+
+  // Subject + action
+  if (action) parts.push(`${subject} is ${action}`);
+  else parts.push(subject);
+
+  // Camera
+  const camParts = [angle, movement, lens].filter(Boolean);
+  if (camParts.length) parts.push(camParts.join(', '));
+
+  // Environment
+  const envParts = [environment, light, time].filter(Boolean);
+  if (envParts.length) parts.push('set in ' + envParts.join(' with '));
+
+  // FX
+  if (intensity >= 2 && fxList.length) parts.push('with ' + fxList.join(', '));
+
+  // Style + grade
+  const styleParts = [artstyle, grade].filter(Boolean);
+  if (styleParts.length) parts.push(styleParts.join(', '));
+
+  // Mood
+  if (pace || tone) parts.push([pace, tone].filter(Boolean).join(', ') + ' mood');
+
+  // Style lock
+  if (styleLock) parts.push(styleLock);
+
+  // Consistency
+  if (addConsist) parts.push('consistent character design throughout');
+
+  // Quality
+  if (addQuality) {
+    const qSuffix = intensity >= 4
+      ? 'cinematic, 8K ultra-detail, professional cinematography, award-winning visual effects'
+      : intensity >= 3
+      ? 'cinematic, 4K, high detail, professional quality'
+      : 'high quality, cinematic';
+    parts.push(qSuffix);
+  }
+
+  let prompt = parts.join('. ');
+  prompt = prompt.charAt(0).toUpperCase() + prompt.slice(1);
+  if (!prompt.endsWith('.')) prompt += '.';
+
+  if (addNeg && negative) prompt += `\n\nNegative: ${negative}`;
+
+  document.getElementById('output').value = prompt;
+  updateStats(prompt);
+  saveToHistory(prompt);
+  genCount++;
+  document.getElementById('statGen').textContent = genCount;
+}
+
+function liveUpdate() {
+  const out = document.getElementById('output');
+  if (out.value) buildPrompt();
+  updateStats(out.value);
+}
+
+function updateStats(text) {
+  const chars = text.length;
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  document.getElementById('charCount').textContent = chars + ' chars / ' + words + ' words';
+  document.getElementById('statLen').textContent = chars;
+  document.getElementById('statWords').textContent = words;
+
+  let score = 'Weak';
+  let color = 'var(--red)';
+  if (chars > 50) { score = 'OK'; color = 'var(--yellow)'; }
+  if (chars > 100) { score = 'Good'; color = 'var(--accent3)'; }
+  if (chars > 200) { score = 'Strong'; color = 'var(--green)'; }
+  if (chars > 350) { score = 'Ultra'; color = 'var(--accent)'; }
+  document.getElementById('qualityScore').textContent = 'Quality: ' + score;
+  document.getElementById('qualityScore').style.color = color;
+}
+
+function saveToHistory(prompt) {
+  if (!prompt || history[history.length - 1] === prompt) return;
+  history.push(prompt);
+  if (history.length > 10) history.shift();
+  document.getElementById('statHist').textContent = history.length;
+  renderHistory();
+}
+
+function renderHistory() {
+  const panel = document.getElementById('historyPanel');
+  if (!history.length) { panel.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:16px 0">Belum ada history.</div>'; return; }
+  panel.innerHTML = '';
+  [...history].reverse().forEach((p, i) => {
+    const d = document.createElement('div');
+    d.className = 'history-item';
+    d.textContent = p;
+    d.title = 'Klik untuk load';
+    d.onclick = () => { document.getElementById('output').value = p; updateStats(p); showToast('Prompt dimuat dari history'); };
+    panel.appendChild(d);
+  });
+}
+
+function clearHistory() {
+  history = [];
+  document.getElementById('statHist').textContent = 0;
+  renderHistory();
+}
+
+function randomize() {
+  const groups = ['chips-angle','chips-movement','chips-lens','chips-light','chips-time','chips-artstyle','chips-grade','chips-pace','chips-tone'];
+  groups.forEach(g => {
+    const chips = document.querySelectorAll('#' + g + ' .chip');
+    chips.forEach(c => c.className = 'chip');
+    const pick = chips[Math.floor(Math.random() * chips.length)];
+    if (pick) pick.className = 'chip sel';
+  });
+  const fxChips = document.querySelectorAll('#chips-fx .chip');
+  fxChips.forEach(c => { c.className = 'chip'; c.dataset.multi = 'true'; });
+  const numFx = Math.floor(Math.random() * 4) + 1;
+  const shuffled = Array.from(fxChips).sort(() => Math.random() - 0.5);
+  shuffled.slice(0, numFx).forEach(c => c.className = 'chip sel');
+  buildPrompt();
+  showToast('Randomized!');
+}
+
+function clearAll() {
+  ['subject','environment','action','styleLock','negative'].forEach(id => document.getElementById(id).value = '');
+  document.querySelectorAll('.chip.sel').forEach(c => { c.className = 'chip'; });
+  document.getElementById('output').value = '';
+  updateStats('');
+  document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
+  showToast('Cleared');
+}
+
+function copyOutput() {
+  const txt = document.getElementById('output').value;
+  if (!txt) { showToast('Generate dulu!'); return; }
+  navigator.clipboard.writeText(txt).then(() => showToast('Copied to clipboard!'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function setMode(mode, el) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('modeLabel').textContent = el.textContent;
+
+  const guide = document.getElementById('veoGuide');
+  const configs = {
+    'image-video': [['Mode','Frames (img→vid)','var(--accent)'],['Ratio','16:9 landscape','var(--text)'],['Output','x4 (80 credits)','var(--accent2)'],['Model','Veo 3.1 Fast','var(--text)'],['Credit/video','20 credits','var(--accent3)']],
+    'text-video': [['Mode','Text → Video','var(--accent)'],['Ratio','16:9 atau 9:16','var(--text)'],['Output','x1–x4','var(--accent2)'],['Model','Veo 3.1 Fast','var(--text)'],['Credit/video','20 credits','var(--accent3)']],
+    'text-image': [['Mode','Text → Image','var(--accent)'],['Ratio','1:1 / 4:3 / 16:9','var(--text)'],['Output','x1–x4','var(--accent2)'],['Model','Imagen 4','var(--text)'],['Credit/image','4 credits','var(--accent3)']],
+  };
+  const rows = configs[mode];
+  guide.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px;font-size:12px">' +
+    rows.map(r => `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)"><span style="color:var(--text2)">${r[0]}</span><span style="color:${r[2]};font-family:'JetBrains Mono',monospace;font-weight:600">${r[1]}</span></div>`).join('') +
+    '</div>';
+}
+
+initPresets();
+</script>
+</body>
+</html>

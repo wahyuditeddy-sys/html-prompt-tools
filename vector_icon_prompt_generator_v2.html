@@ -1,0 +1,249 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+label { font-size: 13px; color: var(--color-text-secondary); display: block; margin-bottom: 6px; }
+.field { margin-bottom: 1rem; }
+input[type=text], textarea, select {
+  width: 100%; font-family: var(--font-sans); font-size: 14px;
+  border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md);
+  background: var(--color-background-primary); color: var(--color-text-primary);
+  padding: 8px 12px;
+}
+textarea { resize: vertical; min-height: 64px; }
+.color-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.swatch { width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: transform .15s; flex-shrink: 0; }
+.swatch:hover { transform: scale(1.15); }
+.swatch.selected { border-color: var(--color-text-primary); }
+.custom-color { width: 28px; height: 28px; border-radius: 50%; border: 0.5px solid var(--color-border-secondary); cursor: pointer; overflow: hidden; padding: 0; }
+.custom-color input[type=color] { width: 36px; height: 36px; border: none; cursor: pointer; transform: translate(-4px,-4px); }
+.style-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.style-opt { border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 10px 8px; cursor: pointer; text-align: center; font-size: 13px; color: var(--color-text-secondary); transition: all .15s; }
+.style-opt:hover { background: var(--color-background-secondary); }
+.style-opt.selected { border-color: #185FA5; color: #185FA5; background: #E6F1FB; }
+.tag-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.tag { font-size: 12px; padding: 4px 10px; border-radius: 99px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-secondary); color: var(--color-text-secondary); cursor: pointer; }
+.tag.selected { background: #E6F1FB; border-color: #185FA5; color: #185FA5; }
+.prompt-box { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; font-size: 13px; line-height: 1.7; color: var(--color-text-primary); white-space: pre-wrap; word-break: break-word; min-height: 80px; }
+.btn-row { display: flex; gap: 8px; margin-top: 1rem; }
+button.gen { background: var(--color-text-primary); color: var(--color-background-primary); border: none; border-radius: var(--border-radius-md); padding: 9px 20px; font-size: 14px; font-weight: 500; cursor: pointer; }
+button.gen:hover { opacity: .85; }
+button.copy { background: transparent; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 9px 16px; font-size: 14px; color: var(--color-text-secondary); cursor: pointer; }
+button.copy:hover { background: var(--color-background-secondary); }
+.divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1.25rem 0; }
+.warn-box { background: #FAEEDA; border: 0.5px solid #EF9F27; border-radius: var(--border-radius-md); padding: 10px 14px; font-size: 13px; color: #633806; margin-bottom: 1rem; display: none; }
+.policy-note { background: var(--color-background-secondary); border-left: 2px solid var(--color-border-secondary); border-radius: 0; padding: 10px 14px; font-size: 12px; color: var(--color-text-secondary); margin-bottom: 1rem; line-height: 1.6; }
+</style>
+
+<div style="padding: 1.5rem 0; max-width: 680px;">
+
+  <div class="policy-note">
+    Prompts are checked against Google's Generative AI Prohibited Use Policy. Content involving CSAM, violent extremism, non-consensual imagery, self-harm, illegal activities, hate speech, harassment, sexually explicit material, fraud, impersonation, or privacy violations will be blocked.
+  </div>
+
+  <div class="field">
+    <label>Theme / topic</label>
+    <input type="text" id="theme" placeholder="e.g. fintech, food, education, health..." />
+  </div>
+
+  <div id="warn-box" class="warn-box"></div>
+
+  <div class="field">
+    <label>Number of icons</label>
+    <input type="text" id="count" value="8" style="width:80px;" />
+  </div>
+
+  <div class="field">
+    <label>Icon style</label>
+    <div class="style-grid" id="style-grid">
+      <div class="style-opt selected" data-val="flat outlined with thin strokes">Flat outlined</div>
+      <div class="style-opt" data-val="filled solid flat">Filled solid</div>
+      <div class="style-opt" data-val="duotone two-color">Duotone</div>
+      <div class="style-opt" data-val="line art minimal">Line art</div>
+      <div class="style-opt" data-val="bold filled rounded corners">Bold rounded</div>
+      <div class="style-opt" data-val="isometric 3D flat">Isometric</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Background color</label>
+    <div class="color-row" id="swatch-row">
+      <div class="swatch selected" data-color="white" style="background:#fff; border-color:#ccc;"></div>
+      <div class="swatch" data-color="transparent" style="background: repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 0 0 / 10px 10px;"></div>
+      <div class="swatch" data-color="#F5F5F0" style="background:#F5F5F0;"></div>
+      <div class="swatch" data-color="#1A1A2E" style="background:#1A1A2E;"></div>
+      <div class="swatch" data-color="#E8F4F8" style="background:#E8F4F8;"></div>
+      <div class="swatch" data-color="#FFF8E7" style="background:#FFF8E7;"></div>
+      <div class="swatch" data-color="#F0EBF8" style="background:#F0EBF8;"></div>
+      <div class="custom-color">
+        <input type="color" id="customColor" value="#ffffff" />
+      </div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Color palette mood</label>
+    <div class="tag-row" id="palette-row">
+      <div class="tag selected" data-val="vibrant multicolor, warm and playful">Vibrant</div>
+      <div class="tag" data-val="pastel soft colors">Pastel</div>
+      <div class="tag" data-val="monochromatic single-hue">Mono</div>
+      <div class="tag" data-val="muted earthy tones">Earthy</div>
+      <div class="tag" data-val="neon bright high-contrast">Neon</div>
+      <div class="tag" data-val="grayscale black and white">Grayscale</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Output format</label>
+    <div class="tag-row" id="format-row">
+      <div class="tag selected" data-val="SVG vector format">SVG</div>
+      <div class="tag" data-val="AI (Adobe Illustrator) vector">Adobe AI</div>
+      <div class="tag" data-val="EPS vector">EPS</div>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Extra notes (optional)</label>
+    <textarea id="notes" placeholder="e.g. consistent stroke width 2px, rounded corners, 64×64px canvas..."></textarea>
+  </div>
+
+  <div class="btn-row">
+    <button class="gen" onclick="generate()">Generate prompt</button>
+  </div>
+
+  <hr class="divider" id="divider" style="display:none" />
+  <div id="out" style="display:none">
+    <label style="margin-bottom:8px;">Generated prompt</label>
+    <div class="prompt-box" id="prompt-text"></div>
+    <div class="btn-row">
+      <button class="copy" onclick="copyPrompt()">Copy prompt</button>
+      <button class="gen" onclick="sendToChat()" style="background:#185FA5;">Use in chat ↗</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let selectedBg = 'white';
+let selectedStyle = 'flat outlined with thin strokes';
+let selectedPalette = 'vibrant multicolor, warm and playful';
+let selectedFormat = 'SVG vector format';
+
+const BLOCKED = [
+  { pattern: /\b(child|minor|kid|infant|baby|toddler|teen|underage).{0,30}(sex|nude|naked|erotic|porn|explicit|sexual|intimate)/i, reason: "Content involving minors in sexual contexts is prohibited." },
+  { pattern: /\b(csam|lolita|cp)\b/i, reason: "Content involving minors in sexual contexts is prohibited." },
+  { pattern: /\b(terror|jihadist?|isis|al.?qaeda|extremis|bomb.making|attack plan)/i, reason: "Content facilitating violent extremism or terrorism is prohibited." },
+  { pattern: /\b(non.?consensual|deepfake.{0,20}(nude|sex|intimate)|revenge.?porn|upskirt)/i, reason: "Non-consensual intimate imagery is prohibited." },
+  { pattern: /\b(self.harm|suicide method|how to (cut|hang|overdose)|self.?mutilat)/i, reason: "Content facilitating self-harm is prohibited." },
+  { pattern: /\b(drug synthesis|meth recipe|synthesize (heroin|fentanyl|cocaine)|illegal weapon|silencer diy)/i, reason: "Content facilitating illegal activities is prohibited." },
+  { pattern: /\b(porn|pornograph|hentai|nude|nudity|naked body|sexual gratif|erotic art|xxx)\b/i, reason: "Sexually explicit content is prohibited." },
+  { pattern: /\b(hate speech|racial slur|white supremac|neo.?nazi|ethnic cleansing|genocide propaganda)/i, reason: "Hate speech and content inciting hatred is prohibited." },
+  { pattern: /\b(harass|bully|stalk|doxx|personal data without consent|biometric without)/i, reason: "Content facilitating harassment or privacy violations is prohibited." },
+  { pattern: /\b(phishing|malware|ransomware|spam campaign|social engineer.{0,10}attack)/i, reason: "Content facilitating cyberattacks or fraud is prohibited." },
+  { pattern: /\b(impersonat|deepfake.{0,20}(celebrity|politician|person)|fake identity to deceive)/i, reason: "Impersonation intended to deceive is prohibited." },
+  { pattern: /\b(misinformation|fake (election|vote|ballot)|health (disinfo|misinformation))/i, reason: "Misinformation and deceptive content is prohibited." },
+];
+
+function checkPolicy(text) {
+  for (const rule of BLOCKED) {
+    if (rule.pattern.test(text)) return rule.reason;
+  }
+  return null;
+}
+
+document.querySelectorAll('.style-opt').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.style-opt').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedStyle = el.dataset.val;
+  });
+});
+document.querySelectorAll('#palette-row .tag').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('#palette-row .tag').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedPalette = el.dataset.val;
+  });
+});
+document.querySelectorAll('#format-row .tag').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('#format-row .tag').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedFormat = el.dataset.val;
+  });
+});
+document.querySelectorAll('.swatch[data-color]').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.swatch').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedBg = el.dataset.color;
+  });
+});
+document.getElementById('customColor').addEventListener('input', e => {
+  document.querySelectorAll('.swatch').forEach(el => el.classList.remove('selected'));
+  selectedBg = e.target.value;
+});
+
+function generate() {
+  const theme = document.getElementById('theme').value.trim() || 'general';
+  const count = document.getElementById('count').value.trim() || '8';
+  const notes = document.getElementById('notes').value.trim();
+  const warnEl = document.getElementById('warn-box');
+
+  const allInput = [theme, notes].join(' ');
+  const violation = checkPolicy(allInput);
+
+  if (violation) {
+    warnEl.textContent = 'Blocked: ' + violation;
+    warnEl.style.display = 'block';
+    document.getElementById('divider').style.display = 'none';
+    document.getElementById('out').style.display = 'none';
+    return;
+  }
+
+  warnEl.style.display = 'none';
+
+  const bgLabel = selectedBg === 'transparent' ? 'transparent background' : `${selectedBg} background`;
+
+  let prompt = `Create a set of ${count} vector icons on the theme of "${theme}".
+
+Style: ${selectedStyle}, cohesive and consistent across all icons.
+Color palette: ${selectedPalette}.
+Background: ${bgLabel}.
+Output format: ${selectedFormat}.
+
+Each icon should:
+- Represent a distinct concept or object related to the "${theme}" theme
+- Share the same visual style, stroke weight, and color language
+- Be clean, readable, and suitable for UI or illustration use
+- Be centered within a square canvas
+- Contain no depictions of real identifiable individuals, protected biometric data, or trademarked characters
+
+Content restrictions (per Google Generative AI Prohibited Use Policy):
+- No sexually explicit, violent, or hateful imagery
+- No content facilitating illegal activities, self-harm, or extremism
+- No impersonation of real individuals intended to deceive
+- No non-consensual intimate imagery`;
+
+  if (notes) {
+    prompt += `\n\nAdditional requirements: ${notes}`;
+  }
+
+  prompt += `\n\nDeliver all icons as individual vector assets, clearly labeled by concept.`;
+
+  document.getElementById('prompt-text').textContent = prompt;
+  document.getElementById('divider').style.display = '';
+  document.getElementById('out').style.display = '';
+}
+
+function copyPrompt() {
+  const text = document.getElementById('prompt-text').textContent;
+  navigator.clipboard.writeText(text).catch(() => {});
+  const btn = document.querySelector('.copy');
+  btn.textContent = 'Copied!';
+  setTimeout(() => btn.textContent = 'Copy prompt', 2000);
+}
+
+function sendToChat() {
+  const text = document.getElementById('prompt-text').textContent;
+  sendPrompt(text);
+}
+</script>
