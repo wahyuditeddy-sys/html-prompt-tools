@@ -385,7 +385,7 @@ code{background:var(--bg4);color:var(--cy);padding:1px 5px;border-radius:3px;
   <div class="card">
     <div class="card-h">
       <div class="card-ht">00 — Quick Templates</div>
-      <div class="card-hs">20 preset siap pakai · klik load</div>
+      <div class="card-hs">20 preset siap pakai · klik load · lalu ⚡ 30 Variasi</div>
     </div>
     <div class="card-b">
       <div class="tmpl-grid2" id="tmplGrid"></div>
@@ -530,7 +530,7 @@ code{background:var(--bg4);color:var(--cy);padding:1px 5px;border-radius:3px;
     <div class="pb-foot">
       <button class="cp-btn" id="cpBtn" onclick="copyPrompt()">COPY PROMPT</button>
       <button class="save-btn" id="saveBtn" onclick="saveCurrentPrompt()">💾 SAVE</button>
-      <button class="save-btn" onclick="build40Vars()" style="border-color:rgba(255,230,0,.4);color:var(--yw);">⚡ 40 VARIASI</button>
+      <button class="save-btn" onclick="build40Vars()" style="border-color:rgba(255,230,0,.4);color:var(--yw);">⚡ 30 VARIASI</button>
       <div class="cp-hint" id="cpHint">Generate → copy → paste ke NB2 / MJ / SD.</div>
     </div>
   </div>
@@ -538,12 +538,12 @@ code{background:var(--bg4);color:var(--cy);padding:1px 5px;border-radius:3px;
   <!-- 40 VARIASI PANEL -->
   <div class="v40-box" id="v40Box" style="display:none;">
     <div class="v40-hdr">
-      <div class="v40-t">⚡ 40 VARIASI PROMPT</div>
+      <div class="v40-t">⚡ 30 VARIASI PROMPT</div>
       <div class="v40-cnt" id="v40CountBadge">Generate dulu</div>
     </div>
     <div class="v40-body">
-      <div class="v40-alert">40 variasi dari 1 template yang sama · Platform, style, resolusi, warna, engine · Copy masing-masing atau bundle semua.</div>
-      <button class="v40-gen-btn" onclick="build40Vars()">⚡ BUILD 40 VARIASI — <span id="v40CatLabel">pilih kategori dulu</span></button>
+      <div class="v40-alert">30 variasi dari 1 template yang sama. TIDAK ada dark background. Semua light-friendly dan siap upload. Klik "Copy" untuk copy prompt variasi tersebut.</div>
+      <button class="v40-gen-btn" onclick="build40Vars()">⚡ BUILD 30 VARIASI — <span id="v40CatLabel">pilih kategori dulu</span></button>
       <div id="v40Container"><div class="v40-empty">Klik Generate Prompt dulu → lalu ⚡ 40 Variasi.</div></div>
     </div>
   </div>
@@ -1905,59 +1905,104 @@ function loadTemplate(id){
 }
 
 // ═══════════════════════════════
-// VARS40 — 40 Variation Configs
+// VARS30 — 30 Variation Configs
 // ═══════════════════════════════
 var VARS40=[
-  // ── Platform (3) ──
-  {cat:'Platform',num:'01',name:'Etsy Digital Download',tag:'vt-plat',note:'PNG transparent · ZIP bundle · 13 SEO tags · harga $2–15',suffix:', etsy digital download product, transparent background PNG, commercial license included, instant download ready'},
-  {cat:'Platform',num:'02',name:'Redbubble Print-on-Demand',tag:'vt-plat',note:'High-res RGB · 6500px min · semua produk aktif',suffix:', redbubble print on demand, high resolution RGB colorspace, sticker poster tshirt mug compatible, bright saturated colors'},
-  {cat:'Platform',num:'03',name:'DTF / Sablon Lokal',tag:'vt-plat',note:'CMYK+white ink · A3/A4 sheet · Tokopedia/Shopee',suffix:', DTF transfer print ready, CMYK colorspace with white ink channel, transparent alpha PNG, heat transfer compatible'},
-  // ── Product Type (5) ──
-  {cat:'Product Type',num:'04',name:'Isolated Single Sticker',tag:'vt-product',note:'1 karakter die-cut · transparent bg · premium outline',suffix:', single isolated sticker design, die-cut style, ultra thick black outline border, pure transparent background, centered composition'},
-  {cat:'Product Type',num:'05',name:'Sticker Pack Bundle 6',tag:'vt-product',note:'6 varian 1 tema · sheet layout · value pack',suffix:', sticker pack bundle of 6 variations, same theme different poses, arranged on transparent sheet, coordinated color palette'},
-  {cat:'Product Type',num:'06',name:'Poster / Wall Art',tag:'vt-product',note:'Full komposisi · artistic bg · siap pajang',suffix:', poster wall art design, full artistic composition, decorative background included, gallery-ready framing, hero centered layout'},
-  {cat:'Product Type',num:'07',name:'T-Shirt DTG/DTF File',tag:'vt-product',note:'Chest print · no garment · CMYK ready',suffix:', t-shirt print design, centered chest placement, no garment shown, isolated artwork on transparent, DTG DTF print compatible'},
-  {cat:'Product Type',num:'08',name:'Clipart Collection Set',tag:'vt-product',note:'10+ elemen tematik · PNG bundle · multi-asset',suffix:', clipart collection set, multiple thematic elements on transparent background, bundle pack design assets, scalable vector style'},
-  // ── Background (5) ──
-  {cat:'Background',num:'09',name:'Transparent Alpha PNG',tag:'vt-bg',note:'Pure alpha · no fill · professional cutout',suffix:', pure transparent background, alpha channel PNG, no fill no shadow, professional clean cutout, isolated object only'},
-  {cat:'Background',num:'10',name:'Pure White Background',tag:'vt-bg',note:'White fill · JPEG-ready · print-safe',suffix:', pure white background, clean solid white fill, print-safe for light paper, professional product photo style'},
-  {cat:'Background',num:'11',name:'Pitch Black Background',tag:'vt-bg',note:'Dark bg · neon elements pop · moody',suffix:', pitch black background, dark dramatic backdrop, neon glow elements pop against dark, high contrast moody atmosphere'},
-  {cat:'Background',num:'12',name:'Kraft Paper Texture',tag:'vt-bg',note:'Organic · warm · artisanal handmade feel',suffix:', kraft paper texture background, warm organic artisanal feel, aged paper surface, handmade craft aesthetic'},
-  {cat:'Background',num:'13',name:'Gradient Atmosphere',tag:'vt-bg',note:'Subtle gradient · premium · depth',suffix:', subtle atmospheric gradient background, soft color fade, premium depth effect, Instagram-ready aesthetic'},
-  // ── Style Treatment (5) ──
-  {cat:'Style',num:'14',name:'Flat Vector Clean',tag:'vt-style',note:'Bold outlines · flat fills · no gradients · scalable',suffix:', flat vector illustration style, bold clean outlines, solid color fills no gradients, clean minimal graphic design, scalable artwork'},
-  {cat:'Style',num:'15',name:'3D Inflated Puffy',tag:'vt-style',note:'3D embossed · inflate · rounded bubbly',suffix:', 3D inflated puffy sticker style, rounded embossed surface, bubbly inflate effect, smooth 3D shading, plastic toy aesthetic'},
-  {cat:'Style',num:'16',name:'Vintage Halftone Retro',tag:'vt-style',note:'Ben-Day dots · aged · print press feel',suffix:', vintage retro halftone style, Ben-Day dot pattern, aged risograph print aesthetic, limited color palette, old newspaper press feel'},
-  {cat:'Style',num:'17',name:'Watercolor Loose Paint',tag:'vt-style',note:'Wet paint · organic edges · artistic',suffix:', loose watercolor painting style, wet paint bleeds and blooms, organic soft edges, artistic brush texture, fine art print quality'},
-  {cat:'Style',num:'18',name:'Line Art Minimal',tag:'vt-style',note:'Pure outline · minimal fill · sketch elegance',suffix:', clean line art illustration, minimal ink lines, sketch elegance, no heavy fill, fine pen drawing style, coloring book ready'},
-  // ── Resolution (4) ──
-  {cat:'Resolution',num:'19',name:'4000px Economy',tag:'vt-res',note:'Fast generate · good digital · low cost',suffix:', 4000x4000 pixels resolution, economy tier, digital use optimized, fast render quality'},
-  {cat:'Resolution',num:'20',name:'8000px Standard HD',tag:'vt-res',note:'Default best practice · print+digital',suffix:', 8000x8000 pixels ultra high resolution, standard HD tier, print and digital dual use, professional quality'},
-  {cat:'Resolution',num:'21',name:'12000px Ultra HD',tag:'vt-res',note:'Max detail · large format print',suffix:', 12000x12000 pixels maximum resolution, ultra HD large format print ready, billboard quality, extreme fine detail'},
-  {cat:'Resolution',num:'22',name:'300 DPI A4 Print',tag:'vt-res',note:'Physical size target · standard print',suffix:', 300 DPI resolution, A4 physical print size target, standard print quality, CMYK print-ready'},
-  // ── Color Palette (4) ──
-  {cat:'Color Palette',num:'23',name:'Neon Vibrant Electric',tag:'vt-color',note:'Hot pink · electric cyan · neon yellow',suffix:', neon vibrant electric color palette, hot pink #FF6EB4, electric cyan, neon yellow, ultra saturated maximum brightness, glowing neon lights'},
-  {cat:'Color Palette',num:'24',name:'Pastel Dreamy Soft',tag:'vt-color',note:'Soft pink · lavender · mint · peach',suffix:', pastel dreamy soft color palette, soft pink lavender mint peach, delicate muted tones, dreamy kawaii aesthetic, cottagecore color story'},
-  {cat:'Color Palette',num:'25',name:'Monochrome Black & White',tag:'vt-color',note:'Pure BW · stark contrast · no color',suffix:', monochrome black and white only, stark contrast graphic, no color pure ink style, bold silhouette design, newspaper print aesthetic'},
-  {cat:'Color Palette',num:'26',name:'Earth Warm Vintage',tag:'vt-color',note:'Terracotta · amber · moss · ivory',suffix:', earth warm vintage color palette, terracotta burnt orange, amber yellow, sage moss green, ivory cream, natural organic tones'},
-  // ── Detail Level (3) ──
-  {cat:'Detail Level',num:'27',name:'Minimal Clean Bold',tag:'vt-detail',note:'Simple shapes · bold statement · 3 colors max',suffix:', minimal clean bold design, simple geometric shapes, 3 color maximum, strong bold statement, icon-level simplicity'},
-  {cat:'Detail Level',num:'28',name:'Balanced Medium',tag:'vt-detail',note:'Standard complexity · balanced elements',suffix:', medium detail level, balanced element complexity, standard illustration depth, clear readable design at any size'},
-  {cat:'Detail Level',num:'29',name:'Ultra Intricate Complex',tag:'vt-detail',note:'Maximum elements · rich detail · magazine quality',suffix:', ultra intricate maximum detail, complex layered elements, micro detail textures, rich fine art quality, magazine editorial level'},
-  // ── Media Target (3) ──
-  {cat:'Media Target',num:'30',name:'White / Light Garment',tag:'vt-media',note:'Dark ink friendly · visible on white tee',suffix:', designed for white light garment, dark ink colors dominate, visible on white cotton tshirt, warm medium tones'},
-  {cat:'Media Target',num:'31',name:'Black / Dark Garment',tag:'vt-media',note:'Light+neon colors · white ink channel',suffix:', designed for black dark garment, light and neon colors dominant, white ink underbase compatible, bright contrast against dark fabric'},
-  {cat:'Media Target',num:'32',name:'Holographic Vinyl Film',tag:'vt-media',note:'Metallic base · chrome ready · special media',suffix:', designed for holographic vinyl film, metallic iridescent base compatible, chrome foil ready, specular rainbow reflection design'},
-  // ── AI Engine (3) ──
-  {cat:'AI Engine',num:'33',name:'NB2 / NovelAI Style',tag:'vt-engine',note:'Anime/illustration specialist · jp-style · flat',suffix:', anime illustration style, japanese flat art, clean line work, 2D character design, manga aesthetic, NovelAI compatible prompt style'},
-  {cat:'AI Engine',num:'34',name:'Midjourney v6 Cinematic',tag:'vt-engine',note:'Cinematic quality · artistic · dramatic',suffix:' --style raw --ar 1:1 --stylize 750 --v 6, cinematic quality, dramatic lighting, artistic composition, photorealistic detail mixed with illustration'},
-  {cat:'AI Engine',num:'35',name:'Stable Diffusion XL',tag:'vt-engine',note:'Open source · local · flexible · SDXL',suffix:', (masterpiece:1.3), (best quality:1.2), sharp focus, detailed illustration, SDXL optimized, ComfyUI workflow compatible'},
-  // ── Special FX (5) ──
-  {cat:'Special FX',num:'36',name:'Holographic Chrome',tag:'vt-special',note:'Rainbow iridescent · metallic surface',suffix:', holographic chrome effect, rainbow iridescent metallic surface, oil slick color shift, prismatic refraction, foil hologram aesthetic'},
-  {cat:'Special FX',num:'37',name:'Glitter Sparkle',tag:'vt-special',note:'Glitter particles · shimmer overlay',suffix:', glitter sparkle effect, micro glitter particles, shimmer overlay texture, diamond dust scattered, bling aesthetic, luxury sparkle'},
-  {cat:'Special FX',num:'38',name:'3D Drop Shadow Sticker',tag:'vt-special',note:'Realistic drop shadow · lifted · premium',suffix:', 3D drop shadow sticker effect, realistic cast shadow below, lifted floating appearance, premium die-cut sticker look, depth illusion'},
-  {cat:'Special FX',num:'39',name:'Foil Metallic Gold/Silver',tag:'vt-special',note:'Premium foil · luxury feel · embossed',suffix:', metallic foil effect, premium gold or silver foil surface, embossed luxury look, hot stamping aesthetic, high-end packaging quality'},
-  {cat:'Special FX',num:'40',name:'UV Glow Blacklight',tag:'vt-special',note:'Neon glow UV active · blacklight reactive',suffix:', UV blacklight reactive design, neon glow colors activated under UV light, fluorescent color palette, club rave aesthetic, invisible ink glow effect'},
+  // ── Background (6) ──
+  {cat:'Background',num:'01',name:'Transparent background',tag:'vt-bg',
+   note:'Fully transparent, no fill. Primary upload version — recommended for sticker &amp; die-cut sheets. Buyer places over any background.',
+   suffix:', pure transparent background, alpha channel PNG, no fill no shadow, clean professional cutout, isolated object only'},
+  {cat:'Background',num:'02',name:'Pure white #FFFFFF',tag:'vt-bg',
+   note:'Flat pure white background. #2 bestseller on POD platforms. Clean, universal, works for any buyer use case.',
+   suffix:', pure white background, solid white fill, clean product photo style, JPEG-ready, print-safe'},
+  {cat:'Background',num:'03',name:'Off-white #F5F4F0',tag:'vt-bg',
+   note:'Warm off-white background. Slightly premium feel. Works well for lifestyle, wellness, food, and editorial brands. Feels handmade and artisanal.',
+   suffix:', warm off-white background #F5F4F0, slightly premium artisanal feel, lifestyle brand aesthetic'},
+  {cat:'Background',num:'04',name:'Light blue #E8F4FF',tag:'vt-bg',
+   note:'Soft light blue tint. Best for tech, AI, medical, and corporate icon sets. Creates a clinical-yet-approachable feel.',
+   suffix:', soft light blue background #E8F4FF, clean clinical aesthetic, tech and medical brand friendly'},
+  {cat:'Background',num:'05',name:'Warm cream #FFF8F0',tag:'vt-bg',
+   note:'Warm golden cream background. Best for food, lifestyle, wellness, and cultural icon sets. Feels artisanal and premium.',
+   suffix:', warm cream background #FFF8F0, golden artisanal feel, food and lifestyle aesthetic, cottagecore warmth'},
+  {cat:'Background',num:'06',name:'Mint #F0F8F0',tag:'vt-bg',
+   note:'Fresh pale mint background. Eco, health, and nature themes. Organic and fresh without being too colorful.',
+   suffix:', pale mint green background #F0F8F0, fresh organic eco feel, nature and health brand aesthetic'},
+  // ── Style (8) ──
+  {cat:'Style',num:'07',name:'Flat vector clean',tag:'vt-style',
+   note:'Bold clean outlines, solid color fills, no gradients. Scalable to any size. Adobe Stock #1 bestseller style. Professional and commercial.',
+   suffix:', flat vector illustration style, bold outlines, solid fills no gradients, scalable clean graphic design'},
+  {cat:'Style',num:'08',name:'3D inflated puffy',tag:'vt-style',
+   note:'Rounded embossed surface, bubbly inflate effect. Trending sticker aesthetic 2024–2025. Plastic toy feel. Highly Instagram-shareable.',
+   suffix:', 3D inflated puffy sticker style, rounded embossed bubbly surface, inflate effect, smooth 3D shading, plastic toy aesthetic'},
+  {cat:'Style',num:'09',name:'Vintage halftone',tag:'vt-style',
+   note:'Ben-Day dot pattern, aged risograph print feel. Limited 3-color palette. Old print press aesthetic. Unique, collectible, and premium.',
+   suffix:', vintage halftone style, Ben-Day dot pattern, aged risograph print, limited color palette, retro newspaper press feel'},
+  {cat:'Style',num:'10',name:'Loose watercolor paint',tag:'vt-style',
+   note:'Wet paint bleeds, organic soft edges, paper texture. Fine art print quality. Popular for art prints and journaling sticker markets.',
+   suffix:', loose watercolor painting style, wet paint bleeds and blooms, organic soft edges, paper texture, fine art quality'},
+  {cat:'Style',num:'11',name:'Line art minimal',tag:'vt-style',
+   note:'Pure outline, minimal fill, sketch elegance. Coloring-book ready. Popular for adult coloring and minimalist lifestyle brands.',
+   suffix:', clean line art illustration, minimal ink lines, sketch elegance, no heavy fill, fine pen drawing, coloring book style'},
+  {cat:'Style',num:'12',name:'Kawaii extra cute',tag:'vt-style',
+   note:'Extra chibi proportions, huge sparkle eyes, round soft shapes. Ultra-kawaii Japanese character style. Top market for sticker sellers.',
+   suffix:', extra kawaii chibi cute style, huge sparkle round eyes, soft round body, ultra cute japanese character, pastel kawaii aesthetic'},
+  {cat:'Style',num:'13',name:'Bold graphic streetwear',tag:'vt-style',
+   note:'Chunky outlines, urban graphic energy, high contrast. DTF/screen print optimized. Works great on dark garments. Youth market.',
+   suffix:', bold graphic streetwear style, chunky thick outlines, urban energy, high contrast composition, screen print DTF optimized'},
+  {cat:'Style',num:'14',name:'Retro 80s neon',tag:'vt-style',
+   note:'Grid lines, sunset color palette, synthwave colors. 80s futurism vibe. Trending for retro gaming and nostalgia culture.',
+   suffix:', retro 80s neon style, synthwave grid lines, sunset gradient palette, neon outlines, 80s futurism vaporwave aesthetic'},
+  // ── Color Mood (6) ──
+  {cat:'Color Mood',num:'15',name:'Neon vibrant electric',tag:'vt-color',
+   note:'Hot pink #FF6EB4, electric cyan, neon yellow. Maximum saturation. Pops on any background. Best for Gen Z and festival market.',
+   suffix:', neon vibrant electric color palette, hot pink #FF6EB4, electric cyan #00FFDD, neon yellow, maximum saturation, glowing neon lights'},
+  {cat:'Color Mood',num:'16',name:'Pastel dreamy soft',tag:'vt-color',
+   note:'Soft pink, lavender, mint, peach. Delicate muted tones. Cottagecore kawaii aesthetic. Popular with lifestyle and stationery buyers.',
+   suffix:', pastel dreamy soft color palette, soft pink lavender mint peach, delicate muted tones, cottagecore kawaii color story'},
+  {cat:'Color Mood',num:'17',name:'Monochrome black & white',tag:'vt-color',
+   note:'Pure BW only. Zero color, stark contrast. Bold silhouette design. Works on any colored garment or paper background.',
+   suffix:', monochrome black and white only, pure BW stark contrast, no color, bold silhouette design, ink illustration style'},
+  {cat:'Color Mood',num:'18',name:'Earth warm vintage',tag:'vt-color',
+   note:'Terracotta, amber, sage moss, ivory cream. Natural organic tones. Popular with boho, nature, and artisan market segments.',
+   suffix:', earth warm vintage color palette, terracotta burnt orange, amber yellow, sage moss green, ivory cream, natural organic tones'},
+  {cat:'Color Mood',num:'19',name:'Jewel tones rich',tag:'vt-color',
+   note:'Deep emerald, royal sapphire, ruby red, amethyst purple. Rich and luxurious. Premium gift market and art print collectors.',
+   suffix:', jewel tones rich color palette, deep emerald green, royal sapphire blue, ruby red, amethyst purple, luxurious saturated colors'},
+  {cat:'Color Mood',num:'20',name:'Sunset warm glow',tag:'vt-color',
+   note:'Coral orange, golden yellow, rose amber. Warm vibrant mood. Popular for travel, summer, and lifestyle theme designs.',
+   suffix:', sunset warm glow color palette, coral orange, golden yellow, rose amber, warm vibrant gradient mood, tropical warmth'},
+  // ── Complexity (4) ──
+  {cat:'Complexity',num:'21',name:'Minimal bold 3-color',tag:'vt-detail',
+   note:'Simple geometric shapes, 3 colors maximum. Strong bold statement. Icon-level simplicity. Fast to generate and top commercial seller.',
+   suffix:', minimal bold design, simple geometric shapes, 3 colors maximum, strong statement, icon-level simplicity, clean negative space'},
+  {cat:'Complexity',num:'22',name:'Standard medium detail',tag:'vt-detail',
+   note:'Balanced element complexity. Clear and readable at any size. Standard illustration depth. Most versatile commercial tier.',
+   suffix:', medium detail level, balanced element complexity, standard illustration depth, clear readable at any size, versatile commercial style'},
+  {cat:'Complexity',num:'23',name:'Detailed illustrated',tag:'vt-detail',
+   note:'Complex layered elements, rich textures, fine character details. Editorial illustration quality. Justifies premium price point.',
+   suffix:', detailed illustration, complex layered elements, rich character details, fine textures, editorial quality illustration'},
+  {cat:'Complexity',num:'24',name:'Ultra intricate fine art',tag:'vt-detail',
+   note:'Maximum detail, micro textures, magazine cover quality. Showcase piece. Best for art prints and premium POD products.',
+   suffix:', ultra intricate maximum detail, micro textures throughout, fine art quality, magazine cover level, collector showcase piece'},
+  // ── Special FX (6) ──
+  {cat:'Special FX',num:'25',name:'Holographic chrome',tag:'vt-special',
+   note:'Rainbow iridescent metallic surface. Oil slick color shift. Prismatic refraction. Foil hologram aesthetic. Premium sticker appeal.',
+   suffix:', holographic chrome effect, rainbow iridescent metallic surface, oil slick color shift, prismatic refraction, foil hologram aesthetic'},
+  {cat:'Special FX',num:'26',name:'Glitter sparkle',tag:'vt-special',
+   note:'Micro glitter particles scattered. Diamond dust overlay. Shimmer and bling aesthetic. Popular luxury sticker feel on Etsy.',
+   suffix:', glitter sparkle effect, micro glitter particles scattered, diamond dust shimmer overlay, bling luxury aesthetic'},
+  {cat:'Special FX',num:'27',name:'3D drop shadow sticker',tag:'vt-special',
+   note:'Realistic cast shadow below artwork. Lifted floating appearance. Premium die-cut sticker look with depth illusion. High perceived value.',
+   suffix:', 3D drop shadow sticker effect, realistic cast shadow below, lifted floating appearance, premium die-cut depth illusion'},
+  {cat:'Special FX',num:'28',name:'Foil metallic gold/silver',tag:'vt-special',
+   note:'Embossed foil surface, hot stamping aesthetic. Gold or silver metallic finish. High-end packaging and luxury gift market.',
+   suffix:', metallic foil effect, premium gold or silver foil surface, embossed luxury look, hot stamping aesthetic, high-end quality'},
+  {cat:'Special FX',num:'29',name:'UV glow blacklight',tag:'vt-special',
+   note:'Fluorescent reactive colors. Neon glow activated under UV light. Club, rave, and festival market. Unique and collectible.',
+   suffix:', UV blacklight reactive design, fluorescent neon glow under UV light, fluorescent color palette, club rave festival aesthetic'},
+  {cat:'Special FX',num:'30',name:'Grunge distressed',tag:'vt-special',
+   note:'Worn texture, ink splatter, rough torn edges. Band poster and vintage aesthetics. Unique aged appeal. Screen print friendly.',
+   suffix:', grunge distressed effect, worn texture overlay, ink splatter details, rough torn edges, vintage band poster aesthetic'},
 ];
 
 function build40Vars(){
@@ -1967,7 +2012,7 @@ function build40Vars(){
   box.style.display='block';
   setTimeout(function(){box.scrollIntoView({behavior:'smooth',block:'start'});},100);
   document.getElementById('v40CatLabel').textContent=cat.t;
-  document.getElementById('v40CountBadge').textContent='40 variasi · '+cat.t;
+  document.getElementById('v40CountBadge').textContent='30 variasi ready';
   var desc=getDesc();
   var base=cat.core+(desc?', '+desc:'');
   renderVars40(base,cat);
@@ -1985,20 +2030,23 @@ function renderVars40(base,cat){
   sectionOrder.forEach(function(secName){
     var items=sections[secName];
     html+='<div class="v40-section">'
-      +'<div class="v40-sec-lbl"><span>'+secName+'</span><span>'+items.length+' var</span></div>'
+      +'<div class="v40-sec-lbl">'
+      +'<span>'+secName+'</span>'
+      +'<span style="font-weight:700;color:var(--wh);">'+items.length+' VARIASI</span>'
+      +'</div>'
       +'<div class="v40-grid">';
     items.forEach(function(v){
       var prompt=buildVar40Prompt(base,cat,v);
       var safeId='v40p_'+v.num;
       html+='<div class="v40c">'
-        +'<div style="display:flex;align-items:center;gap:5px;margin-bottom:3px;">'
-        +'<span class="v40-num">#'+v.num+'</span>'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">'
+        +'<span style="font-family:\'JetBrains Mono\',monospace;font-size:9px;font-weight:600;letter-spacing:.08em;color:var(--muted);">VARIASI '+v.num+'</span>'
         +'<span class="v40-tag '+v.tag+'">'+secName+'</span>'
         +'</div>'
-        +'<div class="v40-name">'+v.name+'</div>'
-        +'<div class="v40-note">'+v.note+'</div>'
+        +'<div class="v40-name" style="font-size:12px;margin-bottom:6px;">'+v.name+'</div>'
+        +'<div class="v40-note" style="font-size:10px;line-height:1.6;color:#9090b8;flex:1;margin-bottom:8px;">'+v.note+'</div>'
         +'<textarea id="'+safeId+'" style="display:none;">'+escH(prompt)+'</textarea>'
-        +'<button class="v40-copy-btn" onclick="copyVar40(this,\''+safeId+'\')">⎘ COPY PROMPT</button>'
+        +'<button class="v40-copy-btn" onclick="copyVar40(this,\''+safeId+'\')">⎘ Copy var '+parseInt(v.num,10)+'</button>'
         +'</div>';
     });
     html+='</div></div>';
@@ -2009,10 +2057,6 @@ function renderVars40(base,cat){
 function buildVar40Prompt(base,cat,v){
   var quality=', isolated artwork, professional digital art, print-ready, centered composition, no text, no watermark, no garment, no clothing';
   var neg=cat.neg?(' --no '+cat.neg):'';
-  // MJ suffix variants don't need extra quality tags
-  if(v.suffix&&v.suffix.indexOf('--ar')!==-1){
-    return base+v.suffix;
-  }
   return (base+(v.suffix||'')+quality+neg).trim();
 }
 
@@ -2021,16 +2065,18 @@ function copyVar40(btn,textareaId){
   if(!ta)return;
   var txt=ta.value;
   navigator.clipboard.writeText(txt).then(function(){
-    btn.textContent='✓ COPIED!';
+    var orig=btn.textContent;
+    btn.textContent='✓ Copied!';
     btn.classList.add('ok');
-    setTimeout(function(){btn.textContent='⎘ COPY PROMPT';btn.classList.remove('ok');},1800);
+    setTimeout(function(){btn.textContent=orig;btn.classList.remove('ok');},1800);
   }).catch(function(){
     ta.style.display='block';ta.select();
     document.execCommand('copy');
     ta.style.display='none';
-    btn.textContent='✓ COPIED!';
+    var orig=btn.textContent;
+    btn.textContent='✓ Copied!';
     btn.classList.add('ok');
-    setTimeout(function(){btn.textContent='⎘ COPY PROMPT';btn.classList.remove('ok');},1800);
+    setTimeout(function(){btn.textContent=orig;btn.classList.remove('ok');},1800);
   });
 }
 
