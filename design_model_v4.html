@@ -48,7 +48,7 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .card-b{padding:13px 14px;}
 
 /* PLATFORM GRID */
-.plat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.plat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;}
 .platc{border:2px solid var(--bg4);border-radius:var(--r);cursor:pointer;overflow:hidden;
   background:var(--bg3);transition:all .18s;text-align:center;padding:10px 8px;}
 .platc:hover{border-color:var(--cy);transform:translateY(-2px);}
@@ -556,6 +556,7 @@ code{background:var(--bg4);color:var(--cy);padding:1px 5px;border-radius:3px;
         <button class="stb on" id="seoTab-etsy" onclick="setSeoTab('etsy',this)">🛒 Etsy</button>
         <button class="stb" id="seoTab-redbubble" onclick="setSeoTab('redbubble',this)">🫧 RB</button>
         <button class="stb" id="seoTab-dtf" onclick="setSeoTab('dtf',this)">🖨️ DTF</button>
+        <button class="stb" id="seoTab-adobe" onclick="setSeoTab('adobe',this)">🅰 AS</button>
       </div>
     </div>
     <div class="seo-body">
@@ -595,6 +596,10 @@ code{background:var(--bg4);color:var(--cy);padding:1px 5px;border-radius:3px;
           <div class="tip-b">Format: PNG CMYK + alpha <code>300–600 DPI</code>.<br>Ukuran: A3 (29.7×42cm) atau A4.<br>White ink channel otomatis dari alpha.<br>Harga: Rp 25–75K per transfer.</div>
         </div>
         <div class="tip">
+          <div class="tip-t">🅰 Adobe Stock — Aturan AI</div>
+          <div class="tip-b">Background: <code>white atau transparent ONLY</code>.<br>Wajib centang "AI-generated" saat upload.<br>Max <code>49 keywords</code> · title max 200 char.<br>Avoid niche oversaturated (cek Niche Finder).</div>
+        </div>
+        <div class="tip">
           <div class="tip-t">📦 Bundle Strategy</div>
           <div class="tip-b">Buat 5–10 variasi satu tema.<br>Bundle jadi 1 pack + preview collage.<br>Nama: "Dark Kawaii Pack Vol.1"<br>Harga bundle 2× lebih besar.</div>
         </div>
@@ -630,6 +635,8 @@ var PLATFORMS=[
    note:'High-res RGB · 6500px min · semua produk otomatis'},
   {id:'dtf',icon:'🖨️',t:'DTF / Sablon',sub:'Transfer Press · IDR',
    note:'CMYK + white ink · 300–600 DPI · A3/A4 sheet'},
+  {id:'adobe',icon:'🅰',t:'Adobe Stock',sub:'Marketplace · USD',
+   note:'White/transparent ONLY · max 49 keywords · wajib declare AI'},
 ];
 
 // ═══════════════════════════════
@@ -1394,6 +1401,14 @@ function getPlatBlock(){
   · Ukuran cetak: A3 (29.7×42cm) atau A4, sesuai area dada kaos
   · White ink layer otomatis dari transparency channel
   · Warna: rich, saturated, tahan laundry — gunakan CMYK vibrant`,
+    adobe:`PLATFORM: Adobe Stock — Compliance Rules
+  · Background: WHITE (#FFFFFF) atau TRANSPARENT ONLY — NO dark background
+  · Format: PNG high-res (min 4MP) atau SVG/AI/EPS vector
+  · TIDAK BOLEH: logo merek, trademark, wajah manusia tanpa release
+  · WAJIB declare sebagai AI-generated saat upload
+  · Konten harus BERBEDA dari yang sudah ada — avoid oversaturated niches
+  · Style: clean, professional, versatile commercial use
+  · Resolusi minimal: 4 megapixel (mis. 2000×2000px minimum)`,
   };
   return blocks[S.platform]||blocks.etsy;
 }
@@ -1461,9 +1476,10 @@ ATURAN 1: JANGAN cetak teks instruksi, catatan produksi, atau
   directive prompt apapun sebagai teks yang terlihat di gambar.
 ATURAN 2: INI BUKAN MOCKUP KAOS. JANGAN gambar kaos, hoodie,
   sweater, jaket, atau garment apapun. Ini PURE isolated artwork.
-ATURAN 3: ${S.mods.has('transparent_bg')?'Background SEPENUHNYA TRANSPARAN — tidak ada warna background':'Background artistik sesuai format yang dipilih'}
+ATURAN 3: ${S.platform==='adobe'?'ADOBE STOCK — Background HARUS PUTIH (#FFFFFF) atau TRANSPARAN — NO dark background':S.mods.has('transparent_bg')?'Background SEPENUHNYA TRANSPARAN — tidak ada warna background':'Background artistik sesuai format yang dipilih'}
 ATURAN 4: Tepi desain BERSIH dan TAJAM — tidak blur di tepian
-ATURAN 5: Tanpa watermark. Tanpa AI generation artifact.
+ATURAN 5: Tanpa watermark. Tanpa AI generation artifact.${S.platform==='adobe'?'\nATURAN 6: ADOBE STOCK COMPLIANCE — clean commercial artwork, no brand/logo/trademark, versatile use':''}
+
 
 ━━ PLATFORM & FORMAT ━━
 ${getPlatBlock()}
@@ -1674,6 +1690,7 @@ function generateSEO(){
     etsy:['instant download','digital download','commercial use','printable','etsy shop','digital file'],
     redbubble:['redbubble art','print on demand','unique design','original art','illustrated'],
     dtf:['sablon kaos','desain kaos','transfer print','dtf ready','print kaos','desain baju'],
+    adobe:['vector illustration','digital art','isolated on white','clip art','royalty free','commercial use','AI generated art','stock illustration','flat design','graphic element','transparent background','white background'],
   };
   var allKwds=[...base,...(fmtKwds[S.fmt]||[]),...(platKwds[tab]||[]),...descWords.slice(0,5)];
   // Deduplicate and clean
@@ -1740,6 +1757,46 @@ function generateSEO(){
       <div class="seo-section">
         <div class="seo-slbl">Spesifikasi DTF Otomatis</div>
         <div class="seo-raw">Resolusi: ${S.res}px @ 600 DPI\nFormat: PNG CMYK + Alpha\nUkuran Cetak: A3 / A4 Transfer Sheet\nBackground: Transparent (white ink auto)\nWarna Media: ${S.tgtColorName} garment</div>
+      </div>`;
+  } else if(tab==='adobe'){
+    // Adobe Stock: max 49 keywords, title max 200 chars
+    var asKwds=allKwds.slice(0,49);
+    var asTitle=`${cat.t}${desc?' - '+desc.split(' ').slice(0,6).join(' '):''}${getFmtLabel()!=='Isolated PNG Sticker'?' - '+getFmtLabel():''} - Vector Illustration Isolated White Background`;
+    var asDesc=`${cat.t} ${desc?desc+'. ':''}Isolated vector illustration on white background. ${getFmtLabel()}. Commercial use, royalty free. AI generated digital art.`;
+    var compScore=asKwds.length;
+    var satLevel=cat.id==='dark_kawaii'||cat.id==='cat_lover'||cat.id==='botanical_floral'?'🔴 HIGH — niche ini sangat kompetitif di Adobe Stock':
+                 cat.id==='batik_fusion'||cat.id==='islamic_art'||cat.id==='mental_wellness'||cat.id==='pixel_gaming'?'🟢 LOW — peluang bagus, supply tipis':
+                 '🟡 MEDIUM — bisa masuk dengan diferensiasi style';
+    out.innerHTML=`
+      <div class="seo-section">
+        <div class="seo-slbl">⚠ Adobe Stock AI Declaration</div>
+        <div class="seo-raw" style="color:#ff8833;border-color:rgba(255,136,51,.3);">Saat upload ke Adobe Stock:\n✓ Centang "This image was created with AI assistance"\n✓ Pilih Content Credential\n✓ JANGAN submit content yang mirip dengan yang sudah ada</div>
+      </div>
+      <div class="seo-section">
+        <div class="seo-slbl">Kompetisi Niche: ${cat.t}</div>
+        <div class="seo-raw" style="border-color:rgba(255,230,0,.2);">${satLevel}</div>
+      </div>
+      <div class="seo-section">
+        <div class="seo-slbl">Adobe Stock Title (max 200) <button class="seo-copy-sm" onclick="copyText('${escH(asTitle.slice(0,200))}',this)">Copy</button></div>
+        <div class="seo-raw">${escH(asTitle.slice(0,200))}</div>
+        <div class="seo-stats"><div class="seo-stat">Chars: <span>${Math.min(asTitle.length,200)}/200</span></div></div>
+      </div>
+      <div class="seo-section">
+        <div class="seo-slbl">Description <button class="seo-copy-sm" onclick="copyText('${escH(asDesc)}',this)">Copy</button></div>
+        <div class="seo-raw">${escH(asDesc)}</div>
+      </div>
+      <div class="seo-section">
+        <div class="seo-slbl">Keywords (max 49) <button class="seo-copy-sm" onclick="copyText('${escH(asKwds.join(', '))}',this)">Copy All</button></div>
+        <div class="seo-tags">${asKwds.map(t=>`<span class="seo-tag hi">${escH(t)}</span>`).join('')}</div>
+        <div class="seo-stats">
+          <div class="seo-stat">Keywords: <span style="color:${compScore>=40?'#00ff88':compScore>=25?'#ffe600':'#ff4444'}">${compScore}/49</span></div>
+          <div class="seo-stat">Format: <span>comma-separated</span></div>
+        </div>
+        <div class="seo-raw" style="margin-top:8px;">${escH(asKwds.join(', '))}</div>
+      </div>
+      <div class="seo-section">
+        <div class="seo-slbl">Category & Release</div>
+        <div class="seo-raw">Category: Illustration &gt; Graphic Elements\nAI Flag: ✓ AI Generated — declare on upload\nRelease: No model/property release needed (no real people)\nContent Type: Generative AI · Commercial use</div>
       </div>`;
   }
 }
