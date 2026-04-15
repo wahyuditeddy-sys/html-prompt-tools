@@ -218,6 +218,53 @@ textarea{resize:vertical;line-height:1.6}
 .ps{width:18px;height:18px;border-radius:50%;border:1.5px solid rgba(0,0,0,.08);flex-shrink:0}
 .pl{font-size:9px;color:var(--ink3);font-family:'JetBrains Mono',monospace}
 .pal-sep{color:var(--border2);font-size:10px;margin:0 2px}
+
+/* NICHE GAP ANALYZER */
+.nf-search{width:100%;padding:7px 10px;border:1px solid var(--border2);border-radius:4px;font-size:11px;font-family:'Outfit',sans-serif;background:var(--bg3);color:var(--ink);outline:none;margin-bottom:10px}
+.nf-search:focus{border-color:var(--acc)}
+.nf-filter{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px}
+.nf-btn{padding:3px 10px;border-radius:3px;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border2);color:var(--ink2);background:var(--bg3);transition:all .12s;font-family:'Outfit',sans-serif}
+.nf-btn:hover{border-color:var(--acc);color:var(--acc)}
+.nf-btn.on{background:var(--ink);border-color:var(--ink);color:#F8F6F2}
+.niche-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.niche-hdr-t{font-size:11px;font-weight:700;color:var(--ink)}
+.niche-stats-row{display:flex;gap:5px}
+.nst{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 8px;border-radius:3px;border:1px solid var(--border)}
+.nst.g{background:rgba(42,122,90,.08);color:var(--acc)}
+.nst.y{background:rgba(184,134,11,.08);color:var(--gold)}
+.nst.r{background:rgba(232,101,42,.08);color:var(--acc2)}
+.niche-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:600px){.niche-grid{grid-template-columns:1fr}}
+.nc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;transition:border-color .15s;display:flex;flex-direction:column}
+.nc:hover{border-color:var(--border2)}
+.nc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px}
+.nc-name{font-size:11px;font-weight:700;color:var(--ink);line-height:1.35}
+.nc-comp{font-size:8px;font-weight:700;padding:2px 7px;border-radius:3px;font-family:'JetBrains Mono',monospace;white-space:nowrap;flex-shrink:0;letter-spacing:.04em}
+.comp-low{background:rgba(42,122,90,.12);color:var(--acc)}
+.comp-mid{background:rgba(184,134,11,.12);color:var(--gold)}
+.comp-high{background:rgba(232,101,42,.12);color:var(--acc2)}
+.nc-cat{font-size:8px;color:var(--ink3);margin-bottom:6px;font-family:'JetBrains Mono',monospace;letter-spacing:.04em;text-transform:uppercase}
+.nc-note{font-size:10px;color:var(--ink2);line-height:1.6;margin-bottom:8px;flex:1}
+.nc-specs{display:flex;flex-direction:column;gap:3px;margin-bottom:8px;background:var(--bg3);border-radius:4px;padding:7px 9px}
+.nc-sr{display:grid;grid-template-columns:44px 1fr;gap:4px;font-size:9px;align-items:start}
+.nc-sk{color:var(--ink3);font-family:'JetBrains Mono',monospace;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding-top:1px}
+.nc-sv{color:var(--ink2);line-height:1.5}
+.nc-load{width:100%;padding:6px;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;border:1px solid var(--border2);color:var(--ink);background:transparent;transition:all .12s;margin-top:2px}
+.nc-load:hover{background:var(--acc);border-color:var(--acc);color:#fff}
+.reject-box{background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:14px;margin-bottom:14px;border-left:3px solid var(--acc2)}
+.reject-title{font-size:11px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.reject-sub{font-size:10px;color:var(--ink3);margin-bottom:10px}
+.reject-row{display:flex;gap:6px}
+.reject-inp{flex:1;padding:7px 10px;border:1px solid var(--border2);border-radius:4px;font-size:11px;font-family:'Outfit',sans-serif;background:var(--bg3);color:var(--ink);outline:none}
+.reject-inp:focus{border-color:var(--acc)}
+.reject-btn{padding:7px 14px;border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;border:none;background:var(--acc2);color:#fff;white-space:nowrap}
+.reject-btn:hover{opacity:.88}
+.rr{margin-top:10px;display:none}
+.rr.show{display:block}
+.rr-section{margin-bottom:10px}
+.rr-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--acc2);margin-bottom:4px;font-family:'JetBrains Mono',monospace}
+.rr-item{font-size:10px;line-height:1.8;color:var(--ink2);padding-left:4px}
+.rr-item::before{content:'→ ';color:var(--acc);font-weight:700}
 </style>
 </head>
 <body>
@@ -407,6 +454,7 @@ textarea{resize:vertical;line-height:1.6}
     <button class="tab" onclick="swTab('subjects',this)">Subjects</button>
     <button class="tab" onclick="swTab('delivery',this)">Delivery Plan</button>
     <button class="tab" onclick="swTab('hist',this)">History</button>
+    <button class="tab" onclick="swTab('niche',this)">🎯 Niche Finder</button>
   </div>
 
   <div class="actions">
@@ -488,6 +536,35 @@ textarea{resize:vertical;line-height:1.6}
       <div class="dc-row"><div class="dc-label">Upload priority</div><div class="dc-val g">Transparent first</div></div>
     </div>
     <button class="btn btn-o" onclick="copyDelivery()">Copy delivery plan</button>
+  </div>
+
+  <!-- TAB: NICHE GAP ANALYZER -->
+  <div id="tab-niche" style="display:none">
+    <!-- Rejection Analyzer -->
+    <div class="reject-box">
+      <div class="reject-title">📋 Rejection Analyzer</div>
+      <div class="reject-sub">Paste tema yang ditolak Adobe Stock → dapat saran spesifik cara perbaikan</div>
+      <div class="reject-row">
+        <input class="reject-inp" id="rejectInp" placeholder="e.g. industrial construction blueprint icons...">
+        <button class="reject-btn" onclick="analyzeRejection()">Analyze →</button>
+      </div>
+      <div class="rr" id="rejectResult"></div>
+    </div>
+    <!-- Niche Stats -->
+    <div class="niche-hdr">
+      <div class="niche-hdr-t">🔍 Adobe Stock Gap Finder — 30 Niche Terpilih</div>
+      <div class="niche-stats-row">
+        <span class="nst g">🟢 Low comp</span>
+        <span class="nst y">🟡 Medium</span>
+        <span class="nst r">🔴 Avoid</span>
+      </div>
+    </div>
+    <!-- Filters -->
+    <div class="nf-filter" id="nicheCatFilter"></div>
+    <!-- Search -->
+    <input class="nf-search" id="nicheSearch" placeholder="Search niches... (e.g. fintech, wellness, culture)" oninput="filterNiches()">
+    <!-- Grid -->
+    <div class="niche-grid" id="nicheGrid"></div>
   </div>
 
   <!-- TAB: HIST -->
@@ -1083,8 +1160,9 @@ function saveHist(p) {
 /* ══ TAB / COPY / MISC ══ */
 function swTab(name, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('on')); el.classList.add('on');
-  ['prompt','vars','meta','subjects','delivery','hist'].forEach(t => document.getElementById('tab-'+t).style.display = t===name?'':'none');
+  ['prompt','vars','meta','subjects','delivery','hist','niche'].forEach(t => document.getElementById('tab-'+t).style.display = t===name?'':'none');
   if (name === 'delivery') updateDelivery();
+  if (name === 'niche') { buildNicheCatFilter(); renderNicheGrid(); }
 }
 function copyPrompt() { const t = document.getElementById('pbox').textContent; if (!t.trim()) { buildPrompt(); return; } navigator.clipboard.writeText(t).then(() => toast('Prompt copied!')); }
 function copySubjects() {
@@ -1120,6 +1198,372 @@ function clearAll() {
 let schedTimer = null;
 function scheduleGen() { clearTimeout(schedTimer); schedTimer = setTimeout(() => { if (document.getElementById('pbox').textContent.trim()) buildPrompt(); }, 400); }
 function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 2200); }
+
+/* ══════════════════════════════════════════
+   NICHE GAP ANALYZER DATA
+══════════════════════════════════════════ */
+const NICHES = [
+  // ── TECH & AI ──
+  {name:'Agentic AI & Autonomous Tools',cat:'Tech & AI',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'New category — AI agents, orchestration, multi-agent systems. Very few packs on Adobe Stock. Demand surging from SaaS & enterprise buyers.',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'electric tech blue violet teal, dark outlines for light bg compatibility',
+   bg:'#E8F4FF light blue',
+   angle:'Focus on AGENT behaviors (observe → plan → act → memory), not generic AI chips',
+   subjects:['AI agent core','task queue pipeline','multi-agent mesh','tool calling connector','memory vector store','autonomous decision node']},
+  {name:'Quantum Computing Icons',cat:'Tech & AI',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'Under 2,000 results on Adobe Stock. Complex tech topic but buyers pay premium. Enterprise, research, quantum-cloud companies are growing fast.',
+   style:'duotone two-color flat design, foreground plus accent color',
+   palette:'electric tech blue violet teal, dark outlines for light bg compatibility',
+   bg:'#E8F4FF light blue',
+   angle:'Represent abstract quantum concepts visually: superposition, entanglement, qubits — not just circuit boards',
+   subjects:['qubit superposition','quantum gate circuit','entanglement pair','quantum error correction','wavefunction collapse','quantum cloud chip']},
+  {name:'EV & Charging Infrastructure',cat:'Tech & AI',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'Electric vehicle market expanding 40% YoY. Few focused icon packs beyond generic cars. Charging network operators are key buyers.',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'earthy muted natural organic tones, readable on light background',
+   bg:'#F0F8F0 mint green',
+   angle:'Focus on charging ecosystem: station types, connectors (CCS/CHAdeMO/Tesla), grid management, battery health',
+   subjects:['DC fast charger','AC home wallbox','CCS connector','battery state of charge','charging network map','V2G bidirectional']},
+  {name:'Smart Agriculture & Precision Farming',cat:'Tech & AI',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'AgriTech investment hit $30B globally. Almost no quality icon packs for this niche. Drone farming, soil sensors, irrigation AI are trending topics.',
+   style:'bold filled rounded corners, chunky friendly shapes',
+   palette:'earthy muted natural organic tones, readable on light background',
+   bg:'#F0F8F0 mint green',
+   angle:'Combine tech + agriculture: IoT sensors in fields, drone crop spray, satellite field mapping, hydroponic tower',
+   subjects:['crop IoT sensor','drone field spray','satellite field scan','soil moisture probe','hydroponic tower vertical','harvest yield prediction']},
+  // ── HEALTH & WELLNESS ──
+  {name:'Mental Health Therapy Tools',cat:'Health',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'Mental health awareness growing globally post-2020. Apps like BetterHelp, Headspace have huge design budgets. Very few quality icon packs.',
+   style:'minimal hairline line art, single-weight strokes on white',
+   palette:'pastel soft colors, muted saturation, gentle on white background',
+   bg:'#F0F8F0 mint green',
+   angle:'Therapy modalities (CBT diagrams, DBT skills), emotional regulation tools, crisis support — not just meditation',
+   subjects:['CBT thought record','emotional regulation wheel','grounding 5-4-3-2-1','therapy session chair','crisis safety plan','self-compassion mirror']},
+  {name:'Ayurveda & Herbal Medicine',cat:'Health',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'Global wellness market $5.6T. Ayurveda & traditional medicine content is very thin on Adobe Stock. High-value niche with premium buyers.',
+   style:'minimal hairline line art, single-weight strokes on white',
+   palette:'earthy muted natural organic tones, readable on light background',
+   bg:'#FDF8F0 parchment',
+   angle:'Three doshas (Vata/Pitta/Kapha), herbal preparations, Panchakarma treatments, medicinal plants with names',
+   subjects:['Vata dosha symbol','Pitta flame balance','Kapha earth grounding','Ashwagandha herb root','Tulsi holy basil','Panchakarma oil pot']},
+  {name:'Sleep & Recovery Tech',cat:'Health',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'Sleep tech is a $30B market. Oura ring, Whoop, sleep apps all need marketing assets. Almost no dedicated icon sets exist.',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'monochromatic single hue, tints and shades, works on white',
+   bg:'#F8F0FF soft lavender',
+   angle:'Sleep stages visualization, HRV tracking, circadian rhythm, smart alarm, sleep debt metrics',
+   subjects:['sleep stage chart','REM cycle wave','HRV heart rate variability','circadian rhythm clock','smart alarm sunrise','sleep debt tracker']},
+  // ── FINANCE ──
+  {name:'Islamic Finance & Halal Economy',cat:'Finance',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'1.8 billion Muslims globally. Islamic fintech growing 15% YoY. Almost NO quality Arabic-friendly icon packs on Adobe Stock. Huge gap.',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'gold and red festive warm palette',
+   bg:'#FDF8F0 parchment',
+   angle:'Sharia-compliant finance: sukuk bonds, zakat calculation, waqf endowment, murabaha, halal certification, no interest (riba)',
+   subjects:['sukuk bond certificate','zakat calculation scale','waqf endowment building','halal certification stamp','murabaha trade contract','takaful insurance shield']},
+  {name:'Gig Economy & Freelance',cat:'Finance',comp:'mid',compLabel:'🟡 MEDIUM',
+   why:'Creator economy growing but specific gig economy icons (platforms, contracts, ratings) are still thin. Angle: process & workflow, not just laptop.',
+   style:'bold filled rounded corners, chunky friendly shapes',
+   palette:'vibrant multicolor, warm and playful, high contrast on white',
+   bg:'pure white #FFFFFF',
+   angle:'Gig workflow from contract to payment: project brief → bid → contract → deliver → review → payment — show the PROCESS',
+   subjects:['gig project brief','freelance bid arrow','digital contract sign','remote delivery box','5-star client review','instant payment received']},
+  {name:'Carbon Credits & ESG Reporting',cat:'Finance',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'ESG reporting mandatory for companies in EU from 2025. Carbon credit markets need visual assets. Very niche, very under-served.',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'earthy muted natural organic tones, readable on light background',
+   bg:'#F0F8F0 mint green',
+   angle:'Carbon accounting process: measure → offset → verify → report. Specific metrics like Scope 1/2/3 emissions',
+   subjects:['carbon footprint measure','Scope 1 direct emission','offset tree planting','carbon credit certificate','ESG reporting dashboard','net zero target flag']},
+  // ── CULTURE & IDENTITY ──
+  {name:'Southeast Asian Heritage (SEA)',cat:'Culture',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'500M population in SEA, rapidly growing digital economy. Very few culturally accurate icon packs. Adobe Stock demand from regional brands high.',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'gold and red festive warm palette',
+   bg:'#FDF8F0 parchment',
+   angle:'Sub-niche per country: Batik Indonesia, Songkran Thailand, Ao Dai Vietnam — NOT generic "Asian" mix',
+   subjects:['batik parang motif','wayang puppet golek','keris dagger ornate','angklung bamboo set','ondel-ondel betawi','temple borobudur tier']},
+  {name:'African Pattern & Symbol Icons',cat:'Culture',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'African creative market growing rapidly. Kente patterns, Adinkra symbols, Nsibidi script — almost ZERO quality sets on Adobe Stock.',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'gold and red festive warm palette',
+   bg:'#FDF8F0 parchment',
+   angle:'Focus on specific traditions: Adinkra symbols (Ghana) or Ndebele patterns (South Africa) — not generic "African"',
+   subjects:['Adinkra Gye Nyame','Kente weave pattern','Nsibidi symbol ancient','Ndebele geometric house','Kanga textile wrap','Djembe drum icon']},
+  {name:'Neurodiversity & Accessibility',cat:'Culture',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'DEI (Diversity Equity Inclusion) content is in high demand from corporations. Neurodiversity (autism, ADHD, dyslexia) icons almost nonexistent.',
+   style:'bold filled rounded corners, chunky friendly shapes',
+   palette:'tropical warm vibrant SEA colors, high saturation',
+   bg:'pure white #FFFFFF',
+   angle:'Represent neurodivergent strengths and supports, not deficits. Sensory tools, fidget aids, communication boards, safe spaces',
+   subjects:['sensory regulation tool','communication AAC board','ADHD hyperfocus state','autism spectrum range','dyslexia text overlay','quiet room safe space']},
+  // ── FOOD & LIFESTYLE ──
+  {name:'Plant-Based & Vegan Lifestyle',cat:'Food',comp:'mid',compLabel:'🟡 MEDIUM',
+   why:'Growing niche but MOST existing packs are generic vegetables. Angle: plant-based PRODUCTS and PROCESSES, not just ingredients.',
+   style:'cartoon illustration, expressive, playful proportions, thick outline',
+   palette:'earthy muted natural organic tones, readable on light background',
+   bg:'#F0F8F0 mint green',
+   angle:'Plant-based alternatives to specific foods: oat milk production, tofu press, tempeh fermentation, nutritional yeast — process-focused',
+   subjects:['oat milk carton','tofu block press','tempeh fermented block','jackfruit pulled texture','nutritional yeast flake','aquafaba liquid can']},
+  {name:'Fermentation & Gut Health',cat:'Food',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'Gut health is the #1 wellness trend 2024-2026. Kombucha, kimchi, kefir market growing 8% YoY. Almost no icon packs targeting this.',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'earthy muted natural organic tones, readable on light background',
+   bg:'#FFF8F0 warm cream',
+   angle:'Show fermentation PROCESS: cultures, vessels, time, transformation. Combine food + science aesthetic',
+   subjects:['kombucha SCOBY jar','kimchi fermentation crock','kefir grain cluster','sourdough starter active','lacto-ferment bubble','gut microbiome circle']},
+  {name:'Zero Waste Kitchen & Eco Home',cat:'Food',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'Sustainability lifestyle growing rapidly. Zero-waste products (beeswax wrap, compost bin, refill station) need marketing icons. Very thin supply.',
+   style:'minimal hairline line art, single-weight strokes on white',
+   palette:'earthy muted natural organic tones, readable on light background',
+   bg:'#F0F8F0 mint green',
+   angle:'Product replacements: what replaces what. Plastic bottle → refillable water bottle. Plastic wrap → beeswax wrap. Show the SWAP.',
+   subjects:['beeswax wrap block','refill station bottle','compost bin layered','bamboo toothbrush set','cloth produce bag','glass mason jar store']},
+  // ── ENVIRONMENT ──
+  {name:'Ocean & Marine Conservation',cat:'Environment',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'Blue economy topic growing. Ocean plastic cleanup, coral restoration, sustainable fishing — niche but premium buyers (NGOs, gov, research).',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'electric tech blue violet teal, dark outlines for light bg compatibility',
+   bg:'#E8F4FF light blue',
+   angle:'Conservation ACTIONS not just ocean creatures. Coral transplanting, plastic sorting, ghost net retrieval, MPAs (marine protected areas)',
+   subjects:['coral transplant clip','ghost net retrieval','ocean plastic sorting','marine protected area','deep sea ROV device','whale song tracking']},
+  {name:'Urban Vertical Farming',cat:'Environment',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'$20B market growing 25% annually. Indoor farms, rooftop gardens, container farms — companies need icons for apps and reports.',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'earthy muted natural organic tones, readable on light background',
+   bg:'#F0F8F0 mint green',
+   angle:'Specific systems: NFT hydroponics, aeroponics fogger, grow light spectrum, vertical tower system, climate control sensor',
+   subjects:['NFT hydroponic channel','aeroponics fogger nozzle','LED grow light bar','vertical tower system','climate sensor box','harvest conveyor belt']},
+  // ── EMERGING INDUSTRIES ──
+  {name:'Digital Nomad & Remote Work',cat:'Lifestyle',comp:'mid',compLabel:'🟡 MEDIUM',
+   why:'Growing but most packs show generic laptop. Angle: the SYSTEMS and TOOLS of nomad life (visa, co-working, time zones, gear setup).',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'tropical warm vibrant SEA colors, high saturation',
+   bg:'#FFF8F0 warm cream',
+   angle:'Nomad infrastructure: digital nomad visa stamp, co-working space, time zone world clock, travel router, e-SIM card, income tracking',
+   subjects:['digital nomad visa stamp','co-working hot desk','world time zone clock','travel wifi router','eSIM card chip','remote income tracker']},
+  {name:'Space Tourism & Commercial Space',cat:'Emerging',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'SpaceX, Blue Origin, Virgin Galactic — space tourism is becoming real. Press and media need editorial icons. Very low supply on Adobe Stock.',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'electric tech blue violet teal, dark outlines for light bg compatibility',
+   bg:'#E8F4FF light blue',
+   angle:'Tourist experience: space hotel pod, zero-gravity lounge, spacewalk tourist, window view Earth, ticket boarding pass',
+   subjects:['space hotel pod','zero-G lounge chair','tourist spacewalk suit','Earth view porthole','space tourist ticket','orbital trajectory path']},
+  {name:'Biohacking & Longevity Tech',cat:'Emerging',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'Longevity is billion-dollar trend (Bryan Johnson, Huberman). Biohacking tools have almost ZERO representation on Adobe Stock.',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'corporate blue gray professional, dark lines on white',
+   bg:'pure white #FFFFFF',
+   angle:'Specific interventions: continuous glucose monitor, red light therapy panel, cold plunge tub, HRV wearable, NAD+ supplement',
+   subjects:['continuous glucose monitor','red light therapy panel','cold plunge tub icon','HRV wearable ring','NAD+ supplement vial','biological age clock']},
+  {name:'Micro-Mobility & Last-Mile',cat:'Emerging',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'E-scooter, e-bike sharing exploding in cities worldwide. Startups need brand assets. Very few specific icon packs for this urban mobility niche.',
+   style:'bold filled rounded corners, chunky friendly shapes',
+   palette:'electric tech blue violet teal, dark outlines for light bg compatibility',
+   bg:'pure white #FFFFFF',
+   angle:'Fleet management + rider journey: dock station, battery swap, route map, helmet lock, ride report, safety score',
+   subjects:['e-scooter dock station','battery swap pod','ride route map pin','helmet lock station','micro-mobility report card','safety score badge']},
+  // ── EDUCATION ──
+  {name:'EdTech & Microlearning',cat:'Education',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'Online education market $400B by 2026. EdTech platforms (Duolingo, Khan, Coursera) all need icon assets. Microlearning specific icons barely exist.',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'vibrant multicolor, warm and playful, high contrast on white',
+   bg:'#E8F4FF light blue',
+   angle:'Learning FORMATS not subjects: spaced repetition, knowledge check, XP points, streak counter, cohort learning, certificate unlock',
+   subjects:['spaced repetition card','knowledge check quiz','XP points badge','streak fire counter','cohort peer group','certificate unlock reward']},
+  {name:'Language Learning & Linguistics',cat:'Education',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'Language apps market $18B. Duolingo-style icons (phonemes, grammar trees, scripts) have almost no supply on Adobe Stock.',
+   style:'cartoon illustration, expressive, playful proportions, thick outline',
+   palette:'vibrant multicolor, warm and playful, high contrast on white',
+   bg:'pure white #FFFFFF',
+   angle:'Linguistic CONCEPTS: phoneme mouth shape, grammar tree diagram, IPA symbol, cognate bridge, immersion level, conversation flow',
+   subjects:['phoneme mouth shape','grammar tree diagram','IPA vowel chart','cognate word bridge','immersion depth meter','conversation speech bubble']},
+  // ── SOCIAL & COMMUNITY ──
+  {name:'Social Impact & NGO Work',cat:'Social',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'UN SDG reporting, NGO annual reports, charity campaigns — all need icons. Specific impact metrics (beneficiaries reached, meals served) thin on Adobe.',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'vibrant multicolor, warm and playful, high contrast on white',
+   bg:'pure white #FFFFFF',
+   angle:'Impact METRICS and ACTIONS: beneficiary count, donation flow, volunteer hours, community meeting, impact report, SDG wheel',
+   subjects:['beneficiary count people','donation flow arrow','volunteer hours clock','community circle meeting','impact report chart','SDG goal wheel']},
+  {name:'Elderly Care & Aging Well',cat:'Social',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'Global aging population growing fast. Senior care apps, retirement planning, eldercare services all need specific icons. Almost none exist.',
+   style:'bold filled rounded corners, chunky friendly shapes',
+   palette:'pastel soft colors, muted saturation, gentle on white background',
+   bg:'pure white #FFFFFF',
+   angle:'Aging WITH dignity: technology aids (hearing aid, walker with GPS), social connection, memory care, independent living tools',
+   subjects:['hearing aid digital','walker GPS tracker','memory aid calendar','video call family','pill reminder device','independent living checklist']},
+  {name:'Pet Tech & Smart Pet Care',cat:'Lifestyle',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'Pet tech market growing 25% YoY. Smart feeders, GPS collars, vet telehealth — these specific icons barely exist on Adobe Stock.',
+   style:'cartoon illustration, expressive, playful proportions, thick outline',
+   palette:'pastel soft colors, muted saturation, gentle on white background',
+   bg:'pure white #FFFFFF',
+   angle:'Smart pet TECH specifically: automatic feeder with app, GPS pet tracker, vet video call, pet health monitor, microchip scanner',
+   subjects:['smart auto pet feeder','GPS pet collar tracker','vet telehealth screen','pet health monitor band','microchip ID scanner','pet insurance card']},
+  // ── LOCAL/REGIONAL ──
+  {name:'Indonesian Local Economy Icons',cat:'Indonesia',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'Tokopedia, Shopee, Gojek, DANA — Indonesian tech unicorns need Indonesian-context icons. OJOL, warung, QRIS payment. Almost nothing exists.',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'gold and red festive warm palette',
+   bg:'#FFF8F0 warm cream',
+   angle:'Indonesian digital economy specifics: QRIS scan, OJOL driver app, warung digitization, BRI link agent, pesantren learning, halal certification',
+   subjects:['QRIS payment scan','OJOL motorcycle driver','warung digital POS','BRI Link agent','pesantren online class','SNI halal badge']},
+  {name:'Halal Tourism & Muslim Travel',cat:'Indonesia',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'Muslim travel market $300B globally. Prayer room finder, halal food map, qibla direction, wudu facilities — NO icon packs cover this.',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'gold and red festive warm palette',
+   bg:'#FDF8F0 parchment',
+   angle:'Practical Muslim traveler needs: prayer time alert, prayer room icon, halal restaurant badge, qibla compass, wudu facility, zakat calculator',
+   subjects:['prayer time adhan alert','prayer room musolla','halal restaurant badge','qibla compass direction','wudu wash facility','zakat trip calculator']},
+  {name:'MSME & Warung Economy',cat:'Indonesia',comp:'low',compLabel:'🟢 LOW COMP',
+   why:'Indonesia has 65M MSMEs (UKM). Government digitization push — BRI, DANA, Tokopedia all need MSME-specific icons for their platforms.',
+   style:'flat outlined, thin uniform 2px stroke, dark outline on light background',
+   palette:'tropical warm vibrant SEA colors, high saturation',
+   bg:'#FFF8F0 warm cream',
+   angle:'MSME business journey: product photo for marketplace, packaging label print, social media posting, order management, online cashier POS',
+   subjects:['product photo for marketplace','handmade packaging label','social media selling post','order management kanban','online cashier tablet','MSME loan application']},
+];
+
+/* niche UI state */
+let nicheActiveCat = 'All';
+
+function renderNicheGrid(filter) {
+  const grid = document.getElementById('nicheGrid');
+  if (!grid) return;
+  const search = (document.getElementById('nicheSearch')?.value || '').toLowerCase();
+  let list = NICHES;
+  if (nicheActiveCat !== 'All') list = list.filter(n => n.cat === nicheActiveCat);
+  if (search) list = list.filter(n =>
+    n.name.toLowerCase().includes(search) ||
+    n.why.toLowerCase().includes(search) ||
+    n.cat.toLowerCase().includes(search) ||
+    n.angle.toLowerCase().includes(search)
+  );
+  grid.innerHTML = list.map(n => {
+    const subs = n.subjects.slice(0,4).join(', ');
+    return `<div class="nc">
+      <div class="nc-top">
+        <div class="nc-name">${n.name}</div>
+        <span class="nc-comp ${n.comp==='low'?'comp-low':n.comp==='mid'?'comp-mid':'comp-high'}">${n.compLabel}</span>
+      </div>
+      <div class="nc-cat">${n.cat}</div>
+      <div class="nc-note">${n.why}</div>
+      <div class="nc-specs">
+        <div class="nc-sr"><span class="nc-sk">Angle</span><span class="nc-sv">${n.angle}</span></div>
+        <div class="nc-sr"><span class="nc-sk">Style</span><span class="nc-sv">${n.style.split(',')[0]}</span></div>
+        <div class="nc-sr"><span class="nc-sk">Subyek</span><span class="nc-sv">${subs}...</span></div>
+      </div>
+      <button class="nc-load" onclick="loadNicheToStudio(${JSON.stringify(n).replace(/"/g,'&quot;')})">▶ Load to Studio</button>
+    </div>`;
+  }).join('');
+  if (!list.length) grid.innerHTML = '<div style="font-size:11px;color:var(--ink3);font-family:\'JetBrains Mono\',monospace;padding:14px;grid-column:1/-1">No niches found. Try a different search.</div>';
+}
+
+function buildNicheCatFilter() {
+  const wrap = document.getElementById('nicheCatFilter');
+  if (!wrap) return;
+  const cats = ['All', ...new Set(NICHES.map(n => n.cat))];
+  const counts = {};
+  cats.forEach(c => { counts[c] = c === 'All' ? NICHES.length : NICHES.filter(n => n.cat === c).length; });
+  wrap.innerHTML = cats.map(c =>
+    `<button class="nf-btn${c===nicheActiveCat?' on':''}" onclick="setNicheCat('${c}',this)">${c} (${counts[c]})</button>`
+  ).join('');
+}
+
+function setNicheCat(cat, btn) {
+  nicheActiveCat = cat;
+  document.querySelectorAll('.nf-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderNicheGrid();
+}
+
+function filterNiches() { renderNicheGrid(); }
+
+function loadNicheToStudio(n) {
+  // Set theme
+  document.getElementById('theme').value = n.name;
+  // Set subjects
+  subjects = [];
+  document.querySelectorAll('.stag').forEach(e => e.remove());
+  n.subjects.forEach(s => addTag(s));
+  // Set style
+  setStyleByVal(n.style);
+  // Set palette
+  chipOneByVal('palChips', n.palette);
+  // Set background
+  setBgByVal(n.bg);
+  // Build prompt
+  buildPrompt();
+  // Switch to prompt tab
+  swTab('prompt', document.querySelector('.tab'));
+  toast('Loaded: ' + n.name + ' → prompt built!');
+}
+
+/* Rejection Analyzer */
+const REJECTION_RULES = [
+  {keywords:['construction','industrial','blueprint','building','architecture','engineering'],
+   problem:'Tema "Construction/Industrial Blueprint" adalah salah satu yang PALING oversaturated di Adobe Stock (>200,000 hasil).',
+   fixes:['Niche ke sub-kategori: bukan "construction icons" tapi "Sustainable Green Building Certification Icons" (LEED, BREEAM, Passive House)',
+          'Ganti style dari isometric menjadi minimal hairline line art — style ini lebih unik untuk tema arsitek',
+          'Tambahkan cultural angle: "Japanese Architectural Woodworking Techniques" atau "Vernacular Architecture Indonesia"',
+          'Fokus ke proses spesifik: "Construction Site Safety Protocol Icons" dengan fokus PPE dan compliance'],
+   nicheAlt:'Coba: "Smart Building & PropTech Icons" — sangat sedikit di Adobe Stock, demand tinggi dari real estate tech'},
+  {keywords:['icon','icons','flat','set','pack','vector'],
+   problem:'Generic icon pack request. Adobe Stock memiliki jutaan icon sets generik.',
+   fixes:['Tentukan niche spesifik: industri, sub-topik, atau cultural context yang unik',
+          'Tambahkan unique treatment: Clay 3D, risograph duotone, atau mixed-media style',
+          'Buat koneksi antar icon: bukan 24 random icons tapi 24 icons yang menceritakan satu PROCESS atau JOURNEY',
+          'Gunakan cultural specificity: icons dengan visual language dari kultur tertentu (tidak generic Western)'],
+   nicheAlt:'Lihat tab Niche Finder untuk 30 niche under-represented yang direkomendasikan'},
+  {keywords:['animal','animals','cute','kawaii','pet','character'],
+   problem:'Kawaii/cute animals adalah kategori SANGAT crowded. Ribuan packs sudah ada.',
+   fixes:['Spesifikasi breed yang sangat spesifik: bukan "cute dogs" tapi "Shiba Inu Emotion Pack" atau "Indonesian native animals only"',
+          'Ganti dari face icons ke full body ACTION icons: animals doing human activities (yoga, coding, cooking)',
+          'Try clay 3D style — jauh lebih sedikit supply dari flat kawaii style',
+          'Gunakan regional animals yang jarang: tidak cat/dog tapi capybara, quokka, axolotl, pangolin'],
+   nicheAlt:'Coba: "Endangered Species of Indonesia Clay 3D Pack" — sangat unik dan belum ada'},
+  {keywords:['food','cooking','kitchen','restaurant','cafe','coffee'],
+   problem:'Food icons kategori ramai namun ada peluang di sub-niche spesifik.',
+   fixes:['Fokus ke specific cuisine yang under-represented: tidak "food icons" tapi "West Sumatran Padang Food Icons"',
+          'Shift ke PROCESS icons: fermentation journey, coffee processing (cherry → green → roast → brew)',
+          'Target specific diet movement: Keto meal prep icons, GAPS protocol foods, or Ayurvedic eating',
+          'Combine food + tech: smart kitchen appliances, nutrition scanning, meal delivery flow'],
+   nicheAlt:'Coba: "Fermentation & Probiotic Foods Icons" — sangat sedikit supply, wellness market besar'},
+];
+
+function analyzeRejection() {
+  const inp = document.getElementById('rejectInp').value.trim().toLowerCase();
+  if (!inp) { toast('Masukkan tema dulu!'); return; }
+  const result = document.getElementById('rejectResult');
+  let matched = REJECTION_RULES.find(r => r.keywords.some(k => inp.includes(k)));
+  if (!matched) {
+    matched = {
+      problem: 'Tema "'+inp+'" kemungkinan ditolak karena terlalu mirip dengan content yang sudah ada.',
+      fixes: [
+        'Tambahkan cultural atau regional specificity (contoh: tidak "medical icons" tapi "Traditional Jamu Medicine Icons")',
+        'Ubah art style secara signifikan: coba Clay 3D atau Risograph Duotone jika sebelumnya flat',
+        'Raisingkan detail level: tambahkan sub-topic yang sangat spesifik (proses, alur, skenario)',
+        'Cek kompetisi di Adobe Stock: search tema kamu → jika hasil > 50,000 = high risk rejection'
+      ],
+      nicheAlt: 'Gunakan tab Niche Finder untuk cari tema serupa dengan kompetisi rendah'
+    };
+  }
+  result.innerHTML = `
+    <div class="rr-section">
+      <div class="rr-lbl">⚠ Masalah yang terdeteksi</div>
+      <div style="font-size:10px;color:var(--ink2);line-height:1.7;padding:6px 9px;background:rgba(232,101,42,.06);border-radius:4px;">${matched.problem}</div>
+    </div>
+    <div class="rr-section">
+      <div class="rr-lbl">✅ 4 Langkah Perbaikan</div>
+      ${matched.fixes.map(f => `<div class="rr-item">${f}</div>`).join('')}
+    </div>
+    <div class="rr-section">
+      <div class="rr-lbl">💡 Alternatif Niche</div>
+      <div style="font-size:10px;color:var(--acc);line-height:1.7;padding:6px 9px;background:rgba(42,122,90,.06);border-radius:4px;">${matched.nicheAlt}</div>
+    </div>`;
+  result.classList.add('show');
+}
 
 init();
 </script>
