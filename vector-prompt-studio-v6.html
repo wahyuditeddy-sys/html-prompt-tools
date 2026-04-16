@@ -345,7 +345,7 @@ textarea{resize:vertical;line-height:1.6}
         <div class="sc" data-val="isometric 3D flat, 45° projection, geometric depth" onclick="sClick(this)"><span class="sci">⬡</span><span class="scl">Isometric</span></div>
         <div class="sc" data-val="cartoon illustration, expressive, playful proportions, thick outline" onclick="sClick(this)"><span class="sci">★</span><span class="scl">Cartoon</span></div>
         <div class="sc" data-val="sticker style, thick black outline, vibrant fill, white background" onclick="sClick(this)"><span class="sci">◉</span><span class="scl">Sticker</span></div>
-        <div class="sc" data-val="clay 3D render, soft volumetric, matte pastel surface, top-left light" onclick="sClick(this)" id="clayStyleCard"><span class="sci">◍</span><span class="scl">Clay 3D</span></div>
+        <div class="sc" data-val="clay 3D render, inflated puffy volumetric forms, matte clay material, NO outlines NO flat fills, strong top-left specular highlight, clear drop shadow bottom-right" onclick="sClick(this)" id="clayStyleCard"><span class="sci">◍</span><span class="scl">Clay 3D</span></div>
         <div class="sc" data-val="pixel art retro 16-bit, aliased crisp edges, limited palette" onclick="sClick(this)"><span class="sci">▦</span><span class="scl">Pixel Art</span></div>
         <div class="sc" data-val="gradient filled, smooth color transitions, modern app icon style" onclick="sClick(this)"><span class="sci">◐</span><span class="scl">Gradient</span></div>
         <div class="sc" data-val="glassmorphism frosted, translucent panels, light backdrop" onclick="sClick(this)"><span class="sci">◯</span><span class="scl">Glass</span></div>
@@ -584,7 +584,7 @@ textarea{resize:vertical;line-height:1.6}
 const TEMPLATES = [
   // ── GENERAL ──
   {name:'Australian Animals',badge:'hot',mode:'general',theme:'cute Australian animal faces',count:24,subjects:['kangaroo','koala','wombat','platypus','echidna','quokka','Tasmanian devil','kookaburra','cockatoo','wallaby','possum','dingo','emu','cassowary','sugar glider','numbat','bilby','bandicoot','frilled lizard','saltwater crocodile','blue-tongue lizard','thorny devil','sea eagle','dugong'],style:'cartoon illustration, expressive, playful proportions, thick outline',palette:'vibrant multicolor, warm and playful, high contrast on white',bg:'pure white #FFFFFF',dna:'rounded square face shape, large expressive circular eyes, small button nose, consistent ear proportions, minimal fur texture lines, friendly expression, same scale and visual weight'},
-  {name:'Agentic AI Tech',badge:'new',mode:'general',theme:'Agentic AI technology icons',count:24,subjects:['AI agent brain core','autonomous robot arm','multi-agent network mesh','LLM language model chip','neural pathway circuit','agent task queue pipeline','decision tree node','reinforcement learning loop','memory vector database','tool calling API connector','orchestration workflow engine','AI model inference server','agent observation sensor','reward signal optimizer','planning module CPU','environment simulation grid','policy gradient chip','embedding space cluster','attention mechanism head','transformer block unit','agent spawner controller','human-in-the-loop gate','feedback loop circuit','autonomous deployment pod'],style:'flat outlined, thin uniform 2px stroke, dark outline on light background',palette:'electric tech blue violet teal, dark outlines for light bg compatibility',bg:'#E8F4FF light blue',dna:'flat isometric 3D style, electric blue #4A9EFF primary, teal #00D4AA accent, dark navy #1A2040 outlines, 2px stroke, clean geometric shapes, no glow, no dark fill'},
+  {name:'Agentic AI Tech',badge:'new',mode:'general',theme:'Agentic AI technology icons',count:24,subjects:['AI agent brain core','autonomous robot arm','multi-agent network mesh','LLM language model chip','neural pathway circuit','agent task queue pipeline','decision tree node','reinforcement learning loop','memory vector database','tool calling API connector','orchestration workflow engine','AI model inference server','agent observation sensor','reward signal optimizer','planning module CPU','environment simulation grid','policy gradient chip','embedding space cluster','attention mechanism head','transformer block unit','agent spawner controller','human-in-the-loop gate','feedback loop circuit','autonomous deployment pod'],style:'flat outlined, thin uniform 2px stroke, dark outline on light background',palette:'electric tech blue violet teal, dark outlines for light bg compatibility',bg:'#E8F4FF light blue',dna:'pure flat 2D vector icon style, solid color fills no gradients no shadows, crisp uniform 2px navy #1A2040 outline, electric blue #4A9EFF fills, teal #00D4AA accent areas, clean geometric silhouettes, zero 3D depth zero dimension, no glow no texture no isometric perspective'},
   {name:'AI Tech Server',badge:'',mode:'general',theme:'AI tech hardware and servers',count:24,subjects:['CPU processor chip','GPU graphics card','RAM memory module','SSD storage drive','server rack unit','network switch','fiber optic cable','cooling fan','motherboard circuit','power supply unit','data center tower','ethernet port','USB hub connector','heat sink','PCIe slot','NVMe drive','BIOS chip','liquid cooling','bandwidth wave','cloud node','firewall shield','router antenna','quantum processor','RAID array'],style:'flat outlined, thin uniform 2px stroke, dark outline on light background',palette:'corporate blue gray professional, dark lines on white',bg:'pure white #FFFFFF',dna:'technical blueprint aesthetic, precise 2px lines, metallic silver, electric blue accent, clean geometric, white background'},
   {name:'Fantasy RPG Items',badge:'hot',mode:'general',theme:'Fantasy RPG game items and weapons',count:24,subjects:['iron sword','magic staff','healing potion','mana potion blue','dragon scale shield','enchanted bow','fire spell scroll','leather armor','iron helmet','ring of power','treasure chest','magic wand','ancient tome','crystal ball','grappling rope','lantern torch','silver axe','crossbow','throwing daggers','emerald amulet','shadow cloak','battle hammer','poison vial','golden crown'],style:'cartoon illustration, expressive, playful proportions, thick outline',palette:'vibrant multicolor, warm and playful, high contrast on white',bg:'transparent',dna:'game item icon style, thick 3px black outline, vibrant saturated colors, subtle inner highlight, consistent icon size, same visual weight per icon'},
   {name:'Food & Cuisine',badge:'',mode:'general',theme:'international street food and cuisine',count:24,subjects:['sushi roll','ramen bowl','tacos','pizza slice','burger','banh mi','pad thai','dim sum basket','shawarma wrap','paella','bao bun','empanada','jerk chicken','falafel wrap','pho bowl','curry bowl','crepe','churros','mango sticky rice','dumplings','fish and chips','lobster roll','biryani','kimchi bowl'],style:'cartoon illustration, expressive, playful proportions, thick outline',palette:'vibrant multicolor, warm and playful, high contrast on white',bg:'pure white #FFFFFF',dna:'cute food illustration, slight top-down view, steam on hot food, consistent drop shadow, warm inviting colors, same rounded style per item'},
@@ -613,7 +613,7 @@ const TEMPLATES = [
   {name:'Business & Productivity',badge:'',mode:'general',theme:'business productivity office and workflow icons',count:24,subjects:['target goal bullseye','checklist done tick','calendar schedule','clock deadline','briefcase work','chart bar growth','presentation board','email envelope','document file','folder organized','team meeting','handshake deal','lightbulb idea','gear settings','rocket launch startup','trophy achievement','badge certificate','workflow pipeline','kanban board','burndown chart','standup meeting','OKR framework','decision diamond','milestone flag'],style:'flat outlined, thin uniform 2px stroke, dark outline on light background',palette:'corporate blue gray professional, dark lines on white',bg:'pure white #FFFFFF',dna:'professional productivity icon set, 2px stroke, corporate blue and green, clean geometric shapes, no unnecessary detail, communicates efficiency and clarity'},
   {name:'Plants & Botany',badge:'',mode:'general',theme:'plants botanical herbs and garden icons',count:24,subjects:['monstera leaf','cactus round pot','succulent rosette','bamboo stalk','cherry blossom branch','sunflower head','lavender sprig','aloe vera plant','fern frond','venus flytrap','bonsai tree trimmed','tulip bloom single','daisy flower','herb basil','herb mint sprig','herb rosemary','seedling sprout tiny','oak leaf autumn','maple leaf fall','lotus flower open','water lily pad','mushroom cap spotted','ivy vine crawl','pine cone brown'],style:'minimal hairline line art, single-weight strokes on white',palette:'earthy muted natural organic tones, readable on light background',bg:'#F0F8F0 mint green',dna:'elegant botanical line art, 1px hairline strokes, true-to-nature shapes, warm earthy sage green and cream tones, vintage natural history illustration feel, white or mint background'},
   {name:'Cultural SEA / Nusantara',badge:'new',mode:'general',theme:'Southeast Asian cultural symbols and motifs',count:24,subjects:['batik motif parang','wayang puppet shadow','keris dagger ornate','angklung bamboo music','gamelan gong','kain songket weave','balih dancer pose','temple prambanan','borobudur stupa','rice terrace field','jukung boat sail','barong mask bali','ondel-ondel betawi','reog ponorogo fan','tari saman aceh','lontong leaf wrap','rendang pot spice','satay skewer grill','gado-gado bowl','es teh manis glass','becak pedicab','bajaj auto rickshaw','warung kecil shop','gerobak street cart'],style:'flat outlined, thin uniform 2px stroke, dark outline on light background',palette:'gold and red festive warm palette',bg:'#FDF8F0 parchment',dna:'clean SEA cultural icon set, 2px warm dark stroke, gold and red festive palette, parchment background, respectful accurate cultural symbols, each icon immediately recognizable'},
-  {name:'Baby & Parenting',badge:'hot',mode:'general',theme:'baby care parenting and nursery icons',count:24,subjects:['baby bottle milk','pacifier dummy','baby rattle toy','diaper clean','baby crib mobile','stroller pram side','baby shoe tiny','bib neckline','stuffed teddy bear','baby monitor screen','potty training seat','bath duck rubber','baby food jar spoon','swaddle wrap blanket','changing mat pad','night light star','baby scale weight','breast pump device','nursing pillow','baby thermometer ear','soft block toy','board book thick','baby gate door','car seat safety'],style:'cartoon illustration, expressive, playful proportions, thick outline',palette:'pastel soft colors, muted saturation, gentle on white background',bg:'pure white #FFFFFF',dna:'soft baby care icons, thick 3px outline, pastel pink blue and yellow palette, round friendly shapes, completely safe and gentle visual language, consistent scale'},
+  {name:'Baby & Parenting',badge:'hot',mode:'general',theme:'baby care parenting and nursery icons',count:24,subjects:['baby bottle milk','pacifier dummy','baby rattle toy','diaper clean','baby crib mobile','stroller pram side','baby shoe tiny','bib neckline','stuffed teddy bear','baby monitor screen','potty training seat','bath duck rubber','baby food jar spoon','swaddle wrap blanket','changing mat pad','night light star','baby scale weight','breast pump device','nursing pillow','baby thermometer ear','soft block toy','board book thick','baby gate door','car seat safety'],style:'cartoon illustration, expressive, playful proportions, thick outline',palette:'pastel soft colors, muted saturation, gentle on white background',bg:'pure white #FFFFFF',dna:'pure flat 2D cartoon baby icons, thick 3px black outline, pastel pink #FFB3C6 fills, pastel blue #B3D9FF fills, pastel yellow #FFF3B3 fills, round friendly silhouettes, zero 3D depth zero shadow zero gradient, completely flat safe gentle visual language, consistent scale'},
   {name:'Gaming & Esports',badge:'new',mode:'general',theme:'gaming esports controllers and game elements',count:24,subjects:['game controller pad','joystick arcade','PC gaming mouse','mechanical keyboard','gaming headset','streaming webcam','game cartridge','VR headset goggles','game disc CD','gaming chair','energy drink can','trophy esports cup','kill streak skull','respawn life heart','XP bar experience','loot box crate','sword RPG pixel','shield defense icon','speed boost star','bomb explosive','coin collect gold','gem crystal score','crown champion','clan guild emblem'],style:'bold filled rounded corners, chunky friendly shapes',palette:'electric tech blue violet teal, dark outlines for light bg compatibility',bg:'#E8F4FF light blue',dna:'bold gaming icon set, chunky rounded shapes, electric blue and purple palette, strong outlines, same visual weight, energetic gamer aesthetic'},
   // ── CLAY 3D ──
   {name:'Clay · Fintech',badge:'trend',mode:'clay',theme:'fintech and digital payment — clay 3D style',count:24,subjects:['crypto wallet','bitcoin coin','stock chart rising','bank building','credit card tap','QR code payment','gold bar stack','piggy bank savings','investment graph','loan document','insurance shield','forex exchange','yield farm plant','DeFi protocol node','NFT digital frame','digital vault lock','wire transfer arrow','compound interest loop','tax return document','portfolio pie chart','fund manager briefcase','blockchain chain link','savings glass jar','financial report clipboard'],style:'clay 3D render, soft volumetric, matte pastel surface, top-left light',palette:'pastel soft colors, muted saturation, gentle on white background',bg:'pure white #FFFFFF',dna:'soft clay 3D render, matte pastel surface with subtle specular highlight top-left 45°, rounded puffy volumetric shapes, no sharp edges, same light source all icons, soft ambient shadow bottom-right, pastel mint #B2EBD4 and soft lavender #C8B8F0 with coral accent #F4A68C, icons feel tactile like molded clay'},
@@ -887,6 +887,28 @@ function setMode(m, el) {
   scheduleGen();
 }
 
+/* ══ CLAY DNA GENERATOR — generates proper clay DNA based on palette ══ */
+function getClayDna(palette) {
+  const p = (palette || '').toLowerCase();
+  if (p.includes('pastel'))
+    return 'inflated puffy clay 3D icon style, matte plasticine material, volumetric rounded bubble shapes, pastel pink #FFB3C6 clay body, pastel blue #B3D9FF accent, white specular highlight top-left, gentle grey drop shadow bottom-right, NO outlines NO strokes NO flat fills, smooth gradient fills creating friendly 3D depth';
+  if (p.includes('electric') || p.includes('tech'))
+    return 'inflated puffy clay 3D icon style, matte plasticine material, volumetric rounded bubble shapes, electric blue #4A9EFF clay body, teal #00D4AA clay accent, white specular highlight top-left, soft grey drop shadow bottom-right, NO outlines NO strokes NO flat fills, smooth gradient color transitions suggesting depth and volume';
+  if (p.includes('vibrant') || p.includes('multicolor'))
+    return 'inflated puffy clay 3D icon style, matte clay material, volumetric rounded bubble shapes, vibrant multicolor clay bodies, white specular highlight top-left, soft grey drop shadow bottom-right, NO outlines NO strokes NO flat fills, smooth gradient fills suggesting colorful 3D depth';
+  if (p.includes('corporate') || p.includes('blue gray'))
+    return 'inflated puffy clay 3D icon style, matte clay material, volumetric rounded shapes, corporate blue #4A9EFF clay body, grey #6C757D accent, white specular highlight top-left, soft grey drop shadow bottom-right, NO outlines NO strokes NO flat fills, smooth gradient suggesting professional 3D depth';
+  if (p.includes('earthy') || p.includes('natural'))
+    return 'inflated puffy clay 3D icon style, matte organic clay material, volumetric rounded earthy shapes, terracotta #E8906A clay body, sage green #A8C8A0 accent, white specular highlight top-left, soft grey drop shadow bottom-right, NO outlines NO strokes NO flat fills, smooth gradient suggesting natural 3D depth';
+  if (p.includes('mono'))
+    return 'inflated puffy clay 3D icon style, matte monochromatic clay material, volumetric rounded shapes, single hue clay body with gradient tones, white specular highlight top-left, soft grey drop shadow bottom-right, NO outlines NO strokes NO flat fills, smooth gradient suggesting depth and volume';
+  if (p.includes('tropical'))
+    return 'inflated puffy clay 3D icon style, matte tropical clay material, volumetric rounded shapes, coral #F4906A clay body, turquoise #A8DDE8 accent, white specular highlight top-left, soft grey drop shadow bottom-right, NO outlines NO strokes NO flat fills, smooth gradient suggesting vibrant 3D depth';
+  if (p.includes('gold'))
+    return 'inflated puffy clay 3D icon style, matte festive clay material, volumetric rounded shapes, gold #D4A017 clay body, red #CC3300 accent, white specular highlight top-left, soft grey drop shadow bottom-right, NO outlines NO strokes NO flat fills, smooth gradient suggesting festive 3D depth';
+  return 'inflated puffy clay 3D icon style, matte plasticine material, volumetric rounded bubble shapes, white specular highlight top-left, soft grey drop shadow bottom-right, NO outlines NO strokes NO flat fills, smooth gradient color transitions suggesting depth and volume';
+}
+
 /* ══ BUILD PROMPT ══ */
 function buildPrompt() {
   const theme = document.getElementById('theme').value.trim() || 'vector icons';
@@ -916,18 +938,34 @@ function buildPrompt() {
 
   // Style block
   lines.push(`STYLE:`);
-  lines.push(`  Render:     ${currentStyle}`);
-  lines.push(`  Palette:    ${palette}`);
+  if (isClay) {
+    lines.push(`  Render:     clay 3D render, inflated puffy volumetric forms, matte clay material, soft specular highlight, NO outlines NO flat fills NO strokes`);
+    lines.push(`  Palette:    ${palette} — applied as clay body color, not flat fill`);
+  } else {
+    lines.push(`  Render:     ${currentStyle}`);
+    lines.push(`  Palette:    ${palette}`);
+  }
   lines.push(`  Background: ${currentBg}`);
   lines.push(`  Format:     ${fmt}`);
   if (isClay) {
-    lines.push(`  Clay light: top-left 45°, consistent across all ${total} icons`);
-    lines.push(`  Clay shadow: soft ambient bottom-right, same intensity all icons`);
+    lines.push(`  Clay light: strong directional top-left 45°, bright white specular highlight on each form, consistent across all ${total} icons`);
+    lines.push(`  Clay shadow: clear drop shadow bottom-right, grey 30% opacity, 8px blur radius, uniform depth all icons`);
   }
   lines.push('');
 
-  // Style DNA
-  const dna = dnaOverride || (currentTemplate?.dna) || '';
+  // Style DNA — clay mode always gets clay DNA, not general DNA
+  let dna = '';
+  if (dnaOverride) {
+    dna = dnaOverride;
+  } else if (isClay) {
+    // Clay templates already have clay DNA; general templates get auto-converted
+    const tDna = currentTemplate?.dna || '';
+    dna = (tDna && (tDna.includes('clay') || tDna.includes('puffy') || tDna.includes('matte plasticine')))
+      ? tDna
+      : getClayDna(palette);
+  } else {
+    dna = currentTemplate?.dna || '';
+  }
   if (dna) {
     lines.push(`STYLE DNA (maintain across all icons):`);
     lines.push(`  ${dna}`);
@@ -958,11 +996,15 @@ function buildPrompt() {
 
   // Consistency
   lines.push(`CONSISTENCY:`);
-  lines.push(`  — Identical stroke weight, corner radius, and style treatment across all ${total} icons`);
-  lines.push(`  — Same visual weight — no icon dominates or appears too small`);
-  lines.push(`  — No stylistic drift between first and last icon`);
   if (isClay) {
-    lines.push(`  — All clay icons: identical matte texture, light direction, shadow depth`);
+    lines.push(`  — Identical clay matte material, light direction top-left 45°, shadow depth, and form volume across all ${total} icons`);
+    lines.push(`  — No outlines, no strokes — all form definition from light, shadow, and specular highlight only`);
+    lines.push(`  — Same visual weight — no icon dominates or appears too small`);
+    lines.push(`  — No stylistic drift between first and last icon`);
+  } else {
+    lines.push(`  — Identical stroke weight, corner radius, and style treatment across all ${total} icons`);
+    lines.push(`  — Same visual weight — no icon dominates or appears too small`);
+    lines.push(`  — No stylistic drift between first and last icon`);
   }
   lines.push('');
 
@@ -991,7 +1033,11 @@ function buildPrompt() {
     lines.push(`  ✓ Count: ${cols} columns × ${rows} rows = exactly ${total} icons`);
     lines.push(`  ✓ Canvas: ${canvasW}×${canvasH} px${useGrid ? ', zero gap between cells' : ''}`);
     lines.push(`  ✓ Background: ${currentBg.includes('transparent') ? 'transparent' : currentBg}`);
-    lines.push(`  ✓ All icons share the same ${isClay ? 'clay 3D ' : ''}style, palette, and stroke weight`);
+    if (isClay) {
+      lines.push(`  ✓ All icons share the same clay 3D matte material, light direction, and shadow depth — zero outlines`);
+    } else {
+      lines.push(`  ✓ All icons share the same style, palette, and stroke weight`);
+    }
   }
 
   const prompt = lines.join('\n').trim();
@@ -1061,7 +1107,7 @@ function getVar30Prompt(idx) {
     const bgMap = {1:'transparent',2:'pure white #FFFFFF',3:'#F5F4F0 off-white',4:'#E8F4FF light blue',5:'#FFF8F0 warm cream',6:'#F0F8F0 mint'};
     override = `VARIATION ${v.num}: ${v.name}\nOVERRIDE BACKGROUND: ${bgMap[v.num] || v.name}. All other settings same as main prompt.\n\n`;
   } else if (cat === 'Style') {
-    const styleMap = {7:'flat outlined, thin uniform 2px stroke, dark outline on light background',8:'filled solid flat, clean silhouette, no outlines',9:'duotone two-color flat design, foreground plus accent',10:'bold filled rounded corners, chunky friendly shapes',11:'minimal hairline line art, single-weight strokes on white',12:'cartoon illustration, expressive, playful proportions, thick outline',13:'sticker style, thick 4px black outline, vibrant fill, white background',14:'clay 3D render, soft volumetric, matte pastel surface, top-left 45° light source',21:'ultra-minimal silhouette, essential shape only, maximum negative space, no detail',22:'standard balanced detail level',23:'ultra-detailed, inner shadows, texture, subtle highlights, micro-patterns'};
+    const styleMap = {7:'flat outlined, thin uniform 2px stroke, dark outline on light background',8:'filled solid flat, clean silhouette, no outlines',9:'duotone two-color flat design, foreground plus accent',10:'bold filled rounded corners, chunky friendly shapes',11:'minimal hairline line art, single-weight strokes on white',12:'cartoon illustration, expressive, playful proportions, thick outline',13:'sticker style, thick 4px black outline, vibrant fill, white background',14:'clay 3D render, inflated puffy volumetric forms, matte clay material, NO outlines NO flat fills, strong top-left 45° specular highlight, clear drop shadow bottom-right 30% opacity',21:'ultra-minimal silhouette, essential shape only, maximum negative space, no detail',22:'standard balanced detail level',23:'ultra-detailed, inner shadows, texture, subtle highlights, micro-patterns'};
     override = `VARIATION ${v.num}: ${v.name}\nOVERRIDE STYLE: ${styleMap[v.num] || currentStyle}. Color palette and background unchanged.\n\n`;
   } else if (cat === 'Color Mood') {
     const moodMap = {15:'vibrant high saturation, bold energetic colors, maximum brightness',16:'pastel soft muted, reduce saturation 50%, add white, gentle palette',17:'earthy natural tones, warm muted browns greens terracotta',18:'corporate blue-gray professional, trustworthy palette',19:'tropical warm vibrant, orange yellow coral teal, high energy',20:'monochromatic single hue, tints and shades only, one color family'};
