@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Flow x4 Chaos Seed Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#08080f;--bg2:#0f0f1a;--bg3:#151525;--bg4:#1e1e32;--bg5:#262640;
+  --wh:#f0f0ff;--mu:#55558a;--mu2:#2a2a50;--mu3:#8888bb;
+  --ac:#6c3fff;--ac2:#8f5fff;--acg:rgba(108,63,255,.12);
+  --cy:#00ddc0;--cyg:rgba(0,221,192,.1);
+  --gn:#00d47a;--gng:rgba(0,212,122,.1);
+  --yw:#f5c500;--ywg:rgba(245,197,0,.1);
+  --or:#ff6b1a;--org:rgba(255,107,26,.1);
+  --pk:#ff3d82;--pkg:rgba(255,61,130,.1);
+  --r:8px;--rl:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--wh);min-height:100vh;
+  background-image:radial-gradient(ellipse 50% 30% at 50% 0%,rgba(108,63,255,.08),transparent 60%)}
+
+.wrap{max-width:900px;margin:0 auto;padding:1.5rem}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;
+  padding-bottom:1.25rem;border-bottom:1px solid var(--bg4)}
+.hdr-left{display:flex;align-items:center;gap:12px}
+.logo{width:40px;height:40px;border-radius:var(--r);background:linear-gradient(135deg,var(--ac),var(--cy));
+  display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0}
+.hdr-title{font-size:17px;font-weight:700;letter-spacing:-.02em}
+.hdr-title span{background:linear-gradient(90deg,var(--ac2),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr-sub{font-size:11px;color:var(--mu3);margin-top:2px}
+.badge{font-size:10px;font-weight:600;padding:4px 12px;border-radius:20px;
+  background:var(--bg4);border:1px solid var(--bg5);color:var(--mu3)}
+
+/* INPUT SECTION */
+.input-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--rl);padding:18px;margin-bottom:12px}
+.ic-title{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ac2);margin-bottom:12px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.fgroup{display:flex;flex-direction:column;gap:5px}
+.lbl{font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mu)}
+input.inp,textarea.inp,select.inp{width:100%;font-family:'Space Grotesk',sans-serif;font-size:12.5px;
+  padding:9px 12px;border:1.5px solid var(--bg4);border-radius:var(--r);
+  background:var(--bg3);color:var(--wh);outline:none;transition:border .15s}
+textarea.inp{resize:vertical;min-height:60px;line-height:1.5}
+input.inp:focus,textarea.inp:focus,select.inp:focus{border-color:var(--ac)}
+.inp::placeholder{color:var(--mu2)}
+select.inp option{background:var(--bg3)}
+
+/* SEED CARDS */
+.seeds-title{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--mu3);margin:14px 0 8px}
+.seed-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.seed-card{border:2px solid var(--bg4);border-radius:var(--rl);overflow:hidden;
+  cursor:pointer;transition:all .15s;position:relative}
+.seed-card:hover{border-color:var(--ac);transform:translateY(-1px)}
+.seed-card.on{border-color:var(--ac)}
+.sc-top{padding:10px 10px 8px;border-bottom:1px solid var(--bg4)}
+.sc-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;
+  padding:3px 8px;border-radius:10px;margin-bottom:5px;letter-spacing:.05em}
+.sc-name{font-size:11px;font-weight:700;color:var(--wh);margin-bottom:2px}
+.sc-style{font-size:9px;color:var(--mu3);line-height:1.3}
+.sc-body{padding:8px 10px;background:var(--bg3)}
+.sc-attrs{display:flex;flex-direction:column;gap:2px}
+.sc-attr{font-size:8.5px;color:var(--mu);line-height:1.3}
+.sc-attr span{color:var(--mu3)}
+.sc-check{position:absolute;top:8px;right:8px;width:14px;height:14px;border-radius:50%;
+  background:var(--ac);display:none;align-items:center;justify-content:center;font-size:7px;color:#fff}
+.seed-card.on .sc-check{display:flex}
+
+/* SEED AXIS PILLS */
+.axis-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.apill{font-size:9px;font-weight:600;padding:3px 9px;border:1.5px solid var(--bg4);
+  border-radius:20px;cursor:pointer;background:var(--bg3);color:var(--mu3);transition:all .1s}
+.apill:hover{border-color:var(--cy);color:var(--cy)}
+.apill.on{border-color:var(--cy);background:var(--cyg);color:var(--cy)}
+
+/* GRID / COUNT */
+.pill-row{display:flex;gap:5px;flex-wrap:wrap}
+.pill{font-size:10px;font-weight:600;padding:5px 12px;border:1.5px solid var(--bg4);
+  border-radius:20px;cursor:pointer;background:var(--bg3);color:var(--mu);transition:all .12s}
+.pill.on{background:var(--yw);border-color:var(--yw);color:var(--bg)}
+
+/* GEN BUTTON */
+.gen-btn{width:100%;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;
+  letter-spacing:.04em;padding:14px;border-radius:var(--r);border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--ac),var(--cy));color:#fff;margin-top:12px;
+  box-shadow:0 4px 20px rgba(108,63,255,.3);transition:all .18s}
+.gen-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(108,63,255,.45)}
+.gen-btn:active{transform:scale(.99)}
+
+/* OUTPUT */
+.out-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--rl);overflow:hidden;margin-top:14px}
+.oc-hdr{padding:10px 14px;border-bottom:1px solid var(--bg4);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.oc-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--cy)}
+.oc-actions{display:flex;gap:6px}
+.oc-btn{font-size:10px;font-weight:600;padding:5px 14px;border-radius:20px;border:none;
+  cursor:pointer;transition:all .12s}
+.oc-btn.primary{background:var(--ac);color:#fff}
+.oc-btn.secondary{background:var(--bg4);color:var(--mu3)}
+.oc-btn.ok{background:var(--gn);color:#fff}
+.oc-btn:hover{opacity:.85}
+
+/* PROMPT TEXT */
+.prompt-area{font-family:'JetBrains Mono',monospace;font-size:10px;line-height:1.85;
+  color:#b0b0d8;white-space:pre-wrap;word-break:break-word;
+  padding:16px;background:var(--bg3);min-height:80px;
+  border-bottom:1px solid var(--bg4)}
+.prompt-area.big{font-size:9.5px;max-height:500px;overflow-y:auto}
+
+/* SEED LABEL HIGHLIGHT */
+.sl-alpha{color:#00ddc0;font-weight:700}
+.sl-beta{color:#f5c500;font-weight:700}
+.sl-gamma{color:#ff6b1a;font-weight:700}
+.sl-delta{color:#ff3d82;font-weight:700}
+
+/* HOW TO USE */
+.how-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--rl);padding:16px;margin-top:12px}
+.how-title{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--yw);margin-bottom:12px}
+.how-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.how-step{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--r);padding:10px}
+.hs-num{font-size:18px;font-weight:700;color:var(--ac2);margin-bottom:4px;font-family:'JetBrains Mono',monospace}
+.hs-title{font-size:10.5px;font-weight:600;color:var(--wh);margin-bottom:3px}
+.hs-desc{font-size:9.5px;color:var(--mu3);line-height:1.5}
+.hs-tag{display:inline-block;font-size:8.5px;font-weight:700;padding:2px 7px;border-radius:8px;margin-top:4px}
+
+/* EMPTY */
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--mu2)}
+.ei{font-size:28px;display:block;margin-bottom:8px;opacity:.25}
+
+/* WARN BOX */
+.warn{background:var(--ywg);border:1px solid rgba(245,197,0,.25);border-radius:var(--r);
+  padding:10px 12px;font-size:10.5px;color:var(--yw);line-height:1.6;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="logo">⚡</div>
+    <div>
+      <div class="hdr-title">Flow x4 <span>Chaos Seed Generator</span></div>
+      <div class="hdr-sub">Satu prompt · 4 visual fingerprint berbeda · Adobe Stock safe</div>
+    </div>
+  </div>
+  <span class="badge">NB2 · Flow · x4</span>
+</div>
+
+<!-- INPUT -->
+<div class="input-card">
+  <div class="ic-title">01 — Tema & Konfigurasi</div>
+  <div class="row2" style="margin-bottom:10px">
+    <div class="fgroup">
+      <label class="lbl">Tema icon set</label>
+      <input type="text" class="inp" id="themeInput" placeholder="Contoh: baby items, medical tools, business office..."/>
+    </div>
+    <div class="fgroup">
+      <label class="lbl">Jumlah icon per sheet</label>
+      <div class="pill-row" id="countRow" style="margin-top:4px"></div>
+    </div>
+  </div>
+  <div class="row2">
+    <div class="fgroup">
+      <label class="lbl">Layout grid</label>
+      <div class="pill-row" id="gridRow" style="margin-top:4px"></div>
+    </div>
+    <div class="fgroup">
+      <label class="lbl">Deskripsi tambahan (opsional)</label>
+      <input type="text" class="inp" id="extraDesc" placeholder="Contoh: modern minimal, professional, clean"/>
+    </div>
+  </div>
+</div>
+
+<!-- SEED SELECTOR -->
+<div class="input-card">
+  <div class="ic-title">02 — Pilih 4 Seed (klik untuk aktifkan/nonaktifkan)</div>
+  <div class="seed-grid" id="seedGrid"></div>
+  <div class="warn">⚡ <strong>Cara kerja Chaos Seed:</strong> NB2 akan baca label ALPHA/BETA/GAMMA/DELTA di dalam prompt dan apply rendering blueprint yang berbeda untuk setiap seed. Hasilnya 4 file dengan visual fingerprint unik dalam satu klik x4 di Flow.</div>
+</div>
+
+<!-- GENERATE -->
+<button class="gen-btn" onclick="doGenerate()">⚡ GENERATE CHAOS SEED PROMPT — SIAP PASTE KE FLOW x4</button>
+
+<!-- OUTPUT -->
+<div class="out-card" id="outCard" style="display:none">
+  <div class="oc-hdr">
+    <div class="oc-title" id="outTitle">CHAOS SEED PROMPT — READY</div>
+    <div class="oc-actions">
+      <button class="oc-btn secondary" id="copyBtn" onclick="copyPrompt()">Copy Prompt</button>
+      <button class="oc-btn primary" onclick="downloadTxt()">Download TXT</button>
+    </div>
+  </div>
+  <div class="prompt-area big" id="promptOut"></div>
+  <div style="padding:10px 14px;border-top:1px solid var(--bg4);font-size:9.5px;color:var(--mu3)">
+    ✅ Paste seluruh teks di atas ke Flow · Set <strong style="color:var(--wh)">x4</strong> · Model <strong style="color:var(--wh)">Nano Banana 2</strong> · Ratio <strong style="color:var(--wh)">1:1</strong>
+  </div>
+</div>
+
+<!-- HOW TO USE -->
+<div class="how-card">
+  <div class="how-title">📋 Cara Pakai di Flow</div>
+  <div class="how-steps">
+    <div class="how-step">
+      <div class="hs-num">01</div>
+      <div class="hs-title">Set Flow</div>
+      <div class="hs-desc">Pilih Image · Ratio 1:1 · Count x4 · Model Nano Banana 2</div>
+      <span class="hs-tag" style="background:var(--cyg);color:var(--cy)">Image · 1:1 · x4 · NB2</span>
+    </div>
+    <div class="how-step">
+      <div class="hs-num">02</div>
+      <div class="hs-title">Paste Prompt</div>
+      <div class="hs-desc">Copy prompt dari generator ini, paste ke kolom input Flow</div>
+      <span class="hs-tag" style="background:var(--acg);color:var(--ac2)">Ctrl+V langsung</span>
+    </div>
+    <div class="how-step">
+      <div class="hs-num">03</div>
+      <div class="hs-title">Generate</div>
+      <div class="hs-desc">Klik send → NB2 generate 4 versi berbeda sekaligus dari 4 seed</div>
+      <span class="hs-tag" style="background:var(--gng);color:var(--gn)">1 klik = 4 file</span>
+    </div>
+    <div class="how-step">
+      <div class="hs-num">04</div>
+      <div class="hs-title">Pilih terbaik</div>
+      <div class="hs-desc">Tiap dari 4 hasil = fingerprint unik. Pilih yang terbaik per seed untuk upload Adobe</div>
+      <span class="hs-tag" style="background:var(--ywg);color:var(--yw)">4 file Adobe-safe</span>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ══════════════════════════════════
+// STATE
+// ══════════════════════════════════
+var S = {
+  theme: '',
+  count: 24,
+  grid: '6x4',
+  extra: '',
+  activeSeeds: new Set(['alpha','beta','gamma','delta']),
+};
+
+// ══════════════════════════════════
+// SEED DNA — ini inti chaos seed
+// ══════════════════════════════════
+var SEEDS = [
+  {
+    id: 'alpha',
+    label: 'ALPHA',
+    name: 'Flat Line · Modern',
+    color: '#00ddc0',
+    bgColor: 'rgba(0,221,192,.08)',
+    borderColor: 'rgba(0,221,192,.3)',
+    style: 'Flat Line · Modern Minimal',
+    rendering: 'clean flat 2D line art with uniform 2px stroke weight — outlines ONLY, NO fill colors inside shapes, all icons defined purely by single-weight strokes on pure white background, Swiss design precision, zero gradients zero shadows zero 3D',
+    perspective: 'strict front-facing orthographic 2D view — no angle no tilt no depth, perfectly flat on picture plane',
+    palette: 'single color strokes: deep navy #1a2e4a on white background',
+    detail: 'simple essential forms only, 5-7 elements per icon maximum, readable at 16px',
+    era: 'contemporary 2020s minimal design, generous negative space, professional tech aesthetic',
+    avoid: 'fills, gradients, shadows, 3D depth, rounded puffy forms, any dimensionality',
+  },
+  {
+    id: 'beta',
+    label: 'BETA',
+    name: 'Clay 3D · Retro',
+    color: '#f5c500',
+    bgColor: 'rgba(245,197,0,.08)',
+    borderColor: 'rgba(245,197,0,.3)',
+    style: 'Clay 3D · Retro Warm',
+    rendering: 'soft 3D clay render style — puffy inflated rounded forms with subtle depth, pastel clay material surface, gentle ambient occlusion shadows underneath, slight soft drop shadow beneath each object, toy-like warm aesthetic, no visible outline strokes',
+    perspective: 'slight isometric tilt 15-20 degrees showing top+front+right faces simultaneously, three-dimensional presence',
+    palette: 'warm retro palette — terracotta orange, warm cream, mustard yellow, brick red tones',
+    detail: 'medium detail with smooth rounded clay surfaces, gentle specular highlight on top surface, 8-12 elements per icon',
+    era: '1970s retro warmth meets modern 3D render — nostalgic analog feel with contemporary polish',
+    avoid: 'flat 2D, sharp hard outlines, cold colors, photorealistic textures, complex angular geometry',
+  },
+  {
+    id: 'gamma',
+    label: 'GAMMA',
+    name: 'Outline Sketch · Organic',
+    color: '#ff6b1a',
+    bgColor: 'rgba(255,107,26,.08)',
+    borderColor: 'rgba(255,107,26,.3)',
+    style: 'Outline Sketch · Organic Handmade',
+    rendering: 'hand-drawn sketch style illustration — slightly irregular organic stroke weight suggesting pen or fine marker drawing, gentle wobble and natural variation in line thickness, authentic handcrafted artisan quality, NOT digitally perfect, doodle illustration feel',
+    perspective: 'casual natural angle — slight diagonal or 3/4 view, as if sketched naturally by hand, organic imperfect placement within cell',
+    palette: 'warm earthy sketch palette — dark brown ink strokes, selective sage green or terracotta accent fills, cream/off-white background',
+    detail: 'expressive gestural detail with hatching or crosshatch for shading, 8-15 organic elements per icon',
+    era: 'artisan folk illustration tradition meets modern editorial design, Scandinavian craft aesthetic',
+    avoid: 'perfectly uniform digital strokes, hard mechanical precision, cold tech feel, complex fills, photorealism',
+  },
+  {
+    id: 'delta',
+    label: 'DELTA',
+    name: 'Bold Filled · Futuristic',
+    color: '#ff3d82',
+    bgColor: 'rgba(255,61,130,.08)',
+    borderColor: 'rgba(255,61,130,.3)',
+    style: 'Bold Filled · Futuristic Cyber',
+    rendering: 'bold flat vector icons with solid high-saturation fills — thick 3px+ outer outline stroke for strong border definition, maximum contrast between shapes, graphic design poster aesthetic, strong visual weight and presence',
+    perspective: 'top-down birds-eye view looking directly downward 90 degrees, flat plan view footprint, overhead radial symmetry preferred',
+    palette: 'futuristic cyber palette — deep navy #0a0a1a base with electric cyan #00f5ff, violet purple, hot magenta accents',
+    detail: 'clear strong visual hierarchy with primary shape dominant, bold graphic punch, 6-10 elements per icon',
+    era: 'cyberpunk 2070s futuristic aesthetic — tech-forward digital circuit energy, neon accent on dark-toned icons',
+    avoid: 'soft gradients, hand-drawn organic feel, pastel colors, complex texture, illustrative sketch quality',
+  },
+];
+
+// ══════════════════════════════════
+// RENDER INIT
+// ══════════════════════════════════
+function init(){
+  renderCountPills();
+  renderGridPills();
+  renderSeedCards();
+}
+
+function renderCountPills(){
+  var r = document.getElementById('countRow'); r.innerHTML = '';
+  [16, 24, 25, 32].forEach((n, i) => {
+    var el = document.createElement('span');
+    el.className = 'pill' + (n === S.count ? ' on' : '');
+    el.textContent = n + ' icons';
+    el.onclick = () => {
+      S.count = n;
+      document.querySelectorAll('#countRow .pill').forEach(x => x.classList.remove('on'));
+      el.classList.add('on');
+      renderGridPills();
+    };
+    r.appendChild(el);
+  });
+}
+
+var GRID_MAP = {
+  16: ['4x4'],
+  24: ['6x4', '4x6', '8x3'],
+  25: ['5x5'],
+  32: ['8x4', '4x8'],
+};
+
+function renderGridPills(){
+  var r = document.getElementById('gridRow'); r.innerHTML = '';
+  var opts = GRID_MAP[S.count] || ['6x4'];
+  S.grid = opts[0];
+  opts.forEach((g, i) => {
+    var el = document.createElement('span');
+    el.className = 'pill' + (i === 0 ? ' on' : '');
+    el.textContent = g;
+    el.onclick = () => {
+      S.grid = g;
+      document.querySelectorAll('#gridRow .pill').forEach(x => x.classList.remove('on'));
+      el.classList.add('on');
+    };
+    r.appendChild(el);
+  });
+}
+
+function renderSeedCards(){
+  var g = document.getElementById('seedGrid'); g.innerHTML = '';
+  SEEDS.forEach(seed => {
+    var on = S.activeSeeds.has(seed.id);
+    var card = document.createElement('div');
+    card.className = 'seed-card' + (on ? ' on' : '');
+    card.style.cssText = on
+      ? `background:${seed.bgColor};border-color:${seed.color}`
+      : 'background:var(--bg3)';
+    card.innerHTML = `
+      <div class="sc-top">
+        <div class="sc-badge" style="background:${seed.bgColor};color:${seed.color};border:1px solid ${seed.borderColor}">
+          ◈ ${seed.label}
+        </div>
+        <div class="sc-name">${seed.name}</div>
+        <div class="sc-style">${seed.style}</div>
+      </div>
+      <div class="sc-body">
+        <div class="sc-attrs">
+          <div class="sc-attr">🎨 <span>${seed.rendering.slice(0,60)}…</span></div>
+          <div class="sc-attr">📐 <span>${seed.perspective.slice(0,55)}…</span></div>
+          <div class="sc-attr">🎭 <span>${seed.era.slice(0,55)}…</span></div>
+        </div>
+      </div>
+      <div class="sc-check">✓</div>`;
+    card.onclick = () => {
+      if(S.activeSeeds.has(seed.id)){
+        if(S.activeSeeds.size <= 2) return; // min 2 seeds
+        S.activeSeeds.delete(seed.id);
+      } else {
+        S.activeSeeds.add(seed.id);
+      }
+      renderSeedCards();
+    };
+    g.appendChild(card);
+  });
+}
+
+// ══════════════════════════════════
+// CANVAS SIZE MAP
+// ══════════════════════════════════
+function getCanvas(count){
+  var m = {16:'1024x1024',24:'1536x1024',25:'1280x1280',32:'2048x1024'};
+  return m[count] || '1536x1024';
+}
+
+// ══════════════════════════════════
+// PROMPT BUILDER
+// ══════════════════════════════════
+function buildPrompt(theme, count, grid, extra, activeSeeds){
+  var seedList = SEEDS.filter(s => activeSeeds.has(s.id));
+  var canvas = getCanvas(count);
+
+  var seedInstructions = seedList.map(s => `
+  ◈ ${s.label} — ${s.name.toUpperCase()}
+    Rendering  : ${s.rendering}
+    Perspective: ${s.perspective}
+    Color era  : ${s.palette}
+    Detail lvl : ${s.detail}
+    Era/mood   : ${s.era}
+    AVOID      : ${s.avoid}`).join('\n');
+
+  var seedLabels = seedList.map(s => s.label).join(' · ');
+  var styleNames = seedList.map(s => s.name).join(', ');
+
+  return `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CHAOS SEED ICON SET — ${theme.toUpperCase()}
+${count} icons · ${grid} grid · Canvas ${canvas}px
+Seeds active: ${seedLabels}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+You are generating ${seedList.length} completely different icon set versions
+of the same theme simultaneously. Each version is identified by a
+SEED LABEL and must be visually distinct with a unique fingerprint.
+
+THEME: ${theme}${extra ? ` — ${extra}` : ''}
+TOTAL ICONS: exactly ${count} unique icons per sheet
+LAYOUT: ${grid} grid · Cell size: 256×256px each
+CANVAS: ${canvas} pixels total
+BACKGROUND: pure WHITE #FFFFFF — absolutely no colored or dark background
+
+━━ CRITICAL MULTI-SEED INSTRUCTION ━━
+Generate ${seedList.length} SEPARATE OUTPUT VERSIONS labeled ${seedLabels}.
+Each seed = fundamentally different visual style, NOT just color swap.
+Rendering approach, stroke type, perspective, and color era must ALL differ.
+DO NOT use the same composition, stroke weight, or style between seeds.
+Each output is an independent icon set with its own visual DNA.
+${seedList.length < 4 ? `\nNOTE: Only ${seedList.length} seeds active. Generate ${seedList.length} distinctly different versions.` : ''}
+
+━━ SEED DNA SPECIFICATIONS ━━
+${seedInstructions}
+
+━━ SHARED REQUIREMENTS ALL SEEDS ━━
+• Every seed must show exactly ${count} DIFFERENT ${theme} subjects
+• Icons must represent specific objects — no repeating subjects across cells
+• All ${count} subjects clearly identifiable at 256×256px
+• Labels below each icon: clean small font, centered, max 3 words
+• Professional commercial illustration quality
+• Adobe Stock compliant: no watermarks, no signatures, no brand marks
+
+━━ SUBJECT DIVERSITY RULE ━━
+Across all ${count} icons: maximize subject variety within the ${theme} theme.
+No two icons should depict identical objects.
+Cover a broad range of sub-categories within ${theme}.
+Think of this as a comprehensive visual encyclopedia of ${theme}.
+
+━━ ADOBE STOCK COMPLIANCE ━━
+✓ White background (#FFFFFF) — no exceptions
+✓ Declare as Generative AI on upload
+✓ SVG or PNG at minimum 4 megapixels
+✓ No copyrighted logos or trademarked symbols
+✓ Original artwork — no reproductions
+
+━━ QUALITY SIGNAL ━━
+Each seed must look like it was made by a different design studio.
+${SEEDS.find(s=>s.id==='alpha')&&activeSeeds.has('alpha') ? 'ALPHA = Swiss modernist studio.' : ''}
+${SEEDS.find(s=>s.id==='beta')&&activeSeeds.has('beta') ? 'BETA = Warm 3D toy design studio.' : ''}
+${SEEDS.find(s=>s.id==='gamma')&&activeSeeds.has('gamma') ? 'GAMMA = Artisan illustration studio.' : ''}
+${SEEDS.find(s=>s.id==='delta')&&activeSeeds.has('delta') ? 'DELTA = Futuristic tech design studio.' : ''}
+Visual DNA must be unmistakably different between every seed output.`;
+}
+
+// ══════════════════════════════════
+// GENERATE
+// ══════════════════════════════════
+var LAST_PROMPT = '';
+
+function doGenerate(){
+  var theme = document.getElementById('themeInput').value.trim();
+  if(!theme){
+    document.getElementById('themeInput').focus();
+    document.getElementById('themeInput').style.borderColor = '#ff3d82';
+    setTimeout(() => document.getElementById('themeInput').style.borderColor = '', 2000);
+    return;
+  }
+  S.theme = theme;
+  S.extra = document.getElementById('extraDesc').value.trim();
+
+  var prompt = buildPrompt(theme, S.count, S.grid, S.extra, S.activeSeeds);
+  LAST_PROMPT = prompt;
+
+  // Show output
+  var outCard = document.getElementById('outCard');
+  outCard.style.display = 'block';
+
+  var seedCount = S.activeSeeds.size;
+  document.getElementById('outTitle').textContent =
+    `CHAOS SEED PROMPT — ${seedCount} SEEDS · ${S.count} ICONS · PASTE KE FLOW x${seedCount}`;
+
+  // Render with colored seed labels
+  var display = prompt
+    .replace(/◈ ALPHA/g, '<span class="sl-alpha">◈ ALPHA</span>')
+    .replace(/◈ BETA/g,  '<span class="sl-beta">◈ BETA</span>')
+    .replace(/◈ GAMMA/g, '<span class="sl-gamma">◈ GAMMA</span>')
+    .replace(/◈ DELTA/g, '<span class="sl-delta">◈ DELTA</span>');
+
+  document.getElementById('promptOut').innerHTML = display;
+
+  outCard.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function copyPrompt(){
+  navigator.clipboard.writeText(LAST_PROMPT).then(() => {
+    var btn = document.getElementById('copyBtn');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('ok');
+    setTimeout(() => {
+      btn.textContent = 'Copy Prompt';
+      btn.classList.remove('ok');
+    }, 2500);
+  });
+}
+
+function downloadTxt(){
+  if(!LAST_PROMPT) return;
+  var theme = S.theme.replace(/\s+/g,'_');
+  var blob = new Blob([LAST_PROMPT], {type:'text/plain'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `chaos_seed_${theme}_${S.count}icons.txt`;
+  a.click();
+}
+
+init();
+</script>
+</body>
+</html>
