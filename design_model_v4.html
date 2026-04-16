@@ -1739,7 +1739,7 @@ function generateSEO(){
         <div class="seo-slbl">More Tag Ideas</div>
         <div class="seo-tags">${allKwds.slice(15,28).map(t=>`<span class="seo-tag">${escH(t)}</span>`).join('')}</div>
       </div>`;
-  } else {
+  } else if(tab==='dtf') {
     // DTF / Lokal
     var dtfBase=['desain kaos','sablon kaos','desain dtf','gambar kaos','motif kaos',cat.t.toLowerCase(),'kaos custom','desain baju'];
     var dtfTags=[...dtfBase,...base.slice(0,6)];
