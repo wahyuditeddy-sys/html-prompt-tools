@@ -1,0 +1,533 @@
+
+<style>
+:root {
+  --bg:#ffffff;--bg2:#f5f4f0;--bg3:#eeecea;
+  --text:#1a1a1a;--text2:#6b6a66;--text3:#9b9a96;
+  --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);
+  --info-bg:#e6f1fb;--info-text:#0c447c;
+  --success-text:#27500a;--radius:8px;--radius-lg:12px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1e1e1e;--bg2:#2a2a2a;--bg3:#323232;
+    --text:#f0eeea;--text2:#a8a7a3;--text3:#6e6d69;
+    --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);
+    --info-bg:#0c447c;--info-text:#b5d4f4;
+    --success-text:#c0dd97;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;}
+.wrap{padding:.75rem 0;max-width:100%;}
+.sec{margin-bottom:1.1rem;}
+.sec-title{font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;padding-bottom:5px;border-bottom:.5px solid var(--border);}
+.field{margin-bottom:8px;}
+label{font-size:11px;color:var(--text2);display:block;margin-bottom:3px;font-weight:500;letter-spacing:.04em;text-transform:uppercase;}
+input[type=text],select,textarea{width:100%;padding:7px 9px;font-size:13px;font-family:inherit;background:var(--bg);color:var(--text);border:.5px solid var(--border2);border-radius:var(--radius);outline:none;}
+input[type=text]:focus,select:focus,textarea:focus{border-color:var(--text2);}
+textarea{resize:vertical;min-height:60px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px;}
+.tag{font-size:11px;padding:3px 9px;border-radius:99px;cursor:pointer;border:.5px solid var(--border2);background:var(--bg2);color:var(--text2);user-select:none;transition:all .12s;white-space:nowrap;}
+.tag.active{background:var(--info-bg);color:var(--info-text);border-color:transparent;}
+hr.div{border:none;border-top:.5px solid var(--border);margin:1rem 0;}
+.result-box{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--radius-lg);padding:.85rem 1rem;font-size:12px;font-family:'Courier New',monospace;color:var(--text);line-height:1.6;white-space:pre-wrap;word-break:break-word;min-height:140px;max-height:320px;overflow-y:auto;}
+.btn-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px;align-items:center;}
+button{padding:7px 14px;font-size:12px;font-family:inherit;font-weight:500;border-radius:var(--radius);border:.5px solid var(--border2);background:transparent;color:var(--text);cursor:pointer;transition:all .12s;white-space:nowrap;}
+button:hover{background:var(--bg2);}
+button.primary{background:var(--info-bg);color:var(--info-text);border-color:transparent;}
+button.primary:hover{opacity:.85;}
+button.danger{border-color:rgba(200,50,50,.3);color:#c23232;}
+button.danger:hover{background:rgba(200,50,50,.08);}
+.copy-msg{font-size:11px;color:var(--success-text);opacity:0;transition:opacity .3s;}
+.copy-msg.show{opacity:1;}
+.char-count{font-size:11px;color:var(--text3);text-align:right;margin-top:3px;}
+
+.size-panel{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:.85rem 1rem;}
+.size-top{display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+.canvas-wrap{flex-shrink:0;text-align:center;}
+.canvas-preview{border:.5px solid var(--border2);background:var(--bg);border-radius:3px;transition:all .2s;}
+.canvas-lbl{font-size:10px;color:var(--text3);margin-top:3px;}
+.size-info{font-size:13px;font-weight:600;color:var(--text);}
+.size-sub{font-size:11px;color:var(--text2);margin-top:2px;}
+.preset-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
+.pbtn{font-size:10px;padding:5px 3px;text-align:center;border-radius:var(--radius);border:.5px solid var(--border2);background:var(--bg);color:var(--text2);cursor:pointer;line-height:1.35;transition:all .12s;}
+.pbtn:hover{color:var(--text);}
+.pbtn.active{background:var(--info-bg);color:var(--info-text);border-color:transparent;}
+.slider-row{display:flex;align-items:center;gap:8px;margin-top:8px;}
+.slider-row label{min-width:28px;margin:0;font-size:10px;}
+.slider-row input[type=range]{flex:1;accent-color:var(--info-text);}
+.sval{font-size:12px;font-weight:500;min-width:46px;text-align:right;color:var(--text);}
+.lock-row{display:flex;align-items:center;gap:7px;margin-top:8px;font-size:12px;color:var(--text2);}
+.lock-row input{width:auto;accent-color:var(--info-text);}
+
+.config-panel{background:var(--bg2);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:.85rem 1rem;}
+.config-list{display:flex;flex-direction:column;gap:6px;margin-top:8px;max-height:160px;overflow-y:auto;}
+.config-item{display:flex;align-items:center;gap:6px;padding:6px 8px;background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .12s;}
+.config-item:hover{border-color:var(--border2);}
+.config-item.selected{border-color:var(--info-text);background:var(--info-bg);}
+.config-name{flex:1;font-size:12px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.config-date{font-size:10px;color:var(--text3);white-space:nowrap;}
+.config-del{font-size:11px;color:var(--text3);cursor:pointer;padding:2px 5px;border-radius:4px;}
+.config-del:hover{color:#c23232;background:rgba(200,50,50,.08);}
+.empty-msg{font-size:12px;color:var(--text3);text-align:center;padding:16px 0;}
+.save-row{display:flex;gap:7px;margin-top:0;}
+.save-row input{flex:1;}
+</style>
+
+<div class="wrap">
+
+<div class="sec">
+  <div class="sec-title">Subjek Utama</div>
+  <div class="g2">
+    <div class="field">
+      <label>Nama Model / Subjek</label>
+      <input id="subjectName" type="text" placeholder="cth: Gundam ZGMF Strike Freedom" value="Gundam ZGMF Strike Freedom">
+    </div>
+    <div class="field">
+      <label>Kategori</label>
+      <select id="category">
+        <option>Mecha / Robot</option>
+        <option>Nature / Living Things</option>
+        <option>Kendaraan / Vehicle</option>
+        <option>Arsitektur / Bangunan</option>
+        <option>Teknologi / Gadget</option>
+        <option>Senjata / Weapon</option>
+        <option>Karakter / Figur</option>
+        <option>Anatomi / Biologi</option>
+        <option value="Lainnya (custom)">Lainnya (custom)</option>
+      </select>
+    </div>
+  </div>
+  <div id="customCatField" class="field" style="display:none">
+    <label>Kategori Custom</label>
+    <input id="customCategory" type="text" placeholder="Tulis kategori sendiri...">
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Ukuran & Resolusi Output</div>
+  <div class="size-panel">
+    <div class="size-top">
+      <div class="canvas-wrap">
+        <div class="canvas-preview" id="cvPrev" style="width:80px;height:45px;"></div>
+        <div class="canvas-lbl" id="cvLbl">16:9 · Landscape</div>
+      </div>
+      <div>
+        <div class="size-info" id="szInfo">1920 × 1080 px</div>
+        <div class="size-sub" id="szSub">600 DPI</div>
+        <div class="size-sub" id="szPrint"></div>
+      </div>
+    </div>
+    <div class="preset-grid" id="presetGrid">
+      <div class="pbtn active" data-w="1920" data-h="1080">Full HD<br>1920×1080</div>
+      <div class="pbtn" data-w="3840" data-h="2160">4K UHD<br>3840×2160</div>
+      <div class="pbtn" data-w="1280" data-h="720">HD<br>1280×720</div>
+      <div class="pbtn" data-w="1080" data-h="1080">Square<br>1080×1080</div>
+      <div class="pbtn" data-w="1080" data-h="1920">Portrait<br>1080×1920</div>
+      <div class="pbtn" data-w="2480" data-h="3508">A4 Portrait<br>2480×3508</div>
+      <div class="pbtn" data-w="3508" data-h="2480">A4 Land.<br>3508×2480</div>
+      <div class="pbtn" data-w="0" data-h="0">Custom</div>
+    </div>
+    <div class="lock-row">
+      <input type="checkbox" id="lockRatio" checked>
+      <label for="lockRatio" style="text-transform:none;letter-spacing:0;font-size:12px;margin:0;">Kunci rasio aspek</label>
+    </div>
+    <div class="slider-row">
+      <label>W</label>
+      <input type="range" id="wSlider" min="256" max="8192" step="1" value="1920">
+      <span class="sval" id="wVal">1920</span>
+    </div>
+    <div class="slider-row">
+      <label>H</label>
+      <input type="range" id="hSlider" min="256" max="8192" step="1" value="1080">
+      <span class="sval" id="hVal">1080</span>
+    </div>
+    <div class="slider-row">
+      <label>DPI</label>
+      <input type="range" id="dpiSlider" min="72" max="1200" step="1" value="600">
+      <span class="sval" id="dpiVal">600</span>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Visual Style</div>
+  <div class="field">
+    <label>Gaya Utama</label>
+    <div class="tag-row" id="styleTags">
+      <span class="tag active" data-val="Victorian botanical illustration, Ernst Haeckel style, scientific print, elegant linework">Victorian Botanical</span>
+      <span class="tag" data-val="technical blueprint, engineering schematic, CAD-style, precise linework">Blueprint / CAD</span>
+      <span class="tag" data-val="cyberpunk neon, holographic HUD, sci-fi interface overlay">Cyberpunk HUD</span>
+      <span class="tag" data-val="isometric 3D, flat design, clean geometric illustration">Isometric</span>
+      <span class="tag" data-val="watercolor sketch, loose artistic illustration, painterly">Watercolor Sketch</span>
+      <span class="tag" data-val="military technical manual, army field manual style, monochrome">Military Manual</span>
+      <span class="tag" data-val="studio product photography, clean white background, commercial">Product Photography</span>
+      <span class="tag" data-val="manga cross-section cutaway, anime reference sheet style">Manga Cutaway</span>
+    </div>
+  </div>
+  <div class="field" style="margin-top:6px">
+    <label>Custom Style (opsional)</label>
+    <input id="customStyle" type="text" placeholder="cth: art nouveau borders, gold foil accents...">
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Background & Lighting</div>
+  <div class="tag-row" id="bgTags">
+    <span class="tag active" data-val="dark charcoal showroom background #1a1a1a, dramatic product display lighting">Dark Showroom</span>
+    <span class="tag" data-val="pure white studio background, high-key lighting, clean and minimal">White Studio</span>
+    <span class="tag" data-val="aged parchment texture, warm sepia tones, scientific manuscript background">Aged Parchment</span>
+    <span class="tag" data-val="deep space black background, stars, cosmic atmosphere">Space / Dark</span>
+    <span class="tag" data-val="blueprint grid paper, indigo blue background #0d1b4b, white linework">Blueprint Grid</span>
+    <span class="tag" data-val="forest environment, natural dappled light, bokeh background">Natural Setting</span>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Target Audience</div>
+  <div class="tag-row" id="audTags">
+    <span class="tag active" data-val="Wibu / anime enthusiasts, mecha fans, detail-oriented otaku">Wibu / Mecha Fan</span>
+    <span class="tag" data-val="engineers and technical professionals, industrial designers">Insinyur / Technical</span>
+    <span class="tag" data-val="students and researchers, academic audience">Pelajar / Akademik</span>
+    <span class="tag" data-val="general public, all ages, accessible visual communication">Umum / General</span>
+    <span class="tag" data-val="collectors and hobbyists, model kit enthusiasts">Kolektor / Hobbyst</span>
+    <span class="tag" data-val="military and defense professionals">Militer / Defense</span>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Anotasi & Callouts</div>
+  <div class="g2">
+    <div class="field">
+      <label>Jumlah Callout Box</label>
+      <select id="callouts">
+        <option value="4-6">4–6 (Minimal)</option>
+        <option value="8-12" selected>8–12 (Standard)</option>
+        <option value="12-16">12–16 (Detail)</option>
+        <option value="16-20">16–20 (Expert)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Bahasa Label</label>
+      <select id="language">
+        <option>Bahasa Indonesia</option>
+        <option>English</option>
+        <option>Bilingual (Bahasa Indonesia + English)</option>
+      </select>
+    </div>
+  </div>
+  <div class="field">
+    <label>Elemen Tambahan</label>
+    <div class="tag-row" id="extraTags">
+      <span class="tag active" data-val="dimension callouts with precise measurements and scale ratio">Dimensi & Skala</span>
+      <span class="tag active" data-val="material callouts (what each part is made of)">Material</span>
+      <span class="tag active" data-val="inset detail zoom or cross-section diagram">Cross-section Zoom</span>
+      <span class="tag" data-val="performance stats and specifications table">Specs Table</span>
+      <span class="tag" data-val="color-coded part numbering system">Part Numbering</span>
+      <span class="tag" data-val="assembly sequence diagram">Assembly Diagram</span>
+      <span class="tag" data-val="historical timeline ribbon at bottom">Timeline Ribbon</span>
+    </div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Negative Prompts</div>
+  <input id="negatives" type="text" value="cartoon, low quality, blurry, pixelated, watermark, text errors, deformed">
+</div>
+
+<div class="sec">
+  <div class="sec-title">Catatan Tambahan (Opsional)</div>
+  <textarea id="extraNotes" placeholder="cth: tampilkan pose dinamis dari sudut 3/4, fokus pada sistem senjata kanan..."></textarea>
+</div>
+
+<div class="sec">
+  <div class="sec-title">Simpan / Muat Konfigurasi</div>
+  <div class="config-panel">
+    <div class="save-row">
+      <input id="configName" type="text" placeholder="Nama konfigurasi (cth: Gundam Default)">
+      <button class="primary" id="saveBtn">Simpan</button>
+    </div>
+    <div class="config-list" id="configList">
+      <div class="empty-msg" id="emptyMsg">Belum ada konfigurasi tersimpan.</div>
+    </div>
+    <div class="btn-row" style="margin-top:8px;">
+      <button id="loadBtn" disabled>Muat Terpilih</button>
+      <button id="exportBtn">Ekspor JSON</button>
+      <button id="importTrigger">Impor JSON</button>
+      <input type="file" id="importFile" accept=".json" style="display:none">
+    </div>
+  </div>
+</div>
+
+<hr class="div">
+
+<div class="sec">
+  <div class="sec-title">Preview Prompt</div>
+  <div class="result-box" id="output"></div>
+  <div class="btn-row">
+    <button class="primary" id="copyBtn">Salin Prompt</button>
+    <button id="dlBtn">Unduh .html</button>
+    <span class="copy-msg" id="copyMsg">Tersalin!</span>
+  </div>
+  <div class="char-count" id="charCount"></div>
+</div>
+
+</div>
+
+<script>
+var W=1920,H=1080,DPI=600,selectedCfg=null;
+var STORE_KEY='gmg_configs';
+
+function gcd(a,b){return b===0?a:gcd(b,a%b);}
+function asp(w,h){var g=gcd(w,h);return(w/g)+':'+(h/g);}
+function orient(w,h){return w===h?'Square':w>h?'Landscape':'Portrait';}
+function printSz(w,h,d){return(w/d).toFixed(1)+'" × '+(h/d).toFixed(1)+'"';}
+
+function updatePreview(){
+  var mW=80,mH=60,sc=Math.min(mW/W,mH/H);
+  var pw=Math.round(W*sc),ph=Math.round(H*sc);
+  var el=document.getElementById('cvPrev');
+  el.style.width=pw+'px';el.style.height=ph+'px';
+  document.getElementById('cvLbl').textContent=asp(W,H)+' · '+orient(W,H);
+  document.getElementById('szInfo').textContent=W+' × '+H+' px';
+  document.getElementById('szSub').textContent=DPI+' DPI · '+orient(W,H);
+  document.getElementById('szPrint').textContent='Print: '+printSz(W,H,DPI)+' @ '+DPI+' DPI';
+  document.getElementById('wVal').textContent=W;
+  document.getElementById('hVal').textContent=H;
+  document.getElementById('dpiVal').textContent=DPI;
+  document.getElementById('wSlider').value=W;
+  document.getElementById('hSlider').value=H;
+  document.getElementById('dpiSlider').value=DPI;
+}
+
+document.getElementById('presetGrid').querySelectorAll('.pbtn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.pbtn').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+    var w=parseInt(btn.dataset.w),h=parseInt(btn.dataset.h);
+    if(w>0){W=w;H=h;}else{W=1920;H=1080;}
+    updatePreview();generatePrompt();
+  });
+});
+
+document.getElementById('wSlider').addEventListener('input',function(){
+  var locked=document.getElementById('lockRatio').checked,ratio=W/H;
+  W=parseInt(this.value);if(locked)H=Math.round(W/ratio);
+  document.querySelectorAll('.pbtn').forEach(function(b){b.classList.remove('active');});
+  updatePreview();generatePrompt();
+});
+document.getElementById('hSlider').addEventListener('input',function(){
+  var locked=document.getElementById('lockRatio').checked,ratio=W/H;
+  H=parseInt(this.value);if(locked)W=Math.round(H*ratio);
+  document.querySelectorAll('.pbtn').forEach(function(b){b.classList.remove('active');});
+  updatePreview();generatePrompt();
+});
+document.getElementById('dpiSlider').addEventListener('input',function(){
+  DPI=parseInt(this.value);updatePreview();generatePrompt();
+});
+
+['styleTags','bgTags','audTags'].forEach(function(gid){
+  document.getElementById(gid).querySelectorAll('.tag').forEach(function(tag){
+    tag.addEventListener('click',function(){
+      document.getElementById(gid).querySelectorAll('.tag').forEach(function(t){t.classList.remove('active');});
+      tag.classList.add('active');generatePrompt();
+    });
+  });
+});
+document.getElementById('extraTags').querySelectorAll('.tag').forEach(function(tag){
+  tag.addEventListener('click',function(){tag.classList.toggle('active');generatePrompt();});
+});
+document.getElementById('category').addEventListener('change',function(){
+  document.getElementById('customCatField').style.display=this.value==='Lainnya (custom)'?'block':'none';
+  generatePrompt();
+});
+['subjectName','customCategory','customStyle','callouts','language','negatives','extraNotes'].forEach(function(id){
+  var el=document.getElementById(id);if(el)el.addEventListener('input',generatePrompt);
+});
+
+function getActive(gid){
+  return Array.from(document.getElementById(gid).querySelectorAll('.tag.active')).map(function(t){return t.dataset.val;});
+}
+
+function generatePrompt(){
+  var subject=document.getElementById('subjectName').value.trim()||'[Subjek]';
+  var catEl=document.getElementById('category');
+  var category=catEl.value==='Lainnya (custom)'?(document.getElementById('customCategory').value.trim()||'Custom'):catEl.value;
+  var styles=getActive('styleTags'),customStyle=document.getElementById('customStyle').value.trim();
+  var bgs=getActive('bgTags'),auds=getActive('audTags'),extras=getActive('extraTags');
+  var callouts=document.getElementById('callouts').value,lang=document.getElementById('language').value;
+  var negatives=document.getElementById('negatives').value.trim(),notes=document.getElementById('extraNotes').value.trim();
+  var styleStr=styles.length?styles.join(', ')+(customStyle?', '+customStyle:''):(customStyle||'technical illustration');
+  var bgStr=bgs.length?bgs[0]:'neutral background';
+  var audStr=auds.length?auds[0]:'general audience';
+  var dpiLabel=DPI>=600?'ultra HD, large format banner':DPI>=300?'print-ready':DPI>=150?'medium print quality':'web optimized';
+  var extLine=extras.length?'- '+extras.join('\n- '):'- detailed callout annotations';
+  var p='Professional technical infographic of ['+subject+'].\n'
+    +'Category: '+category+' | Visual Style: '+(styles.length?styles[0].split(',')[0]:'Technical')+' | Audience: '+audStr.split(',')[0]+'\n'
+    +'Background: '+bgStr+'\n'
+    +'Output: '+W+'×'+H+' pixels, '+orient(W,H)+' '+asp(W,H)+', '+DPI+' DPI '+dpiLabel+'\n'
+    +'Print Quality: '+DPI+' DPI · Physical size: '+printSz(W,H,DPI)+' @ '+DPI+' DPI\n'
+    +'Label Language: '+lang+'\n\n'
+    +'Visual Style: '+styleStr+'\n\n'
+    +'Annotations (in '+lang+') embedded directly in image:\n'
+    +'- Model name and series in title box (top-left)\n'
+    +'- '+callouts+' color-coded callout boxes for all major parts/components\n'
+    +'- Color-coded directional arrows for functionality\n'
+    +extLine+'\n'
+    +'- Technical legend / key at bottom\n\n'
+    +'Use Gemini world knowledge for model accuracy — recognize actual product details.\n'
+    +'Text: all labels in '+lang+', legible, correctly spelled.\n'
+    +'Resolution: '+W+'×'+H+' px at '+DPI+' DPI. No watermark.';
+  if(notes)p+='\nAdditional: '+notes;
+  if(negatives)p+='\nNegative: '+negatives;
+  document.getElementById('output').textContent=p;
+  document.getElementById('charCount').textContent=p.length+' karakter';
+}
+
+function getState(){
+  return{
+    subjectName:document.getElementById('subjectName').value,
+    category:document.getElementById('category').value,
+    customCategory:document.getElementById('customCategory').value,
+    customStyle:document.getElementById('customStyle').value,
+    callouts:document.getElementById('callouts').value,
+    language:document.getElementById('language').value,
+    negatives:document.getElementById('negatives').value,
+    extraNotes:document.getElementById('extraNotes').value,
+    W:W,H:H,DPI:DPI,
+    styleTags:getActive('styleTags'),
+    bgTags:getActive('bgTags'),
+    audTags:getActive('audTags'),
+    extraTags:getActive('extraTags')
+  };
+}
+
+function applyState(s){
+  document.getElementById('subjectName').value=s.subjectName||'';
+  document.getElementById('category').value=s.category||'Mecha / Robot';
+  document.getElementById('customCategory').value=s.customCategory||'';
+  document.getElementById('customCatField').style.display=s.category==='Lainnya (custom)'?'block':'none';
+  document.getElementById('customStyle').value=s.customStyle||'';
+  document.getElementById('callouts').value=s.callouts||'8-12';
+  document.getElementById('language').value=s.language||'Bahasa Indonesia';
+  document.getElementById('negatives').value=s.negatives||'';
+  document.getElementById('extraNotes').value=s.extraNotes||'';
+  W=s.W||1920;H=s.H||1080;DPI=s.DPI||600;
+  document.querySelectorAll('.pbtn').forEach(function(b){b.classList.remove('active');});
+  function setTagGroup(gid,vals,multi){
+    document.getElementById(gid).querySelectorAll('.tag').forEach(function(t){
+      t.classList.remove('active');
+      if(vals&&vals.indexOf(t.dataset.val)>=0)t.classList.add('active');
+    });
+  }
+  setTagGroup('styleTags',s.styleTags,false);
+  setTagGroup('bgTags',s.bgTags,false);
+  setTagGroup('audTags',s.audTags,false);
+  setTagGroup('extraTags',s.extraTags,true);
+  updatePreview();generatePrompt();
+}
+
+function loadConfigs(){return JSON.parse(localStorage.getItem(STORE_KEY)||'[]');}
+function saveConfigs(arr){localStorage.setItem(STORE_KEY,JSON.stringify(arr));}
+
+function renderConfigList(){
+  var configs=loadConfigs();
+  var list=document.getElementById('configList');
+  var empty=document.getElementById('emptyMsg');
+  list.innerHTML='';
+  if(!configs.length){
+    list.appendChild(empty);
+    empty.style.display='block';
+    document.getElementById('loadBtn').disabled=true;
+    selectedCfg=null;
+    return;
+  }
+  configs.forEach(function(cfg,i){
+    var item=document.createElement('div');
+    item.className='config-item'+(selectedCfg===i?' selected':'');
+    item.innerHTML='<span class="config-name">'+cfg.name+'</span>'
+      +'<span class="config-date">'+cfg.date+'</span>'
+      +'<span class="config-del" data-i="'+i+'" title="Hapus">✕</span>';
+    item.addEventListener('click',function(e){
+      if(e.target.classList.contains('config-del')){
+        var arr=loadConfigs();arr.splice(parseInt(e.target.dataset.i),1);saveConfigs(arr);
+        if(selectedCfg===i)selectedCfg=null;
+        renderConfigList();return;
+      }
+      selectedCfg=i;renderConfigList();
+      document.getElementById('loadBtn').disabled=false;
+    });
+    list.appendChild(item);
+  });
+  document.getElementById('loadBtn').disabled=selectedCfg===null;
+}
+
+document.getElementById('saveBtn').addEventListener('click',function(){
+  var name=document.getElementById('configName').value.trim();
+  if(!name){document.getElementById('configName').focus();return;}
+  var configs=loadConfigs();
+  var d=new Date();
+  var dateStr=d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+  configs.unshift({name:name,date:dateStr,state:getState()});
+  saveConfigs(configs);
+  document.getElementById('configName').value='';
+  selectedCfg=null;
+  renderConfigList();
+});
+
+document.getElementById('loadBtn').addEventListener('click',function(){
+  if(selectedCfg===null)return;
+  var configs=loadConfigs();
+  if(configs[selectedCfg])applyState(configs[selectedCfg].state);
+});
+
+document.getElementById('exportBtn').addEventListener('click',function(){
+  var configs=loadConfigs();
+  var blob=new Blob([JSON.stringify(configs,null,2)],{type:'application/json'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='gmg-configs.json';a.click();
+});
+
+document.getElementById('importTrigger').addEventListener('click',function(){
+  document.getElementById('importFile').click();
+});
+document.getElementById('importFile').addEventListener('change',function(e){
+  var file=e.target.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      var arr=JSON.parse(ev.target.result);
+      if(!Array.isArray(arr))throw new Error();
+      var existing=loadConfigs();
+      saveConfigs(arr.concat(existing));
+      selectedCfg=null;renderConfigList();
+    }catch(err){alert('File JSON tidak valid.');}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+});
+
+document.getElementById('copyBtn').addEventListener('click',function(){
+  var text=document.getElementById('output').textContent;
+  navigator.clipboard.writeText(text).then(function(){
+    var msg=document.getElementById('copyMsg');
+    msg.classList.add('show');
+    setTimeout(function(){msg.classList.remove('show');},2000);
+  });
+});
+
+document.getElementById('dlBtn').addEventListener('click',function(){
+  var styleCSS=document.querySelector('style').textContent;
+  var bodyHTML=document.querySelector('.wrap').outerHTML;
+  var scriptJS=document.querySelector('script').textContent;
+  var html='<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gemini Infographic Prompt Generator</title><style>html,body{min-height:100vh;padding:16px 20px;}'+styleCSS+'</style></head><body>'+bodyHTML+'<script>'+scriptJS+'<\/script></body></html>';
+  var blob=new Blob([html],{type:'text/html'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='gemini-prompt-generator.html';a.click();
+});
+
+updatePreview();
+generatePrompt();
+renderConfigList();
+</script>

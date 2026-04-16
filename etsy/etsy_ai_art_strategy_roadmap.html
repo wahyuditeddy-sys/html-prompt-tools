@@ -1,0 +1,472 @@
+
+<h2 class="sr-only">Panduan lengkap berjualan AI art sticker di Etsy: tools, SEO, riset demand, dan strategi monetisasi</h2>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); }
+  .phase { margin-bottom: 2rem; }
+  .phase-header { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; padding: 0.75rem 1rem; border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); background: var(--color-background-secondary); }
+  .phase-num { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; flex-shrink: 0; }
+  .phase-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+  .phase-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+  .steps { display: flex; flex-direction: column; gap: 10px; padding-left: 12px; }
+  .step { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 0.85rem 1rem; cursor: pointer; transition: background 0.15s; }
+  .step:hover { background: var(--color-background-secondary); }
+  .step-top { display: flex; align-items: flex-start; gap: 10px; }
+  .step-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .step-content { flex: 1; }
+  .step-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+  .step-desc { font-size: 12px; color: var(--color-text-secondary); margin-top: 3px; line-height: 1.5; }
+  .step-detail { display: none; margin-top: 10px; padding-top: 10px; border-top: 0.5px solid var(--color-border-tertiary); }
+  .step-detail.open { display: block; }
+  .tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: var(--border-radius-md); margin: 2px 2px 2px 0; }
+  .tag-tool { background: #E6F1FB; color: #0C447C; }
+  .tag-free { background: #EAF3DE; color: #27500A; }
+  .tag-paid { background: #FAEEDA; color: #633806; }
+  .tag-action { background: #EEEDFE; color: #3C3489; }
+  .tag-warning { background: #FCEBEB; color: #791F1F; }
+  .detail-list { list-style: none; margin-top: 8px; }
+  .detail-list li { font-size: 12px; color: var(--color-text-secondary); padding: 4px 0; padding-left: 14px; position: relative; line-height: 1.5; }
+  .detail-list li::before { content: "→"; position: absolute; left: 0; color: var(--color-text-tertiary); }
+  .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+  .tool-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 8px 10px; }
+  .tool-name { font-size: 12px; font-weight: 500; color: var(--color-text-primary); }
+  .tool-use { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+  .toggle-btn { font-size: 11px; color: var(--color-text-tertiary); margin-top: 6px; display: block; }
+  .progress-bar { height: 4px; border-radius: 2px; background: var(--color-border-tertiary); margin-top: 8px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 2px; }
+  .section-divider { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1.5rem 0; }
+  .summary-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 2rem; }
+  .metric-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 0.85rem; text-align: center; }
+  .metric-label { font-size: 11px; color: var(--color-text-secondary); }
+  .metric-value { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin-top: 4px; }
+  .metric-note { font-size: 10px; color: var(--color-text-tertiary); margin-top: 2px; }
+</style>
+
+<div style="padding: 1rem 0;">
+
+  <div class="summary-grid">
+    <div class="metric-card">
+      <div class="metric-label">modal awal</div>
+      <div class="metric-value">$0</div>
+      <div class="metric-note">bisa mulai gratis</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">listing fee</div>
+      <div class="metric-value">$0.20</div>
+      <div class="metric-note">per listing</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">target bulan 3</div>
+      <div class="metric-value">$300+</div>
+      <div class="metric-note">50 listings aktif</div>
+    </div>
+  </div>
+
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-num" style="background: #E6F1FB; color: #0C447C;">1</div>
+      <div>
+        <div class="phase-title">Riset pasar — sebelum upload apapun</div>
+        <div class="phase-sub">Cari tahu apa yang paling banyak dicari buyer di Etsy</div>
+      </div>
+    </div>
+    <div class="steps">
+
+      <div class="step" onclick="toggle(this)">
+        <div class="step-top">
+          <div class="step-icon">🔍</div>
+          <div class="step-content">
+            <div class="step-title">Install tools riset (gratis)</div>
+            <div class="step-desc">Gunakan Chrome extension untuk spy kompetitor langsung di Etsy</div>
+          </div>
+        </div>
+        <span class="toggle-btn">klik untuk detail ↓</span>
+        <div class="step-detail">
+          <div class="tools-grid">
+            <div class="tool-card">
+              <div class="tool-name">EverBee</div>
+              <div class="tool-use">Lihat estimasi sales & revenue kompetitor langsung di Etsy</div>
+              <div style="margin-top:4px;"><span class="tag tag-free">free tier</span><span class="tag tag-tool">Chrome ext</span></div>
+            </div>
+            <div class="tool-card">
+              <div class="tool-name">EtsyHunt</div>
+              <div class="tool-use">Database produk terbesar, riset keyword, spy tags kompetitor</div>
+              <div style="margin-top:4px;"><span class="tag tag-free">free tier</span><span class="tag tag-tool">web + ext</span></div>
+            </div>
+            <div class="tool-card">
+              <div class="tool-name">eRank</div>
+              <div class="tool-use">Keyword volume & trend jangka panjang dari data Etsy</div>
+              <div style="margin-top:4px;"><span class="tag tag-free">free plan</span><span class="tag tag-paid">$5.99/mo</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggle(this)">
+        <div class="step-top">
+          <div class="step-icon">📊</div>
+          <div class="step-content">
+            <div class="step-title">Riset keyword & niche yang laku</div>
+            <div class="step-desc">Cari keyword high demand, low competition untuk niche sticker kamu</div>
+          </div>
+        </div>
+        <span class="toggle-btn">klik untuk detail ↓</span>
+        <div class="step-detail">
+          <ul class="detail-list">
+            <li>Buka EtsyHunt → Product Database → filter "digital download" → sort by "sales"</li>
+            <li>Cari keyword seperti: "neon sticker pack", "cyber sticker", "kawaii bear sticker", "dark fantasy sticker"</li>
+            <li>Di eRank: cek monthly searches vs competition. Ideal: searches tinggi, competition rendah</li>
+            <li>Dengan EverBee: sort listing by monthly revenue → klik listing terlaris → copy tag mereka</li>
+            <li>Target keyword long-tail: "neon cyber bear sticker png", "mystical owl digital sticker"</li>
+          </ul>
+          <div style="margin-top:10px;"><span class="tag tag-action">target: 10–15 keyword utama</span></div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggle(this)">
+        <div class="step-top">
+          <div class="step-icon">🕵️</div>
+          <div class="step-content">
+            <div class="step-title">Spy top seller — reverse engineer yang berhasil</div>
+            <div class="step-desc">Lihat judul, tag, harga, dan mockup toko paling laris di niche kamu</div>
+          </div>
+        </div>
+        <span class="toggle-btn">klik untuk detail ↓</span>
+        <div class="step-detail">
+          <ul class="detail-list">
+            <li>Search "neon sticker pack png" di Etsy → aktifkan EverBee ext</li>
+            <li>Sort by highest monthly revenue → perhatikan 5 listing teratas</li>
+            <li>Catat: judul listing, tags yang digunakan, jumlah foto, harga, format bundle</li>
+            <li>Cek review mereka — buyer sering sebut kelebihan & kekurangan yang bisa kamu perbaiki</li>
+          </ul>
+          <div style="margin-top:10px;"><span class="tag tag-warning">jangan copy persis — jadikan inspirasi & perbaiki</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-num" style="background: #EEEDFE; color: #3C3489;">2</div>
+      <div>
+        <div class="phase-title">Persiapan file — upscaling & metadata</div>
+        <div class="phase-sub">File PNG harus siap cetak dan siap download buyer</div>
+      </div>
+    </div>
+    <div class="steps">
+
+      <div class="step" onclick="toggle(this)">
+        <div class="step-top">
+          <div class="step-icon">🖼️</div>
+          <div class="step-content">
+            <div class="step-title">Upscaling — wajib sebelum upload</div>
+            <div class="step-desc">File dari Gemini/Midjourney perlu di-upscale agar memenuhi standar print quality</div>
+          </div>
+        </div>
+        <span class="toggle-btn">klik untuk detail ↓</span>
+        <div class="step-detail">
+          <ul class="detail-list">
+            <li>Target minimal: 3000 × 3000 px, 300 DPI untuk print quality</li>
+            <li>Tool gratis: Upscayl (desktop app, open source) — upscale 4x AI tanpa biaya</li>
+            <li>Tool online gratis: Adobe Express AI → Image Enhancer → upscale to 4K</li>
+            <li>Berbayar terbaik: Topaz Gigapixel AI ($99 one-time) — hasil terbaik untuk print</li>
+            <li>Setelah upscale: export PNG dengan transparent background jika ada (penting untuk sticker)</li>
+          </ul>
+          <div style="margin-top:10px;">
+            <span class="tag tag-free">Upscayl (gratis)</span>
+            <span class="tag tag-free">Adobe Express (gratis)</span>
+            <span class="tag tag-paid">Topaz AI ($99)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggle(this)">
+        <div class="step-top">
+          <div class="step-icon">🏷️</div>
+          <div class="step-content">
+            <div class="step-title">Inject metadata ke file PNG</div>
+            <div class="step-desc">Tambahkan EXIF/IPTC metadata agar file terasa lebih profesional dan traceable</div>
+          </div>
+        </div>
+        <span class="toggle-btn">klik untuk detail ↓</span>
+        <div class="step-detail">
+          <ul class="detail-list">
+            <li>Metadata penting: Title, Description, Copyright, Author, Keywords</li>
+            <li>Tool gratis: ExifTool (command line) atau GIMP → Image Properties</li>
+            <li>Tool mudah: Adobe Bridge (jika punya CC) → File Info → isi IPTC Core</li>
+            <li>Metadata membantu SEO di Google Images dan platform lain</li>
+            <li>Tambahkan watermark tipis di preview image tapi BUKAN di file download</li>
+          </ul>
+          <div style="margin-top:10px;"><span class="tag tag-free">ExifTool (gratis)</span><span class="tag tag-tool">GIMP (gratis)</span></div>
+          <div style="margin-top:6px; font-size:11px; color: var(--color-text-tertiary);">Metadata tidak wajib tapi best practice untuk branding jangka panjang</div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggle(this)">
+        <div class="step-top">
+          <div class="step-icon">📦</div>
+          <div class="step-content">
+            <div class="step-title">Bundling & packaging file</div>
+            <div class="step-desc">Bundle beberapa design jadi satu paket ZIP untuk nilai jual lebih tinggi</div>
+          </div>
+        </div>
+        <span class="toggle-btn">klik untuk detail ↓</span>
+        <div class="step-detail">
+          <ul class="detail-list">
+            <li>Contoh bundle: "5 Neon Cyber Sticker Pack PNG" → harga $5–8</li>
+            <li>Isi ZIP: semua PNG hi-res + bonus "How to Use" PDF singkat</li>
+            <li>How to Use PDF mengurangi refund request hingga 90%</li>
+            <li>Sertakan file dalam berbagai ukuran: 2000px, 3000px, 4000px</li>
+            <li>Etsy limit upload file: max 20 files per listing, total 20MB</li>
+          </ul>
+          <div style="margin-top:10px;"><span class="tag tag-action">bundle 5 designs → harga 3x lebih tinggi dari jual satuan</span></div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggle(this)">
+        <div class="step-top">
+          <div class="step-icon">🖼️</div>
+          <div class="step-content">
+            <div class="step-title">Buat mockup foto listing (sangat penting)</div>
+            <div class="step-desc">Listing dengan 7 foto mockup mendapat traffic 3x lebih banyak dari Etsy algorithm</div>
+          </div>
+        </div>
+        <span class="toggle-btn">klik untuk detail ↓</span>
+        <div class="step-detail">
+          <ul class="detail-list">
+            <li>Canva Pro: gunakan template sticker mockup (laptop, tumbler, planner, phone)</li>
+            <li>Placeit.net: $9.95/bulan, ribuan mockup template siap pakai</li>
+            <li>Smartmockups: gratis tier tersedia, mockup produk fisik realistis</li>
+            <li>Upload 7 foto: 1 thumbnail utama + 2-3 mockup produk + 1 preview semua design + 1 size guide + 1 how-to-use</li>
+            <li>Foto pertama (thumbnail) paling kritis — ini yang muncul di search</li>
+          </ul>
+          <div style="margin-top:10px;">
+            <span class="tag tag-free">Canva free</span>
+            <span class="tag tag-paid">Placeit $9.95/mo</span>
+            <span class="tag tag-free">Smartmockups free</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-num" style="background: #E1F5EE; color: #085041;">3</div>
+      <div>
+        <div class="phase-title">Setup & optimasi listing Etsy</div>
+        <div class="phase-sub">SEO listing = 70% dari total penjualan kamu</div>
+      </div>
+    </div>
+    <div class="steps">
+
+      <div class="step" onclick="toggle(this)">
+        <div class="step-top">
+          <div class="step-icon">🏪</div>
+          <div class="step-content">
+            <div class="step-title">Setup toko Etsy yang benar</div>
+            <div class="step-desc">Langkah-langkah membuka toko dari nol</div>
+          </div>
+        </div>
+        <span class="toggle-btn">klik untuk detail ↓</span>
+        <div class="step-detail">
+          <ul class="detail-list">
+            <li>Daftar di etsy.com → Sell on Etsy → buat akun penjual</li>
+            <li>Nama toko: pilih nama niche yang mudah dicari (contoh: NeonStickerStudio, CyberKawaiiShop)</li>
+            <li>Isi shop bio dengan keyword niche kamu</li>
+            <li>Upload banner dan logo yang konsisten dengan style artwork kamu</li>
+            <li>Setting pembayaran: Etsy Payments — langsung terima USD, dikonversi otomatis</li>
+            <li>Pastikan alamat & info pajak lengkap (Etsy akan tanya untuk W-8BEN form sebagai non-US seller)</li>
+          </ul>
+          <div style="margin-top:10px;"><span class="tag tag-warning">penting: isi W-8BEN form dengan benar agar bisa tarik uang</span></div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggle(this)">
+        <div class="step-top">
+          <div class="step-icon">✏️</div>
+          <div class="step-content">
+            <div class="step-title">Formula judul listing yang ranking</div>
+            <div class="step-desc">Judul harus mengandung keyword utama di awal kalimat</div>
+          </div>
+        </div>
+        <span class="toggle-btn">klik untuk detail ↓</span>
+        <div class="step-detail">
+          <ul class="detail-list">
+            <li>Format: [Keyword Utama] + [Keyword Sekunder] + [Format File] + [Niche]</li>
+            <li>Contoh buruk: "Owl Design Beautiful Sticker Pack Art"</li>
+            <li>Contoh bagus: "Mystical Owl Sticker PNG, Dark Fantasy Digital Sticker Bundle, Transparent Background, Instant Download"</li>
+            <li>Maksimal 140 karakter — manfaatkan semuanya</li>
+            <li>Jangan gunakan kata "AI-generated" di judul — Etsy bisa flag listing</li>
+          </ul>
+          <div style="margin-top:10px;"><span class="tag tag-action">keyword utama harus di 3 kata pertama judul</span></div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggle(this)">
+        <div class="step-top">
+          <div class="step-icon">🏷️</div>
+          <div class="step-content">
+            <div class="step-title">Optimasi 13 tags Etsy (SEO kritis)</div>
+            <div class="step-desc">Tags adalah sinyal terpenting untuk Etsy search algorithm</div>
+          </div>
+        </div>
+        <span class="toggle-btn">klik untuk detail ↓</span>
+        <div class="step-detail">
+          <ul class="detail-list">
+            <li>Etsy memberi 13 tag slot — isi SEMUANYA</li>
+            <li>Gunakan long-tail tags (2-3 kata): "neon bear sticker", "digital sticker pack png", "kawaii cyber sticker"</li>
+            <li>Copy tags terlaris dari kompetitor via EverBee → modifikasi untuk niche kamu</li>
+            <li>Hindari single-word tags seperti "sticker" atau "bear" — terlalu kompetitif</li>
+            <li>Mix antara keyword product + keyword audience: "planner sticker", "goodnotes sticker", "ipad sticker"</li>
+          </ul>
+          <div style="margin-top:10px;"><span class="tag tag-action">semua 13 tags harus terisi</span><span class="tag tag-warning">jangan ulangi kata yang sama di judul & tags</span></div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggle(this)">
+        <div class="step-top">
+          <div class="step-icon">📝</div>
+          <div class="step-content">
+            <div class="step-title">Deskripsi listing yang convert</div>
+            <div class="step-desc">Deskripsi yang baik menjawab semua pertanyaan buyer sebelum mereka tanya</div>
+          </div>
+        </div>
+        <span class="toggle-btn">klik untuk detail ↓</span>
+        <div class="step-detail">
+          <ul class="detail-list">
+            <li>Baris pertama: ulangi keyword utama + apa yang dapat buyer ("You'll get 5 high-resolution PNG stickers...")</li>
+            <li>Isi deskripsi: apa yang ada di bundle, format file, resolusi, cara download, cara pakai</li>
+            <li>Tambahkan FAQ mini: "Can I use this for commercial use? Yes/No"</li>
+            <li>Sertakan keyword tambahan secara natural dalam paragraf</li>
+            <li>Tutup dengan: "Instant digital download — no shipping, available right after purchase"</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <div class="phase">
+    <div class="phase-header">
+      <div class="phase-num" style="background: #FAEEDA; color: #633806;">4</div>
+      <div>
+        <div class="phase-title">Scaling & traffic — setelah 10 listing aktif</div>
+        <div class="phase-sub">Dorong traffic eksternal untuk akselerasi pertumbuhan toko</div>
+      </div>
+    </div>
+    <div class="steps">
+
+      <div class="step" onclick="toggle(this)">
+        <div class="step-top">
+          <div class="step-icon">📌</div>
+          <div class="step-content">
+            <div class="step-title">Pinterest — mesin traffic gratis terbesar untuk Etsy</div>
+            <div class="step-desc">Pinterest → Etsy adalah funnel paling efektif untuk digital art seller</div>
+          </div>
+        </div>
+        <span class="toggle-btn">klik untuk detail ↓</span>
+        <div class="step-detail">
+          <ul class="detail-list">
+            <li>Buat akun Pinterest Business → connect dengan Etsy shop kamu</li>
+            <li>Upload mockup setiap listing sebagai pin dengan link langsung ke listing Etsy</li>
+            <li>Judul pin = copy judul Etsy listing kamu</li>
+            <li>Buat 3–5 board niche: "Neon Sticker Aesthetic", "Cyber Kawaii Art", "Digital Stickers for GoodNotes"</li>
+            <li>Repin konten relevan dari creator lain di board kamu untuk engagement</li>
+          </ul>
+          <div style="margin-top:10px;"><span class="tag tag-free">100% gratis</span><span class="tag tag-action">pin setiap listing baru</span></div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggle(this)">
+        <div class="step-top">
+          <div class="step-icon">💰</div>
+          <div class="step-content">
+            <div class="step-title">Etsy Ads — setelah ada sales organik</div>
+            <div class="step-desc">Jalankan Etsy Ads hanya setelah listing terbukti dapat sales organik</div>
+          </div>
+        </div>
+        <span class="toggle-btn">klik untuk detail ↓</span>
+        <div class="step-detail">
+          <ul class="detail-list">
+            <li>Mulai Etsy Ads setelah punya minimal 20 listing dan beberapa sales organik</li>
+            <li>Budget awal: $1–3/hari untuk test listing mana yang paling convert</li>
+            <li>Hanya boost listing yang sudah ada review dan click organik</li>
+            <li>Monitor setelah 2 minggu: hentikan listing dengan ROAS rendah</li>
+            <li>Q4 (Oktober–Desember) = musim paling menguntungkan — naikkan budget 2x</li>
+          </ul>
+          <div style="margin-top:10px;"><span class="tag tag-paid">mulai $1/hari</span><span class="tag tag-warning">jangan ads listing baru tanpa sales organik dulu</span></div>
+        </div>
+      </div>
+
+      <div class="step" onclick="toggle(this)">
+        <div class="step-top">
+          <div class="step-icon">📅</div>
+          <div class="step-content">
+            <div class="step-title">Jadwal produksi konten mingguan</div>
+            <div class="step-desc">Konsistensi upload baru adalah kunci algorithm Etsy</div>
+          </div>
+        </div>
+        <span class="toggle-btn">klik untuk detail ↓</span>
+        <div class="step-detail">
+          <ul class="detail-list">
+            <li>Senin: riset keyword baru dengan EtsyHunt, cek tren seasonal</li>
+            <li>Selasa–Rabu: generate design baru di Gemini/Midjourney, upscale, buat mockup</li>
+            <li>Kamis: upload listing baru (target 1 listing baru setiap 48 jam)</li>
+            <li>Jumat: upload ke Pinterest, refresh pin lama</li>
+            <li>Weekend: balas pesan buyer, update listing yang underperform</li>
+          </ul>
+          <div style="margin-top:10px;"><span class="tag tag-action">1 listing baru per 48 jam = Etsy boost visibility baru</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-top: 0.5rem;">
+    <div style="font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 8px;">timeline realistis untuk artwork niche kamu</div>
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px;"><span>bulan 1 — setup + 20 listing pertama</span><span>$0–50</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width: 15%; background: #B5D4F4;"></div></div>
+      </div>
+      <div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px;"><span>bulan 2–3 — 50 listing + Pinterest aktif</span><span>$50–300</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width: 40%; background: #9FE1CB;"></div></div>
+      </div>
+      <div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px;"><span>bulan 4–6 — 100+ listing + Etsy Ads</span><span>$300–1.000+</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width: 70%; background: #AFA9EC;"></div></div>
+      </div>
+    </div>
+    <button onclick="sendPrompt('Buatkan contoh judul dan 13 tag Etsy yang optimal untuk sticker pack Burung Hantu Mystical dari gambar yang sudah saya upload')" style="margin-top: 12px; width: 100%; padding: 8px; font-size: 13px;">
+      Buatkan contoh listing SEO untuk Burung Hantu saya ↗
+    </button>
+  </div>
+
+</div>
+
+<script>
+function toggle(el) {
+  const detail = el.querySelector('.step-detail');
+  const btn = el.querySelector('.toggle-btn');
+  if (detail.classList.contains('open')) {
+    detail.classList.remove('open');
+    btn.textContent = 'klik untuk detail ↓';
+  } else {
+    detail.classList.add('open');
+    btn.textContent = 'tutup ↑';
+  }
+}
+</script>
