@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Adobe-Safe Variation Engine — v6 Upgrade Module</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#07070f;--bg2:#0c0c18;--bg3:#111122;--bg4:#181830;--bg5:#1f1f3a;--bg6:#282845;
+  --wh:#eeeeff;--muted:#55558a;--muted2:#2a2a50;--muted3:#7777aa;
+  --ac:#5b3fff;--ac2:#7c5fff;--acg:rgba(91,63,255,.12);
+  --cy:#00d4b8;--cyg:rgba(0,212,184,.1);
+  --gn:#00cc6a;--gng:rgba(0,204,106,.1);
+  --yw:#f0b800;--ywg:rgba(240,184,0,.1);
+  --pk:#ff3d7f;--pkg:rgba(255,61,127,.1);
+  --or:#ff6820;--rd:#ff3333;
+  --r:8px;--rl:12px;--rxl:16px;
+  --sh:0 2px 16px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--wh);min-height:100vh;
+  background-image:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(91,63,255,.07),transparent 70%);}
+
+/* ── HEADER ── */
+.hdr{max-width:1200px;margin:0 auto;padding:1.5rem 1.5rem 0;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.hdr-left{display:flex;align-items:center;gap:14px;}
+.logo{width:42px;height:42px;background:linear-gradient(135deg,var(--ac),var(--cy));border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:15px;
+  font-weight:800;color:#fff;letter-spacing:-.02em;flex-shrink:0;}
+.hdr-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:-.02em;}
+.hdr-title span{background:linear-gradient(90deg,var(--ac2),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hdr-sub{font-size:11px;color:var(--muted3);margin-top:2px;}
+.ver-badge{background:var(--bg4);border:1px solid var(--bg6);font-size:10px;font-weight:600;
+  padding:5px 12px;border-radius:20px;color:var(--muted3);white-space:nowrap;}
+.inject-badge{background:var(--acg);border:1px solid rgba(91,63,255,.3);color:var(--ac2);
+  font-size:10px;font-weight:600;padding:5px 12px;border-radius:20px;}
+
+/* ── LAYOUT ── */
+.wrap{max-width:1200px;margin:0 auto;padding:1.25rem 1.5rem 3rem;}
+.layout{display:grid;grid-template-columns:380px 1fr;gap:14px;align-items:start;}
+
+/* ── CARD ── */
+.card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--rl);margin-bottom:12px;overflow:hidden;}
+.card-h{padding:10px 14px;border-bottom:1px solid var(--bg4);display:flex;align-items:center;justify-content:space-between;}
+.ch-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ac2);}
+.ch-sub{font-size:9px;color:var(--muted);}
+.card-b{padding:14px;}
+
+/* ── SECTION LABEL ── */
+.lbl{font-size:9.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);display:block;margin-bottom:7px;margin-top:14px;}
+.lbl:first-child{margin-top:0;}
+
+/* ── INPUT ── */
+textarea.inp,input.inp{width:100%;font-family:'DM Sans',sans-serif;font-size:12.5px;
+  padding:9px 12px;border:1.5px solid var(--bg4);border-radius:var(--r);
+  background:var(--bg3);color:var(--wh);outline:none;resize:vertical;transition:border .15s;}
+textarea.inp{min-height:68px;line-height:1.5;}
+textarea.inp:focus,input.inp:focus{border-color:var(--ac);}
+.inp::placeholder{color:var(--muted2);}
+
+/* ── STRATEGY MATRIX ── */
+.strategy-matrix{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.strat-card{border:2px solid var(--bg4);border-radius:var(--rl);cursor:pointer;
+  background:var(--bg3);transition:all .15s;padding:11px 12px;position:relative;}
+.strat-card:hover{border-color:var(--ac);transform:translateY(-1px);}
+.strat-card.on{border-color:var(--ac);background:var(--acg);}
+.strat-num{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.1em;margin-bottom:4px;}
+.strat-name{font-size:11px;font-weight:600;color:var(--wh);margin-bottom:3px;}
+.strat-desc{font-size:9.5px;color:var(--muted3);line-height:1.4;}
+.strat-check{position:absolute;top:8px;right:8px;width:16px;height:16px;background:var(--ac);
+  border-radius:50%;display:none;align-items:center;justify-content:center;font-size:8px;color:#fff;}
+.strat-card.on .strat-check{display:flex;}
+.strat-axes{display:flex;gap:3px;flex-wrap:wrap;margin-top:5px;}
+.sax{font-size:8px;padding:2px 6px;border-radius:10px;font-weight:600;}
+
+/* ── AXIS SELECTOR ── */
+.axis-group{margin-bottom:10px;}
+.axis-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.axis-title{font-size:10px;font-weight:600;color:var(--wh);}
+.axis-cnt{font-size:9px;color:var(--muted3);}
+.axis-pills{display:flex;gap:4px;flex-wrap:wrap;}
+.apill{font-size:9.5px;font-weight:500;padding:4px 10px;border:1.5px solid var(--bg4);
+  border-radius:20px;cursor:pointer;background:var(--bg3);color:var(--muted3);transition:all .12s;}
+.apill:hover{border-color:var(--cy);color:var(--cy);}
+.apill.on{border-color:var(--cy);background:var(--cyg);color:var(--cy);}
+
+/* ── COMPLEXITY SLIDER ── */
+.complexity-row{display:flex;gap:5px;}
+.cplx{flex:1;border:1.5px solid var(--bg4);border-radius:var(--r);padding:8px 10px;
+  cursor:pointer;background:var(--bg3);text-align:center;transition:all .12s;}
+.cplx:hover{border-color:var(--yw);}
+.cplx.on{border-color:var(--yw);background:var(--ywg);}
+.cplx-icon{font-size:16px;margin-bottom:3px;}
+.cplx-name{font-size:9.5px;font-weight:600;color:var(--wh);}
+.cplx-desc{font-size:8.5px;color:var(--muted);margin-top:1px;}
+
+/* ── VARIATION COUNT ── */
+.vcount-row{display:flex;gap:5px;align-items:center;}
+.vcnt{font-size:10px;font-weight:600;padding:5px 12px;border:1.5px solid var(--bg4);
+  border-radius:20px;cursor:pointer;background:var(--bg3);color:var(--muted);transition:all .12s;}
+.vcnt.on{background:var(--pk);border-color:var(--pk);color:#fff;}
+.vcount-info{font-size:9.5px;color:var(--muted3);margin-left:4px;}
+
+/* ── GENERATE BTN ── */
+.gen-btn{width:100%;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;
+  letter-spacing:.06em;padding:14px;border-radius:var(--r);border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--ac),var(--cy));color:#fff;
+  box-shadow:0 4px 24px rgba(91,63,255,.3);transition:all .18s;margin-top:12px;}
+.gen-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(91,63,255,.45);}
+.gen-btn:active{transform:scale(.99);}
+
+/* ── RIGHT COLUMN: OUTPUT ── */
+.out-col{display:flex;flex-direction:column;gap:12px;}
+
+/* ── VARIATION SUMMARY ── */
+.var-summary{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--rl);
+  padding:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.vsm-item{text-align:center;}
+.vsm-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;
+  background:linear-gradient(135deg,var(--ac2),var(--cy));-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;}
+.vsm-label{font-size:9px;color:var(--muted3);margin-top:2px;}
+
+/* ── VARIATION CARDS ── */
+.var-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.var-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--rl);overflow:hidden;
+  transition:border .15s;}
+.var-card:hover{border-color:var(--ac);}
+.vc-head{padding:8px 12px;border-bottom:1px solid var(--bg4);display:flex;align-items:center;
+  justify-content:space-between;}
+.vc-id{font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--muted);}
+.vc-name{font-size:10.5px;font-weight:600;color:var(--wh);}
+.vc-badges{display:flex;gap:3px;flex-wrap:wrap;}
+.vc-badge{font-size:8px;font-weight:600;padding:2px 6px;border-radius:8px;}
+.vc-body{padding:10px 12px;}
+.vc-prompt{font-family:'DM Mono',monospace;font-size:9.5px;color:#aaaacc;line-height:1.7;
+  white-space:pre-wrap;word-break:break-word;max-height:180px;overflow-y:auto;
+  background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--r);padding:10px;}
+.vc-footer{padding:8px 12px;border-top:1px solid var(--bg4);display:flex;gap:6px;align-items:center;}
+.copy-btn{font-size:9.5px;font-weight:600;padding:5px 12px;border-radius:20px;border:none;
+  cursor:pointer;background:var(--bg4);color:var(--muted3);transition:all .12s;}
+.copy-btn:hover{background:var(--ac);color:#fff;}
+.copy-btn.ok{background:var(--gn);color:#fff;}
+.diff-score{font-size:9px;color:var(--muted3);margin-left:auto;}
+.diff-bar{width:60px;height:5px;background:var(--bg5);border-radius:3px;overflow:hidden;display:inline-block;vertical-align:middle;margin-left:4px;}
+.diff-fill{height:100%;border-radius:3px;background:var(--gn);}
+
+/* ── BUNDLE EXPORT ── */
+.bundle-box{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--rl);overflow:hidden;}
+.bb-head{padding:10px 14px;border-bottom:1px solid var(--bg4);display:flex;align-items:center;
+  justify-content:space-between;}
+.bb-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--cy);}
+.bb-actions{display:flex;gap:6px;}
+.bb-btn{font-size:10px;font-weight:600;padding:5px 14px;border-radius:20px;border:none;
+  cursor:pointer;transition:all .12s;}
+.bb-btn.primary{background:var(--ac);color:#fff;}
+.bb-btn.secondary{background:var(--bg4);color:var(--muted3);}
+.bb-btn:hover{opacity:.85;}
+.bb-body{padding:14px;}
+.bundle-prompt{font-family:'DM Mono',monospace;font-size:9.5px;color:#aaaacc;line-height:1.75;
+  white-space:pre-wrap;word-break:break-word;background:var(--bg3);border:1px solid var(--bg4);
+  border-radius:var(--r);padding:12px;max-height:300px;overflow-y:auto;}
+
+/* ── ADOBE COMPLIANCE CHECKLIST ── */
+.checklist{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.chk{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--r);
+  padding:8px 10px;display:flex;align-items:flex-start;gap:7px;}
+.chk-icon{font-size:13px;flex-shrink:0;margin-top:1px;}
+.chk-text{font-size:9.5px;color:var(--muted3);line-height:1.4;}
+.chk-text strong{color:var(--wh);font-weight:600;display:block;font-size:10px;margin-bottom:1px;}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:3rem 1rem;color:var(--muted2);background:var(--bg3);
+  border-radius:var(--r);}
+.empty-icon{font-size:36px;display:block;margin-bottom:10px;opacity:.2;}
+
+/* ── FINGERPRINT DIFF PANEL ── */
+.diff-panel{background:var(--bg2);border:1px solid var(--bg4);border-radius:var(--rl);
+  padding:14px;margin-bottom:12px;}
+.dp-title{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--yw);margin-bottom:10px;}
+.dp-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+.dp-dim{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--r);
+  padding:8px;text-align:center;}
+.dp-name{font-size:9px;font-weight:600;color:var(--muted3);margin-bottom:4px;}
+.dp-bars{display:flex;flex-direction:column;gap:2px;}
+.dp-bar-row{display:flex;align-items:center;gap:4px;}
+.dp-bar-label{font-size:7.5px;color:var(--muted);width:20px;text-align:right;flex-shrink:0;}
+.dp-bar-track{flex:1;height:4px;background:var(--bg5);border-radius:2px;overflow:hidden;}
+.dp-bar-fill{height:100%;border-radius:2px;transition:width .4s ease;}
+
+/* ── TIPS ── */
+.tips{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;}
+.tip{background:var(--bg3);border:1px solid var(--bg4);border-radius:var(--r);padding:10px;}
+.tip-t{font-size:10px;font-weight:600;color:var(--cy);margin-bottom:4px;}
+.tip-b{font-size:9px;color:var(--muted3);line-height:1.6;}
+code{background:var(--bg5);color:var(--cy);padding:1px 5px;border-radius:3px;
+  font-family:'DM Mono',monospace;font-size:9px;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="logo">VS</div>
+    <div>
+      <div class="hdr-title">Vector Studio <span>Adobe-Safe Engine</span></div>
+      <div class="hdr-sub">Modul inject untuk v6 · 4 strategi anti-rejection · Visual fingerprint diversifier</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:6px;">
+    <span class="inject-badge">⚡ Inject Module</span>
+    <span class="ver-badge">v6 → v7 Upgrade</span>
+  </div>
+</div>
+
+<div class="wrap">
+<div class="layout">
+
+<!-- ══ LEFT PANEL ══ -->
+<div>
+
+  <!-- 01 TEMA -->
+  <div class="card">
+    <div class="card-h"><div class="ch-title">01 — Tema & Subjek</div><div class="ch-sub">Dari v6 atau input baru</div></div>
+    <div class="card-b">
+      <span class="lbl" style="margin-top:0">Tema utama icon set</span>
+      <input type="text" class="inp" id="themeInput" placeholder="Contoh: baby items, AI tech icons, architecture tools, medical equipment..."/>
+      <span class="lbl">Jumlah icon per sheet</span>
+      <div class="axis-pills" style="margin-top:0" id="countPills"></div>
+    </div>
+  </div>
+
+  <!-- 02 STRATEGY MATRIX -->
+  <div class="card">
+    <div class="card-h"><div class="ch-title">02 — Strategy Matrix</div><div class="ch-sub">Pilih kombinasi → fingerprint unik</div></div>
+    <div class="card-b">
+      <div class="strategy-matrix" id="stratGrid"></div>
+    </div>
+  </div>
+
+  <!-- 03 AXIS SELECTORS -->
+  <div class="card" id="axisCard">
+    <div class="card-h"><div class="ch-title">03 — Axis Configuration</div><div class="ch-sub">Tentukan variasi per dimensi</div></div>
+    <div class="card-b" id="axisBody">
+      <div style="font-size:11px;color:var(--muted);text-align:center;padding:10px">Aktifkan strategi dulu →</div>
+    </div>
+  </div>
+
+  <!-- 04 COMPLEXITY -->
+  <div class="card">
+    <div class="card-h"><div class="ch-title">04 — Detail Complexity Level</div></div>
+    <div class="card-b">
+      <div class="complexity-row" id="cplxRow"></div>
+    </div>
+  </div>
+
+  <!-- 05 VARIATION COUNT -->
+  <div class="card">
+    <div class="card-h"><div class="ch-title">05 — Jumlah Variasi Output</div></div>
+    <div class="card-b">
+      <div class="vcount-row">
+        <div class="axis-pills" id="vcountRow"></div>
+        <span class="vcount-info" id="vcountInfo"></span>
+      </div>
+      <div style="margin-top:10px;font-size:10px;color:var(--muted3);line-height:1.6;background:var(--bg3);border-radius:var(--r);padding:8px 10px;">
+        💡 <strong style="color:var(--yw)">Adobe rule:</strong> File dengan tema sama di-submit sebagai satu "submission group". Max 30 file per group. Rekomendasi: 4–8 variasi per tema untuk approval rate tertinggi.
+      </div>
+    </div>
+  </div>
+
+  <!-- GENERATE -->
+  <button class="gen-btn" onclick="doGenerate()">⚡ GENERATE ADOBE-SAFE VARIATIONS</button>
+
+  <!-- CHECKLIST -->
+  <div class="card" style="margin-top:12px;">
+    <div class="card-h"><div class="ch-title">✅ Adobe Stock Compliance</div></div>
+    <div class="card-b">
+      <div class="checklist">
+        <div class="chk"><span class="chk-icon">🖼️</span><div class="chk-text"><strong>Visual Fingerprint</strong>Tiap file punya hash unik — style, rendering, perspective berbeda</div></div>
+        <div class="chk"><span class="chk-icon">🔡</span><div class="chk-text"><strong>Metadata Unik</strong>Title, description, dan keywords berbeda per variasi</div></div>
+        <div class="chk"><span class="chk-icon">📐</span><div class="chk-text"><strong>Composition Shift</strong>Layout dan framing berbeda antar batch</div></div>
+        <div class="chk"><span class="chk-icon">🎨</span><div class="chk-text"><strong>Rendering Diversity</strong>Flat vs 3D vs outline vs filled — bukan sekedar warna beda</div></div>
+        <div class="chk"><span class="chk-icon">📏</span><div class="chk-text"><strong>Detail Level</strong>Simple / Medium / Ornate → complexity berbeda jelas</div></div>
+        <div class="chk"><span class="chk-icon">⚠️</span><div class="chk-text"><strong>AI Declaration</strong>Selalu centang "Generative AI" saat upload di Adobe</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ RIGHT PANEL ══ -->
+<div class="out-col">
+
+  <!-- SUMMARY -->
+  <div class="var-summary" id="varSummary" style="display:none;">
+    <div class="vsm-item"><div class="vsm-num" id="sumCount">0</div><div class="vsm-label">Variasi dibuat</div></div>
+    <div class="vsm-item"><div class="vsm-num" id="sumDims">0</div><div class="vsm-label">Dimensi berbeda</div></div>
+    <div class="vsm-item"><div class="vsm-num" id="sumScore">0%</div><div class="vsm-label">Uniqueness score</div></div>
+    <div class="vsm-item"><div class="vsm-num" id="sumPass">✓</div><div class="vsm-label">Adobe compliant</div></div>
+  </div>
+
+  <!-- FINGERPRINT DIFF PANEL -->
+  <div class="diff-panel" id="fpPanel" style="display:none;">
+    <div class="dp-title">📊 Visual Fingerprint Diversity Map</div>
+    <div class="dp-grid" id="fpGrid"></div>
+  </div>
+
+  <!-- VARIATION CARDS -->
+  <div id="varGrid">
+    <div class="empty"><span class="empty-icon">⚡</span>Generate untuk lihat variasi Adobe-safe</div>
+  </div>
+
+  <!-- BUNDLE EXPORT -->
+  <div class="bundle-box" id="bundleBox" style="display:none;">
+    <div class="bb-head">
+      <div class="bb-title">📦 Bundle Export — Semua Variasi</div>
+      <div class="bb-actions">
+        <button class="bb-btn secondary" onclick="copyBundle()">Copy Bundle</button>
+        <button class="bb-btn primary" onclick="downloadBundle()">Download TXT</button>
+      </div>
+    </div>
+    <div class="bb-body">
+      <div class="bundle-prompt" id="bundlePrompt"></div>
+    </div>
+  </div>
+
+  <!-- TIPS -->
+  <div class="card">
+    <div class="card-h"><div class="ch-title">💡 Tips Adobe Stock Approval</div></div>
+    <div class="card-b">
+      <div class="tips">
+        <div class="tip">
+          <div class="tip-t">🚫 Yang sering ditolak</div>
+          <div class="tip-b">Submit 10 file icon set dengan tema sama tapi hanya beda warna. Adobe detect via perceptual hash → instant reject sebagai "substantially similar".</div>
+        </div>
+        <div class="tip">
+          <div class="tip-t">✅ Yang lolos konsisten</div>
+          <div class="tip-b">4 file per tema: <code>Flat Line</code> + <code>Bold 3D</code> + <code>Outline Sketch</code> + <code>Retro Filled</code>. Visual fingerprint beda di semua 5 dimensi.</div>
+        </div>
+        <div class="tip">
+          <div class="tip-t">📊 Upload strategy</div>
+          <div class="tip-b">Submit variasi dengan interval 2–3 hari. Jangan upload 4 variasi sekaligus — AI reviewer Adobe akan flag batch yang masuk bersamaan dengan tema serupa.</div>
+        </div>
+        <div class="tip">
+          <div class="tip-t">🎯 Metadata penting</div>
+          <div class="tip-b">Title harus mention style: <code>"Flat Line Baby Icons"</code> vs <code>"3D Clay Baby Set"</code>. Ini yang jadi differentiator utama di search Adobe.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<script>
+// ═══════════════════════════════
+// DATA — STYLE DNA MATRIX
+// ═══════════════════════════════
+
+var STATE = {
+  theme: '',
+  count: 24,
+  strategies: new Set(['style_axis','era_mood','perspective','complexity']),
+  styleAxes: new Set(['flat_line','bold_filled','outline_sketch','clay_3d']),
+  eraAxes: new Set(['modern_minimal','retro_vintage','futuristic_cyber','organic_handmade']),
+  perspAxes: new Set(['front_2d','isometric_3d','top_down','side_silhouette']),
+  complexity: 'medium',
+  varCount: 4,
+};
+
+var STRATEGIES = [
+  {id:'style_axis', num:'S1', name:'Style Axis Rotation',
+   desc:'Rendering style berbeda fundamental per file',
+   axes:['flat_line','bold_filled','outline_sketch','clay_3d','duotone','pixel_art'],
+   color:var_cy='#00d4b8'},
+  {id:'era_mood', num:'S2', name:'Era / Mood Differentiation',
+   desc:'Estetik era berbeda — fingerprint beda total',
+   axes:['modern_minimal','retro_vintage','futuristic_cyber','organic_handmade'],
+   color:'#f0b800'},
+  {id:'perspective', num:'S3', name:'Perspective Shift',
+   desc:'Sudut pandang & komposisi berbeda',
+   axes:['front_2d','isometric_3d','top_down','side_silhouette'],
+   color:'#ff6820'},
+  {id:'complexity', num:'S4', name:'Detail Complexity',
+   desc:'Level detail berbeda — simple ke ornate',
+   axes:['simple','medium','ornate'],
+   color:'#7c5fff'},
+];
+
+// ── STYLE DNA BLUEPRINTS ──
+var STYLE_DNA = {
+  flat_line: {
+    render: 'clean flat 2D line art, uniform stroke weight 2px, single-weight outlines only, NO fill colors — only stroke lines on white background, minimalist linework, technical illustration precision, every element defined by clean vector paths, zero gradients zero shadows zero texture',
+    stroke: 'uniform 2px stroke, consistent weight throughout, crisp sharp edges',
+    palette_mod: 'single accent color for strokes, white fill inside shapes',
+    composition: 'centered front-facing view, equal padding around each icon',
+    detail: 'essential shapes only, no decorative elements, readable at 16px',
+    avoid: 'fills, gradients, shadows, textures, 3D effects, multiple stroke weights',
+  },
+  bold_filled: {
+    render: 'bold filled vector icons, flat solid color fills with strong contrast, thick 3px+ outer stroke, high saturation colors, graphic design aesthetic, strong visual weight, professional icon set style, flat design 2.0',
+    stroke: '3-4px bold outer stroke, strong border definition',
+    palette_mod: 'high saturation vibrant fills, strong contrast between elements',
+    composition: 'solid presence, icon fills majority of cell space',
+    detail: 'clear visual hierarchy, primary shape dominant, secondary elements supporting',
+    avoid: 'gradients, drop shadows, 3D perspective, fine detail, hairline strokes',
+  },
+  outline_sketch: {
+    render: 'hand-drawn sketch style outline illustration, slightly irregular stroke weight suggesting pen or marker drawing, organic imperfect lines, sketch aesthetic, doodle-like quality, gentle variation in line thickness, authentic handcrafted feel, NOT digital perfect',
+    stroke: 'variable weight 1.5-3px, slight wobble, organic imperfection',
+    palette_mod: 'monochrome or limited 2-color palette, sketch-like fills',
+    composition: 'slightly casual placement, natural hand-drawn spacing',
+    detail: 'gestural detail, hatching or crosshatch for shading, expressive linework',
+    avoid: 'perfectly uniform strokes, digital precision, complex fills, photorealism',
+  },
+  clay_3d: {
+    render: '3D clay render style icon, soft rounded forms with subtle depth, pastel clay material appearance, gentle ambient occlusion shadows, slightly puffy inflated forms, toy-like 3D aesthetic, soft lighting from top-left, gentle drop shadow beneath each object',
+    stroke: 'no visible outline stroke, form defined by 3D volume and lighting',
+    palette_mod: 'soft pastel clay colors, subtle tonal variation for depth',
+    composition: 'slight isometric tilt 10-15 degrees, dimensional presence',
+    detail: 'smooth rounded surfaces, gentle specular highlight on upper surface',
+    avoid: 'harsh outlines, flat 2D appearance, photorealistic textures, complex geometry',
+  },
+  duotone: {
+    render: 'duotone two-color design, graphic print aesthetic, screen-print visual, exactly two colors only — primary dark + vibrant accent, high contrast graphic style, Risograph print aesthetic, halftone dot patterns optional',
+    stroke: 'bold shapes, silhouette-driven design',
+    palette_mod: 'exactly 2 colors: dark base + single vivid accent',
+    composition: 'strong silhouette focus, graphic punch',
+    detail: 'shape-driven, minimal fine detail, maximum graphic impact',
+    avoid: 'full color, gradients, fine linework, photorealism, three or more colors',
+  },
+  pixel_art: {
+    render: 'pixel art style icon set, clean pixel grid, 32x32 or 64x64 pixel resolution aesthetic, retro game graphics style, hard pixel edges, limited color palette 8-16 colors, chunky pixels, 8-bit video game visual language',
+    stroke: 'pixel grid outline, anti-aliasing forbidden, hard pixel edges only',
+    palette_mod: '8-16 colors maximum, retro game palette, indexed colors',
+    composition: 'pixel-perfect grid alignment, chunky readable forms',
+    detail: 'pixel-accurate detail, readable character at small size',
+    avoid: 'smooth curves, gradients, anti-aliasing, photorealism, fine detail',
+  },
+};
+
+var ERA_DNA = {
+  modern_minimal: {
+    era: 'contemporary minimal design 2020s aesthetic, clean geometric forms, Swiss design influence, generous negative space, professional corporate tech visual language',
+    mood: 'calm, professional, trustworthy, precise',
+    color_era: 'muted neutrals, single accent, white space dominant',
+    texture: 'perfectly clean, no texture, no grain',
+    typography_feel: 'geometric sans, precise',
+  },
+  retro_vintage: {
+    era: '1970s-1980s retro design aesthetic, warm analog feel, slightly worn and distressed, vintage commercial illustration style, nostalgic warmth, badge and label design influence',
+    mood: 'nostalgic, warm, approachable, classic',
+    color_era: 'warm orange, mustard yellow, cream, burgundy, worn browns',
+    texture: 'subtle paper grain, slight halftone dots, vintage print texture',
+    typography_feel: 'slab serif, condensed vintage lettering',
+  },
+  futuristic_cyber: {
+    era: 'futuristic sci-fi aesthetic 2070s, cyberpunk and solarpunk design language, tech-forward, digital circuit motifs, neon accent on dark base, holographic shimmer suggestion',
+    mood: 'cutting-edge, innovative, dynamic, digital-native',
+    color_era: 'deep navy or black base, electric cyan and purple neon accents',
+    texture: 'circuit board micro-detail, grid lines, tech scan lines',
+    typography_feel: 'geometric techno, angular, monospaced',
+  },
+  organic_handmade: {
+    era: 'artisan handcrafted aesthetic, organic natural forms, folk art and craft illustration tradition, imperfect beautifully human quality, Scandinavian folk design meets modern illustration',
+    mood: 'warm, authentic, human, artisanal, trustworthy',
+    color_era: 'earthy terracotta, sage green, warm cream, natural pigments',
+    texture: 'slight paper texture, linen weave, natural organic grain',
+    typography_feel: 'hand-lettered, warm humanist sans',
+  },
+};
+
+var PERSP_DNA = {
+  front_2d: {
+    view: 'strict front-facing 2D view, zero perspective, orthographic projection, flat on picture plane, no angle no tilt no rotation, direct face-on presentation',
+    spatial: 'completely flat 2D space, no depth suggestion',
+    framing: 'symmetric centered composition, equal margins all sides',
+  },
+  isometric_3d: {
+    view: 'isometric projection view, 30-degree angle consistent for all icons, three visible faces — top front right, no perspective distortion, clean technical 3D',
+    spatial: 'equal dimensions all three visible axes, geometric precision',
+    framing: 'isometric diamond footprint, centered in cell',
+  },
+  top_down: {
+    view: "strict birds-eye top-down view looking directly downward 90 degrees, as if camera is directly above object, flat circular or square footprint visible, overhead plan view",
+    spatial: 'plan view, circular or square layout, radial symmetry preferred',
+    framing: 'centered in cell, strong overhead read',
+  },
+  side_silhouette: {
+    view: 'pure profile silhouette view from exact side — 90 degrees lateral, left-facing, strong clean silhouette edge, highly recognizable form language',
+    spatial: 'completely flat side profile, strong silhouette value',
+    framing: 'centered horizontally, clear profile read',
+  },
+};
+
+var COMPLEXITY_DNA = {
+  simple: {
+    level: 'SIMPLE complexity level — essential forms only, minimum viable design, readable at 16px, maximum 5-7 anchor points per shape, NO decorative detail, pure iconic reduction, symbol clarity priority',
+    detail_count: '3-5 visual elements per icon maximum',
+    stroke_detail: 'single-purpose shapes, no embellishment',
+    use_case: 'App icons, UI symbols, small-size usage',
+  },
+  medium: {
+    level: 'MEDIUM complexity level — balanced detail, clear subject with moderate secondary elements, 8-15 anchor points per shape, select decorative accents, strong readability at 32px',
+    detail_count: '6-10 visual elements per icon',
+    stroke_detail: 'primary + secondary visual elements, selective detail',
+    use_case: 'Web icons, presentations, medium-size print',
+  },
+  ornate: {
+    level: 'ORNATE complexity level — rich decorative detail, intricate patterns and textures, fine linework, multiple visual layers, detailed secondary elements, ornamental borders or frames, premium illustration quality, 20+ elements per icon acceptable',
+    detail_count: '12-20+ visual elements per icon',
+    stroke_detail: 'multiple detail layers, decorative fills, rich texture',
+    use_case: 'Large print, poster, premium packaging, wall art',
+  },
+};
+
+var PALETTE_SETS = {
+  flat_line:    {primary:'#1a1a2e', accent:'#0066ff', bg:'white'},
+  bold_filled:  {primary:'#ff4d00', accent:'#ffd600', bg:'white'},
+  outline_sketch:{primary:'#2d2d2d', accent:'#e85d04', bg:'white'},
+  clay_3d:      {primary:'#ffb3c6', accent:'#a8dadc', bg:'white'},
+  duotone:      {primary:'#0d0d0d', accent:'#ff6b6b', bg:'white'},
+  pixel_art:    {primary:'#3d348b', accent:'#f7b731', bg:'white'},
+};
+
+var ERA_PALETTES = {
+  modern_minimal:   ['#f5f5f5','#2d2d2d','#0052cc'],
+  retro_vintage:    ['#f4e4c1','#8b3a3a','#d97c2b'],
+  futuristic_cyber: ['#0a0a1a','#00f5ff','#bf5af2'],
+  organic_handmade: ['#f0e6d3','#5c4a37','#7a9e5e'],
+};
+
+// ── AXIS LABELS ──
+var AXIS_LABELS = {
+  flat_line:'Flat Line', bold_filled:'Bold Filled', outline_sketch:'Outline Sketch',
+  clay_3d:'Clay 3D', duotone:'Duotone', pixel_art:'Pixel Art',
+  modern_minimal:'Modern Minimal', retro_vintage:'Retro Vintage',
+  futuristic_cyber:'Futuristic Cyber', organic_handmade:'Organic Handmade',
+  front_2d:'Front 2D', isometric_3d:'Isometric 3D',
+  top_down:'Top Down', side_silhouette:'Side Silhouette',
+  simple:'Simple', medium:'Medium', ornate:'Ornate',
+};
+
+var AXIS_COLORS = {
+  flat_line:'#00d4b8', bold_filled:'#ff6820', outline_sketch:'#f0b800',
+  clay_3d:'#ff3d7f', duotone:'#7c5fff', pixel_art:'#00cc6a',
+  modern_minimal:'#00d4b8', retro_vintage:'#f0b800',
+  futuristic_cyber:'#7c5fff', organic_handmade:'#00cc6a',
+  front_2d:'#ff6820', isometric_3d:'#00d4b8', top_down:'#f0b800', side_silhouette:'#ff3d7f',
+};
+
+// ═══════════════════════════════
+// RENDER INIT
+// ═══════════════════════════════
+function init(){
+  renderCountPills();
+  renderStratGrid();
+  renderComplexity();
+  renderVcountRow();
+}
+
+function renderCountPills(){
+  var r=document.getElementById('countPills');r.innerHTML='';
+  [16,24,25,32,36].forEach((n,i)=>{
+    var el=document.createElement('span');
+    el.className='apill'+(n===STATE.count?' on':'');
+    el.textContent=n+' icons';
+    el.onclick=()=>{STATE.count=n;document.querySelectorAll('#countPills .apill').forEach(x=>x.classList.remove('on'));el.classList.add('on');};
+    r.appendChild(el);
+  });
+}
+
+function renderStratGrid(){
+  var g=document.getElementById('stratGrid');g.innerHTML='';
+  STRATEGIES.forEach(s=>{
+    var el=document.createElement('div');
+    el.className='strat-card'+(STATE.strategies.has(s.id)?' on':'');
+    el.innerHTML=`<div class="strat-num">${s.num}</div><div class="strat-name">${s.name}</div><div class="strat-desc">${s.desc}</div><div class="strat-axes">${s.axes.slice(0,3).map(a=>`<span class="sax" style="background:${s.color}22;color:${s.color}">${AXIS_LABELS[a]||a}</span>`).join('')}</div><div class="strat-check">✓</div>`;
+    el.onclick=()=>{
+      el.classList.toggle('on');
+      STATE.strategies.has(s.id)?STATE.strategies.delete(s.id):STATE.strategies.add(s.id);
+      renderAxisSelectors();
+    };
+    g.appendChild(el);
+  });
+}
+
+function renderComplexity(){
+  var r=document.getElementById('cplxRow');r.innerHTML='';
+  [{id:'simple',icon:'◻',name:'Simple',desc:'5–7 elemen'},
+   {id:'medium',icon:'◧',name:'Medium',desc:'8–15 elemen'},
+   {id:'ornate',icon:'◼',name:'Ornate',desc:'20+ elemen'}].forEach(c=>{
+    var el=document.createElement('div');
+    el.className='cplx'+(STATE.complexity===c.id?' on':'');
+    el.innerHTML=`<div class="cplx-icon">${c.icon}</div><div class="cplx-name">${c.name}</div><div class="cplx-desc">${c.desc}</div>`;
+    el.onclick=()=>{STATE.complexity=c.id;document.querySelectorAll('.cplx').forEach(x=>x.classList.remove('on'));el.classList.add('on');};
+    r.appendChild(el);
+  });
+}
+
+function renderVcountRow(){
+  var r=document.getElementById('vcountRow');r.innerHTML='';
+  [2,4,6,8,12].forEach((n,i)=>{
+    var el=document.createElement('span');
+    el.className='apill'+(n===STATE.varCount?' on':'');
+    el.textContent=n+' variasi';
+    el.onclick=()=>{
+      STATE.varCount=n;
+      document.querySelectorAll('#vcountRow .apill').forEach(x=>x.classList.remove('on'));
+      el.classList.add('on');
+      updateVcountInfo(n);
+    };
+    r.appendChild(el);
+  });
+  updateVcountInfo(STATE.varCount);
+}
+
+function updateVcountInfo(n){
+  var el=document.getElementById('vcountInfo');
+  var rec = n<=4?'✅ Optimal untuk Adobe':n<=8?'✅ Aman — spread upload 3 hari':'⚠️ Submit bertahap 5–7 hari';
+  el.textContent=rec;
+}
+
+function renderAxisSelectors(){
+  var body=document.getElementById('axisBody');body.innerHTML='';
+  if(STATE.strategies.size===0){body.innerHTML='<div style="font-size:11px;color:var(--muted);text-align:center;padding:10px">Aktifkan minimal 1 strategi →</div>';return;}
+
+  if(STATE.strategies.has('style_axis')){
+    body.appendChild(buildAxisGroup('Style rendering',
+      ['flat_line','bold_filled','outline_sketch','clay_3d','duotone','pixel_art'],
+      STATE.styleAxes,'styleAxes','#00d4b8'));
+  }
+  if(STATE.strategies.has('era_mood')){
+    body.appendChild(buildAxisGroup('Era & mood',
+      ['modern_minimal','retro_vintage','futuristic_cyber','organic_handmade'],
+      STATE.eraAxes,'eraAxes','#f0b800'));
+  }
+  if(STATE.strategies.has('perspective')){
+    body.appendChild(buildAxisGroup('Perspective',
+      ['front_2d','isometric_3d','top_down','side_silhouette'],
+      STATE.perspAxes,'perspAxes','#ff6820'));
+  }
+}
+
+function buildAxisGroup(title, axes, activeSet, stateKey, color){
+  var div=document.createElement('div');
+  div.className='axis-group';
+  var head=document.createElement('div');head.className='axis-head';
+  var t=document.createElement('span');t.className='axis-title';t.textContent=title;
+  var cnt=document.createElement('span');cnt.className='axis-cnt';cnt.id='cnt-'+stateKey;
+  cnt.textContent=activeSet.size+' aktif';
+  head.appendChild(t);head.appendChild(cnt);div.appendChild(head);
+  var pills=document.createElement('div');pills.className='axis-pills';
+  axes.forEach(a=>{
+    var p=document.createElement('span');
+    p.className='apill'+(activeSet.has(a)?' on':'');
+    p.textContent=AXIS_LABELS[a]||a;
+    p.style.setProperty('--hover-col',color);
+    p.onclick=()=>{
+      p.classList.toggle('on');
+      activeSet.has(a)?activeSet.delete(a):activeSet.add(a);
+      document.getElementById('cnt-'+stateKey).textContent=activeSet.size+' aktif';
+    };
+    pills.appendChild(p);
+  });
+  div.appendChild(pills);
+  return div;
+}
+
+// ═══════════════════════════════
+// PROMPT BUILDERS
+// ═══════════════════════════════
+function buildVariationPrompt(varIndex, styleId, eraId, perspId, complexityId, theme, count){
+  var sd = STYLE_DNA[styleId] || STYLE_DNA.flat_line;
+  var ed = ERA_DNA[eraId] || ERA_DNA.modern_minimal;
+  var pd = PERSP_DNA[perspId] || PERSP_DNA.front_2d;
+  var cd = COMPLEXITY_DNA[complexityId] || COMPLEXITY_DNA.medium;
+  var pal = PALETTE_SETS[styleId] || PALETTE_SETS.flat_line;
+  var epals = ERA_PALETTES[eraId] || ERA_PALETTES.modern_minimal;
+
+  var grid = getGrid(count);
+
+  return `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ADOBE STOCK ICON SET — VARIATION ${String(varIndex+1).padStart(2,'0')}
+Theme: ${theme.toUpperCase()} | Style: ${AXIS_LABELS[styleId]} | Era: ${AXIS_LABELS[eraId]}
+View: ${AXIS_LABELS[perspId]} | Complexity: ${complexityId.toUpperCase()}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Create a professional ${theme} icon set for Adobe Stock.
+Exactly ${count} unique icons arranged in a ${grid} grid.
+Background: WHITE #FFFFFF — absolutely no colored or dark background.
+
+━━ RENDERING STYLE ━━
+${sd.render}
+Stroke definition: ${sd.stroke}
+Color application: ${sd.palette_mod}
+Composition per cell: ${sd.composition}
+Detail approach: ${sd.detail}
+AVOID: ${sd.avoid}
+
+━━ ERA & MOOD ━━
+${ed.era}
+Mood: ${ed.mood}
+Color era palette: ${ed.color_era} / Hex reference: ${epals.join(' · ')}
+Texture treatment: ${ed.texture}
+
+━━ PERSPECTIVE & FRAMING ━━
+${pd.view}
+Spatial treatment: ${pd.spatial}
+Cell framing: ${pd.framing}
+
+━━ COMPLEXITY ━━
+${cd.level}
+Elements per icon: ${cd.detail_count}
+Detail approach: ${cd.stroke_detail}
+Optimal use case: ${cd.use_case}
+
+━━ ICON SUBJECTS — ALL ${count} MUST BE UNIQUE ━━
+Generate ${count} distinct ${theme} icons. Every icon must represent a different
+specific object, tool, or concept within the ${theme} category.
+NO TWO ICONS should depict the same subject — vary subjects maximally.
+All ${count} subjects must be clearly identifiable at 256×256px cell size.
+
+━━ GRID SPECIFICATION ━━
+Canvas: ${getCanvas(count)} pixels | Grid: ${grid} | Cell: 256×256px each
+Equal spacing between all cells — consistent margin all sides.
+Icons must NOT overlap cell boundaries.
+Label each icon with small centered text below — clean readable font.
+
+━━ ADOBE STOCK COMPLIANCE ━━
+✓ Background: WHITE only — no grey, no colored backgrounds
+✓ No watermarks, no signatures, no copyright marks
+✓ Declare as Generative AI on upload
+✓ Format: SVG preferred, PNG at minimum 4MP
+✓ All icons original — no trademarked logos or brand marks
+✓ Consistent visual style across all ${count} icons in this set
+
+━━ QUALITY STANDARD ━━
+Commercial-grade vector illustration quality.
+Each icon must work as standalone AND as part of the set.
+Consistent visual weight, proportions, and style DNA throughout.`;
+}
+
+function getGrid(count){
+  var grids={16:'4×4',24:'6×4',25:'5×5',32:'8×4',36:'6×6'};
+  return grids[count]||'6×4';
+}
+function getCanvas(count){
+  var c={16:'1024×1024',24:'1536×1024',25:'1280×1280',32:'2048×1024',36:'1536×1536'};
+  return c[count]||'1536×1024';
+}
+
+// ═══════════════════════════════
+// COMBINATION ENGINE
+// ═══════════════════════════════
+function buildCombinations(){
+  var styleArr = STATE.strategies.has('style_axis') ? Array.from(STATE.styleAxes) : ['flat_line'];
+  var eraArr   = STATE.strategies.has('era_mood')   ? Array.from(STATE.eraAxes)  : ['modern_minimal'];
+  var perspArr = STATE.strategies.has('perspective') ? Array.from(STATE.perspAxes): ['front_2d'];
+  var cplxArr  = STATE.strategies.has('complexity')  ? [STATE.complexity]         : [STATE.complexity];
+
+  // Build all combinations
+  var combos=[];
+  for(var s of styleArr){
+    for(var e of eraArr){
+      for(var p of perspArr){
+        for(var c of cplxArr){
+          combos.push({style:s,era:e,persp:p,complexity:c});
+        }
+      }
+    }
+  }
+
+  // Shuffle for diversity, pick STATE.varCount
+  combos=shuffleArray(combos);
+
+  // Ensure maximum diversity — pick combos with maximum dimension spread
+  var selected=selectMaxDiversity(combos, STATE.varCount);
+  return selected;
+}
+
+function shuffleArray(arr){
+  var a=[...arr];
+  for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function selectMaxDiversity(combos, n){
+  if(combos.length<=n)return combos;
+  // Greedy: pick combos that maximize # of unique values seen across dimensions
+  var seen={style:new Set(),era:new Set(),persp:new Set(),complexity:new Set()};
+  var result=[];
+  var remaining=[...combos];
+  while(result.length<n && remaining.length>0){
+    // Score: count new unique values each combo would add
+    var bestScore=-1,bestIdx=0;
+    remaining.forEach((c,i)=>{
+      var score=0;
+      if(!seen.style.has(c.style))score+=4;
+      if(!seen.era.has(c.era))score+=3;
+      if(!seen.persp.has(c.persp))score+=2;
+      if(!seen.complexity.has(c.complexity))score+=1;
+      if(score>bestScore){bestScore=score;bestIdx=i;}
+    });
+    var chosen=remaining.splice(bestIdx,1)[0];
+    result.push(chosen);
+    seen.style.add(chosen.style);
+    seen.era.add(chosen.era);
+    seen.persp.add(chosen.persp);
+    seen.complexity.add(chosen.complexity);
+  }
+  return result;
+}
+
+// ═══════════════════════════════
+// UNIQUENESS SCORING
+// ═══════════════════════════════
+function calcUniquenessScore(combos){
+  if(combos.length<=1)return 100;
+  var dims={style:new Set(),era:new Set(),persp:new Set(),complexity:new Set()};
+  combos.forEach(c=>{dims.style.add(c.style);dims.era.add(c.era);dims.persp.add(c.persp);dims.complexity.add(c.complexity);});
+  var maxPerDim=combos.length;
+  var styleScore=dims.style.size/Math.min(maxPerDim,6);
+  var eraScore=dims.era.size/Math.min(maxPerDim,4);
+  var perspScore=dims.persp.size/Math.min(maxPerDim,4);
+  var cplxScore=dims.complexity.size/Math.min(maxPerDim,3);
+  return Math.round(((styleScore+eraScore+perspScore+cplxScore)/4)*100);
+}
+
+function calcDiffScore(comboA, comboB){
+  var score=0;
+  if(comboA.style!==comboB.style)score+=40;
+  if(comboA.era!==comboB.era)score+=25;
+  if(comboA.persp!==comboB.persp)score+=25;
+  if(comboA.complexity!==comboB.complexity)score+=10;
+  return score;
+}
+
+// ═══════════════════════════════
+// FINGERPRINT MAP
+// ═══════════════════════════════
+function renderFingerprintMap(combos){
+  var panel=document.getElementById('fpPanel');
+  var grid=document.getElementById('fpGrid');
+  panel.style.display='block';
+  grid.innerHTML='';
+
+  var dims=[
+    {key:'style',label:'Rendering',values:['flat_line','bold_filled','outline_sketch','clay_3d','duotone','pixel_art'],color:'#00d4b8'},
+    {key:'era',label:'Era/Mood',values:['modern_minimal','retro_vintage','futuristic_cyber','organic_handmade'],color:'#f0b800'},
+    {key:'persp',label:'Perspective',values:['front_2d','isometric_3d','top_down','side_silhouette'],color:'#ff6820'},
+    {key:'complexity',label:'Complexity',values:['simple','medium','ornate'],color:'#7c5fff'},
+  ];
+
+  dims.forEach(dim=>{
+    var valueCount={};
+    dim.values.forEach(v=>valueCount[v]=0);
+    combos.forEach(c=>{ if(valueCount[c[dim.key]]!==undefined)valueCount[c[dim.key]]++; });
+
+    var dc=document.createElement('div');dc.className='dp-dim';
+    dc.style.gridColumn='span 1';
+    var nameEl=document.createElement('div');nameEl.className='dp-name';nameEl.textContent=dim.label;
+    dc.appendChild(nameEl);
+    var bars=document.createElement('div');bars.className='dp-bars';
+    dim.values.forEach(v=>{
+      var cnt=valueCount[v]||0;
+      if(cnt===0)return;
+      var row=document.createElement('div');row.className='dp-bar-row';
+      var lbl=document.createElement('div');lbl.className='dp-bar-label';
+      lbl.textContent=(AXIS_LABELS[v]||v).slice(0,4);
+      var track=document.createElement('div');track.className='dp-bar-track';
+      var fill=document.createElement('div');fill.className='dp-bar-fill';
+      fill.style.width=Math.round((cnt/combos.length)*100)+'%';
+      fill.style.background=dim.color;
+      track.appendChild(fill);row.appendChild(lbl);row.appendChild(track);bars.appendChild(row);
+    });
+    dc.appendChild(bars);
+    // unique count badge
+    var unique=dim.values.filter(v=>valueCount[v]>0).length;
+    var badge=document.createElement('div');
+    badge.style.cssText='font-size:8px;color:'+dim.color+';margin-top:4px;font-weight:600';
+    badge.textContent=unique+'/'+dim.values.length+' variants';
+    dc.appendChild(badge);
+    grid.appendChild(dc);
+  });
+
+  // Overall uniqueness bar
+  var score=calcUniquenessScore(combos);
+  var overall=document.createElement('div');overall.className='dp-dim';
+  overall.style.background='rgba(91,63,255,.1)';overall.style.border='1px solid rgba(91,63,255,.3)';
+  overall.innerHTML=`<div class="dp-name" style="color:#7c5fff">Overall</div>
+    <div style="font-size:22px;font-weight:700;color:${score>=75?'#00cc6a':score>=50?'#f0b800':'#ff3333'};margin:4px 0">${score}%</div>
+    <div style="font-size:8.5px;color:var(--muted3)">${score>=75?'✅ Adobe safe':score>=50?'⚠️ Borderline':'❌ Too similar'}</div>`;
+  grid.appendChild(overall);
+}
+
+// ═══════════════════════════════
+// VARIATION CARD BADGE COLORS
+// ═══════════════════════════════
+var BADGE_COLORS={
+  flat_line:{bg:'rgba(0,212,184,.12)',c:'#00d4b8'},
+  bold_filled:{bg:'rgba(255,104,32,.12)',c:'#ff6820'},
+  outline_sketch:{bg:'rgba(240,184,0,.12)',c:'#f0b800'},
+  clay_3d:{bg:'rgba(255,61,127,.12)',c:'#ff3d7f'},
+  duotone:{bg:'rgba(124,95,255,.12)',c:'#7c5fff'},
+  pixel_art:{bg:'rgba(0,204,106,.12)',c:'#00cc6a'},
+  modern_minimal:{bg:'rgba(0,212,184,.1)',c:'#00d4b8'},
+  retro_vintage:{bg:'rgba(240,184,0,.1)',c:'#f0b800'},
+  futuristic_cyber:{bg:'rgba(124,95,255,.1)',c:'#7c5fff'},
+  organic_handmade:{bg:'rgba(0,204,106,.1)',c:'#00cc6a'},
+  front_2d:{bg:'rgba(238,238,255,.06)',c:'#aaaacc'},
+  isometric_3d:{bg:'rgba(0,212,184,.08)',c:'#00d4b8'},
+  top_down:{bg:'rgba(240,184,0,.08)',c:'#f0b800'},
+  side_silhouette:{bg:'rgba(255,104,32,.08)',c:'#ff6820'},
+  simple:{bg:'rgba(0,204,106,.08)',c:'#00cc6a'},
+  medium:{bg:'rgba(91,63,255,.1)',c:'#7c5fff'},
+  ornate:{bg:'rgba(255,61,127,.1)',c:'#ff3d7f'},
+};
+function badge(id){
+  var bc=BADGE_COLORS[id]||{bg:'rgba(170,170,200,.1)',c:'#aaaacc'};
+  return `<span class="vc-badge" style="background:${bc.bg};color:${bc.c}">${AXIS_LABELS[id]||id}</span>`;
+}
+
+// ═══════════════════════════════
+// MAIN GENERATE
+// ═══════════════════════════════
+var GENERATED_COMBOS=[];
+var GENERATED_PROMPTS=[];
+
+function doGenerate(){
+  var theme=document.getElementById('themeInput').value.trim();
+  if(!theme){document.getElementById('themeInput').focus();document.getElementById('themeInput').placeholder='⚠️ Isi tema dulu!';return;}
+
+  var combos=buildCombinations();
+  GENERATED_COMBOS=combos;
+  GENERATED_PROMPTS=[];
+
+  var score=calcUniquenessScore(combos);
+  var uniqueDims=new Set(['style','era','persp','complexity'].filter(dim=>{
+    var vals=new Set(combos.map(c=>c[dim]));return vals.size>1;
+  })).size;
+
+  // Update summary
+  document.getElementById('varSummary').style.display='grid';
+  document.getElementById('sumCount').textContent=combos.length;
+  document.getElementById('sumDims').textContent=uniqueDims;
+  document.getElementById('sumScore').textContent=score+'%';
+  document.getElementById('sumPass').textContent=score>=60?'✅':'⚠️';
+
+  // Fingerprint map
+  renderFingerprintMap(combos);
+
+  // Build variation cards
+  var grid=document.getElementById('varGrid');
+  grid.innerHTML='';
+  var vgrid=document.createElement('div');vgrid.className='var-grid';
+
+  combos.forEach((combo,i)=>{
+    var prompt=buildVariationPrompt(i,combo.style,combo.era,combo.persp,combo.complexity,theme,STATE.count);
+    GENERATED_PROMPTS.push(prompt);
+
+    // diff vs first
+    var diffScore=i===0?100:calcDiffScore(combos[0],combo);
+
+    var card=document.createElement('div');card.className='var-card';
+    var colPair=`${AXIS_LABELS[combo.style]} × ${AXIS_LABELS[combo.era]}`;
+    card.innerHTML=`
+      <div class="vc-head">
+        <div>
+          <div class="vc-id">VAR ${String(i+1).padStart(2,'0')}</div>
+          <div class="vc-name">${colPair}</div>
+        </div>
+        <div class="vc-badges">
+          ${badge(combo.style)}${badge(combo.era)}${badge(combo.persp)}${badge(combo.complexity)}
+        </div>
+      </div>
+      <div class="vc-body">
+        <div class="vc-prompt" id="vp-${i}">${prompt}</div>
+      </div>
+      <div class="vc-footer">
+        <button class="copy-btn" onclick="copyVar(${i})">Copy</button>
+        <span class="diff-score">vs Var 01: <span style="color:${diffScore>=70?'#00cc6a':diffScore>=40?'#f0b800':'#ff4444'}">${diffScore}% diff</span><span class="diff-bar"><span class="diff-fill" style="width:${diffScore}%"></span></span></span>
+      </div>`;
+    vgrid.appendChild(card);
+  });
+
+  grid.appendChild(vgrid);
+
+  // Bundle
+  buildBundle(combos, theme);
+  document.getElementById('bundleBox').style.display='block';
+  document.querySelector('.var-summary').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function buildBundle(combos, theme){
+  var lines=[
+    '════════════════════════════════════════════════════════',
+    `ADOBE STOCK BUNDLE — ${theme.toUpperCase()}`,
+    `${combos.length} VARIATIONS · MAXIMUM VISUAL DIVERSITY · ADOBE-SAFE`,
+    '════════════════════════════════════════════════════════',
+    '',
+    `STRATEGY APPLIED: Style Axis × Era/Mood × Perspective × Complexity`,
+    `Uniqueness Score: ${calcUniquenessScore(combos)}% · All ${combos.length} files visually distinct`,
+    '',
+    '── UPLOAD INSTRUCTIONS ──',
+    '1. Generate each variation separately in NB2/Gemini',
+    '2. Export as SVG + PNG (4MP minimum)',
+    '3. Declare "Generative AI" on every upload',
+    '4. Upload variation 1 first, wait 48hrs, then next',
+    '5. Use unique Title/Description per variation (see metadata below)',
+    '',
+    '── METADATA PER VARIATION ──',
+  ];
+
+  combos.forEach((c,i)=>{
+    var theme2=document.getElementById('themeInput').value.trim();
+    lines.push(`VAR ${String(i+1).padStart(2,'0')}: "${AXIS_LABELS[c.style]} ${theme2} Icons" | ${AXIS_LABELS[c.era]} | ${AXIS_LABELS[c.persp]} view | ${c.complexity} detail`);
+  });
+
+  lines.push('','════════════════════════════════════════════════════════','');
+  combos.forEach((c,i)=>{lines.push(GENERATED_PROMPTS[i]);lines.push('');lines.push('──────────────────────────────────────────────────────');lines.push('');});
+
+  document.getElementById('bundlePrompt').textContent=lines.join('\n');
+}
+
+function copyVar(i){
+  navigator.clipboard.writeText(GENERATED_PROMPTS[i]).then(()=>{
+    var btns=document.querySelectorAll('.copy-btn');
+    btns[i].textContent='✓ Copied!';btns[i].classList.add('ok');
+    setTimeout(()=>{btns[i].textContent='Copy';btns[i].classList.remove('ok');},2000);
+  });
+}
+function copyBundle(){
+  var txt=document.getElementById('bundlePrompt').textContent;
+  navigator.clipboard.writeText(txt).then(()=>{
+    var btn=document.querySelector('.bb-btn.secondary');
+    btn.textContent='✓ Copied!';
+    setTimeout(()=>{btn.textContent='Copy Bundle';},2000);
+  });
+}
+function downloadBundle(){
+  var txt=document.getElementById('bundlePrompt').textContent;
+  var theme=document.getElementById('themeInput').value.trim().replace(/\s+/g,'_');
+  var blob=new Blob([txt],{type:'text/plain'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`adobe_safe_bundle_${theme}_${GENERATED_COMBOS.length}var.txt`;
+  a.click();
+}
+
+// INIT
+init();
+renderAxisSelectors();
+</script>
+</body>
+</html>
+HTMLEOF
+echo "Done"
