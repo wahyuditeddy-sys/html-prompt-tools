@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Edu Infographic Prompt Studio</title>
+<style>
+:root{
+  --bg:#0f1117;--bg2:#161b22;--bg3:#1c2230;--bg4:#21283a;
+  --border:#2a3347;--border2:#334155;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,.13);--blue-bd:rgba(59,130,246,.3);
+  --green:#22c55e;--green-bg:rgba(34,197,94,.13);--green-bd:rgba(34,197,94,.3);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.13);--amber-bd:rgba(245,158,11,.3);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.13);--red-bd:rgba(239,68,68,.3);
+  --purple:#a855f7;--purple-bg:rgba(168,85,247,.13);--purple-bd:rgba(168,85,247,.3);
+  --cyan:#06b6d4;--cyan-bg:rgba(6,182,212,.13);--cyan-bd:rgba(6,182,212,.3);
+  --r:10px;--rs:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.app{max-width:960px;margin:0 auto;padding:20px 14px}
+
+/* Header */
+.hdr{display:flex;align-items:flex-start;gap:14px;padding-bottom:18px;margin-bottom:18px;border-bottom:1px solid var(--border)}
+.hdr-icon{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,#1d4ed8,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.hdr h1{font-size:18px;font-weight:600;color:var(--text)}
+.hdr p{font-size:12px;color:var(--text2);margin-top:3px;line-height:1.5}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{font-size:11px;padding:2px 9px;border-radius:20px;border:1px solid var(--border);color:var(--text3)}
+
+/* Two column layout */
+.layout{display:grid;grid-template-columns:300px 1fr;gap:14px}
+@media(max-width:700px){.layout{grid-template-columns:1fr}}
+.sidebar{display:flex;flex-direction:column;gap:10px}
+
+/* Cards */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.card-title{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.card-title span{font-size:14px}
+
+/* Jenjang selector */
+.jenjang-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.jj{border:1.5px solid var(--border);border-radius:var(--rs);padding:10px 8px;cursor:pointer;transition:.15s;text-align:center;background:var(--bg3)}
+.jj:hover{border-color:var(--blue)}
+.jj.sel{border-color:var(--blue);background:var(--blue-bg)}
+.jj-icon{font-size:22px;margin-bottom:4px}
+.jj-label{font-size:12px;font-weight:600;color:var(--text)}
+.jj-sub{font-size:10px;color:var(--text3);margin-top:2px}
+
+/* Mapel selector */
+.mapel-pills{display:flex;flex-wrap:wrap;gap:5px}
+.mp{font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:12px;cursor:pointer;color:var(--text2);transition:.15s;background:var(--bg3)}
+.mp:hover{border-color:var(--blue);color:var(--blue)}
+.mp.sel{background:var(--blue-bg);border-color:var(--blue-bd);color:var(--blue);font-weight:500}
+
+/* Mode / gaya grid */
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mode-card{border:1.5px solid var(--border);border-radius:var(--rs);padding:8px 10px;cursor:pointer;transition:.15s;background:var(--bg3)}
+.mode-card:hover{border-color:var(--purple)}
+.mode-card.sel{border-color:var(--purple);background:var(--purple-bg)}
+.mode-icon{font-size:16px;float:left;margin-right:6px;margin-top:1px}
+.mode-name{font-size:11.5px;font-weight:600;color:var(--text)}
+.mode-desc{font-size:10px;color:var(--text3);margin-top:2px;line-height:1.3}
+
+/* BG Options */
+.bg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.bg-opt{border:2px solid var(--border);border-radius:var(--rs);padding:5px 4px;cursor:pointer;text-align:center;transition:.15s;font-size:9px;color:var(--text3)}
+.bg-opt:hover,.bg-opt.sel{border-color:var(--blue)}
+.bg-opt.sel{background:var(--blue-bg)}
+.bg-sw{width:100%;height:18px;border-radius:3px;margin-bottom:3px}
+
+/* Platform chips */
+.plat-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.plat-btn{border:1.5px solid var(--border);border-radius:var(--rs);padding:6px 8px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:7px;background:var(--bg3)}
+.plat-btn:hover{border-color:var(--amber)}
+.plat-btn.sel{border-color:var(--amber-bd);background:var(--amber-bg)}
+.plat-btn-icon{font-size:16px}
+.plat-btn-name{font-size:11px;font-weight:500;color:var(--text)}
+.plat-btn-note{font-size:9.5px;color:var(--text3)}
+
+/* Language pills */
+.lang-row{display:flex;gap:5px}
+.lang-btn{font-size:11px;padding:5px 12px;border:1px solid var(--border);border-radius:20px;cursor:pointer;color:var(--text2);transition:.15s;background:var(--bg3)}
+.lang-btn:hover{border-color:var(--cyan)}
+.lang-btn.sel{background:var(--cyan-bg);border-color:var(--cyan-bd);color:var(--cyan);font-weight:500}
+
+/* Form elements */
+.field label{font-size:11px;color:var(--text2);display:block;margin-bottom:5px;font-weight:500}
+input,select,textarea{width:100%;font-size:13px;border:1px solid var(--border);border-radius:var(--rs);background:var(--bg3);color:var(--text);padding:7px 10px;outline:none;transition:.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);background:var(--bg4)}
+textarea{resize:vertical;min-height:52px;font-family:inherit;line-height:1.5}
+select option{background:var(--bg3)}
+
+/* Topic pills */
+.topic-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.tp{font-size:10.5px;padding:3px 9px;border:1px solid var(--border);border-radius:12px;cursor:pointer;color:var(--text3);transition:.12s;background:var(--bg3)}
+.tp:hover{border-color:var(--green);color:var(--green);background:var(--green-bg)}
+
+/* Format / DPI */
+.fmt-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px}
+.fmt-btn{font-size:11px;padding:4px 12px;border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;color:var(--text2);background:var(--bg3);transition:.15s}
+.fmt-btn.sel{background:var(--amber-bg);border-color:var(--amber-bd);color:var(--amber)}
+.sz-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.sz-opt{border:1px solid var(--border);border-radius:var(--rs);padding:6px 7px;cursor:pointer;transition:.15s;text-align:center;background:var(--bg3)}
+.sz-opt:hover,.sz-opt.sel{border-color:var(--amber)}
+.sz-opt.sel{background:var(--amber-bg)}
+.sz-name{font-size:11px;font-weight:500;color:var(--text)}
+.sz-dim{font-size:9.5px;color:var(--text3);font-family:monospace}
+.sz-use{font-size:9px;color:var(--text3)}
+.dpi-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px}
+.dpi-btn{font-size:10.5px;padding:3px 9px;border:1px solid var(--border);border-radius:var(--rs);cursor:pointer;background:var(--bg3);color:var(--text2);transition:.15s}
+.dpi-btn.sel{background:var(--green-bg);border-color:var(--green-bd);color:var(--green)}
+
+/* Generate button */
+.gen-btn{width:100%;font-size:14px;font-weight:600;padding:12px;border-radius:var(--r);border:none;background:linear-gradient(135deg,#1d4ed8,#7c3aed);color:#fff;cursor:pointer;transition:.15s;margin-top:4px}
+.gen-btn:hover{opacity:.9;transform:translateY(-1px)}
+.gen-btn:active{transform:scale(.98)}
+
+/* Output area */
+.output-area{display:flex;flex-direction:column;gap:10px}
+
+/* Tabs */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);flex-wrap:wrap;margin-bottom:12px}
+.tab{font-size:12px;padding:7px 12px;border:none;background:none;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:.15s}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:500}
+.panel{display:none}.panel.active{display:block}
+
+/* Prompt box */
+.prompt-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.pb-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px}
+.platform-tag{font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px;color:#fff;letter-spacing:.04em}
+.pb-meta{font-size:10px;color:var(--text3);font-family:monospace}
+.output-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);padding:12px;font-family:'Cascadia Code','Fira Code',monospace;font-size:11px;color:#c4d4f0;white-space:pre-wrap;word-break:break-word;line-height:1.7;max-height:380px;overflow-y:auto}
+.output-box::-webkit-scrollbar{width:4px}
+.output-box::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.copy-btn{font-size:11px;padding:4px 10px;border:1px solid var(--border);border-radius:var(--rs);background:transparent;color:var(--text2);cursor:pointer;transition:.15s;white-space:nowrap}
+.copy-btn:hover{background:var(--bg3)}
+.copy-btn.ok{color:var(--green);border-color:var(--green-bd)}
+
+/* Adobe Stock metadata */
+.meta-block{background:var(--bg2);border:1px solid var(--amber-bd);border-radius:var(--r);padding:14px}
+.meta-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.meta-title{font-size:12px;font-weight:600;color:var(--amber);display:flex;align-items:center;gap:6px}
+.meta-output{background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);padding:10px;font-family:monospace;font-size:10.5px;color:var(--text2);white-space:pre-wrap;line-height:1.7;max-height:280px;overflow-y:auto}
+
+/* Keywords */
+.kw-wrap{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}
+.kw{font-size:11.5px;padding:4px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--text2);cursor:pointer;transition:.15s;user-select:none}
+.kw:hover{border-color:var(--blue);color:var(--blue)}
+.kw.sel{background:var(--blue-bg);border-color:var(--blue-bd);color:var(--blue)}
+.kw-count{font-size:12px;color:var(--text3)}
+.kw-count b{color:var(--amber)}
+.kw-export{background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);padding:10px;font-size:11.5px;color:var(--text2);min-height:44px;word-break:break-all;line-height:1.6;margin-top:8px}
+
+/* Variations */
+.var-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+@media(max-width:600px){.var-grid{grid-template-columns:1fr}}
+.var-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px}
+.var-head{font-size:11px;font-weight:600;margin-bottom:7px;display:flex;justify-content:space-between;align-items:center}
+.var-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);padding:10px;font-family:monospace;font-size:10px;color:#c4d4f0;white-space:pre-wrap;max-height:240px;overflow-y:auto;line-height:1.6}
+
+/* Tips */
+.tip{font-size:12px;color:var(--text2);background:var(--bg3);border-left:2px solid var(--blue);padding:8px 12px;border-radius:0 var(--rs) var(--rs) 0;line-height:1.6;margin-bottom:6px}
+.tip.amber{border-left-color:var(--amber)}
+.tip.green{border-left-color:var(--green)}
+.tip.purple{border-left-color:var(--purple)}
+
+/* Compliance */
+.comp-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.ci{font-size:11px;padding:3px 10px;border-radius:12px;display:flex;align-items:center;gap:3px}
+.ci-ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+.ci-warn{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-bd)}
+
+/* Sec label */
+.sec{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);margin-bottom:7px;margin-top:4px}
+hr{border:none;border-top:1px solid var(--border);margin:10px 0}
+.btn-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+button.small{font-size:12px;padding:5px 12px;border:1px solid var(--border);border-radius:var(--rs);background:transparent;color:var(--text2);cursor:pointer;transition:.15s}
+button.small:hover{background:var(--bg3);color:var(--text)}
+button.small.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+button.small.success{background:var(--green-bg);color:var(--green);border-color:var(--green-bd)}
+.toast{font-size:11px;color:var(--green);display:none}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty-state .big{font-size:36px;margin-bottom:12px}
+.empty-state p{font-size:13px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- Header -->
+<div class="hdr">
+  <div class="hdr-icon">🎓</div>
+  <div>
+    <h1>Edu Infographic Prompt Studio</h1>
+    <p>Generator prompt infografis edukasi untuk SD, SMP, SMA, dan Perguruan Tinggi — Museum Teardown, Poster Kelas, Diagram Proses, dan lebih banyak lagi. Dioptimasi untuk Adobe Stock & stock market.</p>
+    <div class="chips">
+      <span class="chip">Gemini (NB2)</span>
+      <span class="chip">Midjourney v7</span>
+      <span class="chip">DALL·E 3</span>
+      <span class="chip">Adobe Firefly</span>
+      <span class="chip">Adobe Stock</span>
+      <span class="chip">v1.0</span>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+<!-- ═══════════════════════ SIDEBAR ═══════════════════════ -->
+<div class="sidebar">
+
+  <!-- 1. Jenjang -->
+  <div class="card">
+    <div class="card-title"><span>🏫</span> Jenjang Pendidikan</div>
+    <div class="jenjang-grid" id="jenjangGrid">
+      <div class="jj sel" onclick="setJenjang('sd',this)">
+        <div class="jj-icon">📚</div>
+        <div class="jj-label">SD</div>
+        <div class="jj-sub">Kelas 1–6 · 6-12 thn</div>
+      </div>
+      <div class="jj" onclick="setJenjang('smp',this)">
+        <div class="jj-icon">📐</div>
+        <div class="jj-label">SMP</div>
+        <div class="jj-sub">Kelas 7–9 · 12-15 thn</div>
+      </div>
+      <div class="jj" onclick="setJenjang('sma',this)">
+        <div class="jj-icon">🔬</div>
+        <div class="jj-label">SMA</div>
+        <div class="jj-sub">Kelas 10–12 · 15-18 thn</div>
+      </div>
+      <div class="jj" onclick="setJenjang('kuliah',this)">
+        <div class="jj-icon">🎓</div>
+        <div class="jj-label">Kuliah</div>
+        <div class="jj-sub">S1/S2/S3 · 18+ thn</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Mapel -->
+  <div class="card">
+    <div class="card-title"><span>📖</span> Mata Pelajaran</div>
+    <div class="mapel-pills" id="mapelPills"></div>
+  </div>
+
+  <!-- 3. Topik -->
+  <div class="card">
+    <div class="card-title"><span>💡</span> Topik / Materi</div>
+    <div class="field">
+      <input id="topikInput" placeholder="Ketik topik atau pilih contoh di bawah" />
+    </div>
+    <div class="topic-pills" id="topikPills"></div>
+  </div>
+
+  <!-- 4. Gaya Visual -->
+  <div class="card">
+    <div class="card-title"><span>🎨</span> Gaya Visual</div>
+    <div class="mode-grid" id="modeGrid"></div>
+  </div>
+
+  <!-- 5. Background -->
+  <div class="card">
+    <div class="card-title"><span>🖼</span> Background</div>
+    <div class="bg-grid" id="bgGrid">
+      <div class="bg-opt sel" onclick="setBg(this,'Pure White','pure white studio background #FFFFFF, clean product photography style, non-reflective')"><div class="bg-sw" style="background:#fff"></div>Putih</div>
+      <div class="bg-opt" onclick="setBg(this,'Light Blue Academic','soft light blue academic background #EBF4FF, educational reference style')"><div class="bg-sw" style="background:#EBF4FF"></div>Biru Muda</div>
+      <div class="bg-opt" onclick="setBg(this,'Dark Navy Blueprint','dark navy blueprint background #0d2137, technical drawing style')"><div class="bg-sw" style="background:#0d2137"></div>Blueprint</div>
+      <div class="bg-opt" onclick="setBg(this,'Cream Museum','warm cream museum-exhibit background #FAF8F0, academic gallery display')"><div class="bg-sw" style="background:#FAF8F0"></div>Krem</div>
+      <div class="bg-opt" onclick="setBg(this,'Midnight Black','midnight black background #0d0d0d, premium editorial style')"><div class="bg-sw" style="background:#0d0d0d"></div>Hitam</div>
+      <div class="bg-opt" onclick="setBg(this,'Soft Gray','soft light gray #F5F5F5, neutral technical background')"><div class="bg-sw" style="background:#F5F5F5"></div>Abu-abu</div>
+      <div class="bg-opt" onclick="setBg(this,'Pastel Yellow (SD Friendly)','soft pastel yellow #FFFBEB, cheerful educational background for children')"><div class="bg-sw" style="background:#FFFBEB"></div>Pastel</div>
+      <div class="bg-opt" onclick="setBg(this,'Transparent','transparent background, PNG-ready, alpha channel for compositing')"><div class="bg-sw" style="background:repeating-conic-gradient(#ccc 0% 25%,#fff 0% 50%) 0 0/12px 12px"></div>Transparan</div>
+    </div>
+  </div>
+
+  <!-- 6. Platform -->
+  <div class="card">
+    <div class="card-title"><span>⚙️</span> Platform AI</div>
+    <div class="plat-grid" id="platGrid">
+      <div class="plat-btn sel" onclick="setPlat('nb2',this)">
+        <div class="plat-btn-icon">🍌</div>
+        <div><div class="plat-btn-name">NanoBanana 2</div><div class="plat-btn-note">Gemini Imagen 3</div></div>
+      </div>
+      <div class="plat-btn" onclick="setPlat('mj',this)">
+        <div class="plat-btn-icon">⚓</div>
+        <div><div class="plat-btn-name">Midjourney v7</div><div class="plat-btn-note">--style raw</div></div>
+      </div>
+      <div class="plat-btn" onclick="setPlat('dalle',this)">
+        <div class="plat-btn-icon">✦</div>
+        <div><div class="plat-btn-name">DALL·E 3</div><div class="plat-btn-note">GPT-4o</div></div>
+      </div>
+      <div class="plat-btn" onclick="setPlat('firefly',this)">
+        <div class="plat-btn-icon">🔥</div>
+        <div><div class="plat-btn-name">Adobe Firefly</div><div class="plat-btn-note">Stock-Safe</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Format & DPI -->
+  <div class="card">
+    <div class="card-title"><span>📐</span> Format & DPI</div>
+    <div class="fmt-row" id="fmtBtns">
+      <button class="fmt-btn sel" onclick="setFmt('digital',this)">Digital</button>
+      <button class="fmt-btn" onclick="setFmt('print',this)">Print</button>
+      <button class="fmt-btn" onclick="setFmt('sosmed',this)">Sosmed</button>
+    </div>
+    <div class="sz-grid" id="szGrid"></div>
+    <div class="dpi-row">
+      <span style="font-size:10px;color:var(--text3);padding:3px 0">DPI:</span>
+      <button class="dpi-btn" onclick="setDpi('72',this)">72</button>
+      <button class="dpi-btn" onclick="setDpi('150',this)">150</button>
+      <button class="dpi-btn sel" onclick="setDpi('300',this)">300 ✓</button>
+      <button class="dpi-btn" onclick="setDpi('600',this)">600</button>
+    </div>
+    <div id="pixelInfo" style="font-size:10.5px;color:var(--text3);margin-top:6px"></div>
+  </div>
+
+  <!-- 8. Bahasa Label -->
+  <div class="card">
+    <div class="card-title"><span>🌐</span> Bahasa Label</div>
+    <div class="lang-row" id="langBtns">
+      <button class="lang-btn sel" onclick="setLang('id',this)">🇮🇩 Indonesia</button>
+      <button class="lang-btn" onclick="setLang('en',this)">🇬🇧 English</button>
+      <button class="lang-btn" onclick="setLang('both',this)">🌐 Bilingual</button>
+    </div>
+  </div>
+
+  <!-- Generate -->
+  <button class="gen-btn" onclick="generate()">⚡ Generate Semua Prompt</button>
+
+</div><!-- /sidebar -->
+
+<!-- ═══════════════════════ MAIN OUTPUT ═══════════════════════ -->
+<div class="output-area">
+  <div class="tabs">
+    <button class="tab active" onclick="swTab('output',this)">📄 Prompt Output</button>
+    <button class="tab" onclick="swTab('variations',this)">🔁 3 Variasi Angle</button>
+    <button class="tab" onclick="swTab('keywords',this)">🏷️ SEO Keywords</button>
+    <button class="tab" onclick="swTab('tips',this)">💡 Tips & Guide</button>
+  </div>
+
+  <!-- TAB: OUTPUT -->
+  <div id="tab-output" class="panel active">
+    <div id="outputContainer">
+      <div class="empty-state">
+        <div class="big">🎓</div>
+        <p>Pilih jenjang, mata pelajaran, topik, dan gaya visual<br>lalu klik <b>Generate Semua Prompt</b></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: VARIATIONS -->
+  <div id="tab-variations" class="panel">
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-title"><span>🔁</span> 3 Angle Variations — Bundle untuk Stock</div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:12px">Tiga variasi angle berbeda dari topik yang sama — cocok untuk bundle submission ke Adobe Stock & Etsy (harga bundle 2-3× lebih tinggi).</p>
+      <div class="btn-row">
+        <button class="small primary" onclick="generateVars()">Generate 3 Variations</button>
+        <button class="small" onclick="copyAllVars()">Copy All Numbered</button>
+        <span class="toast" id="toast-vars">✓ Copied!</span>
+      </div>
+    </div>
+    <div class="var-grid" id="varGrid">
+      <div class="var-card"><div class="var-head" style="color:var(--blue)">VAR 1 — Overview</div><div class="var-box" style="color:var(--text3);font-size:11px">← Generate dulu dari sidebar</div></div>
+      <div class="var-card"><div class="var-head" style="color:var(--purple)">VAR 2 — Detail Zoom</div><div class="var-box" style="color:var(--text3);font-size:11px">← Generate dulu dari sidebar</div></div>
+      <div class="var-card"><div class="var-head" style="color:var(--amber)">VAR 3 — Flat Diagram</div><div class="var-box" style="color:var(--text3);font-size:11px">← Generate dulu dari sidebar</div></div>
+    </div>
+  </div>
+
+  <!-- TAB: KEYWORDS -->
+  <div id="tab-keywords" class="panel">
+    <div class="card">
+      <div class="card-title"><span>🏷️</span> SEO Keyword Generator</div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:10px">Klik keyword untuk select/deselect. <b>Adobe Stock max 49 keywords.</b> Klik Copy untuk export.</p>
+      <div class="btn-row" style="margin-bottom:10px">
+        <button class="small" onclick="buildKeywords()">Refresh Keywords</button>
+        <button class="small" onclick="kwSelectAll()">Select All</button>
+        <button class="small" onclick="kwDeselectAll()">Deselect All</button>
+        <button class="small success" onclick="copyKeywords()">Copy Selected</button>
+        <span class="toast" id="toast-kw">✓ Copied!</span>
+      </div>
+      <div class="kw-count">Terpilih: <b id="kwCount">0</b> / 49 keywords (Adobe Stock limit)</div>
+      <div class="kw-wrap" id="kwGrid"></div>
+      <hr>
+      <div class="sec">Export (comma-separated)</div>
+      <div class="kw-export" id="kwExport">Pilih keyword di atas, lalu klik Copy Selected</div>
+    </div>
+  </div>
+
+  <!-- TAB: TIPS -->
+  <div id="tab-tips" class="panel">
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-title"><span>📊</span> Visual DNA per Jenjang</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs)">
+          <div style="font-size:12px;font-weight:600;color:#4ade80;margin-bottom:4px">📚 SD (6-12 thn)</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.5">DK Eyewitness Kids style · Bright pastel colors · Large bold labels · Simple vocabulary · Friendly cartoon-like accuracy · Fun and engaging</div>
+        </div>
+        <div style="padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs)">
+          <div style="font-size:12px;font-weight:600;color:#60a5fa;margin-bottom:4px">📐 SMP (12-15 thn)</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.5">DK Eyewitness Encyclopedia · Intermediate scientific diagrams · Color-coded components · Textbook-quality illustration · Clear labeled sections</div>
+        </div>
+        <div style="padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs)">
+          <div style="font-size:12px;font-weight:600;color:#c084fc;margin-bottom:4px">🔬 SMA (15-18 thn)</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.5">WIRED magazine + museum exhibit quality · Ultra-detailed technical · Precise scientific annotations · iFixit meets Science textbook · Professional academic</div>
+        </div>
+        <div style="padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs)">
+          <div style="font-size:12px;font-weight:600;color:#fbbf24;margin-bottom:4px">🎓 Kuliah (18+ thn)</div>
+          <div style="font-size:11px;color:var(--text2);line-height:1.5">Nature / Science journal quality · Academic reference · Ultra-precise annotation · Sophisticated color coding · Journal-quality technical illustration</div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-title"><span>💡</span> Tips Prompt Terbaik per Gaya</div>
+      <div class="tip">🏛️ <b>Museum Teardown:</b> Tambahkan nama komponen spesifik di field Topik. Gunakan background Pure White untuk stock acceptance tertinggi. Sebutkan "6-10 callout boxes" di prompt untuk hasil terbaik.</div>
+      <div class="tip amber">📊 <b>Diagram Proses:</b> Sertakan jumlah tahap (step). Contoh: "Proses Fotosintesis 6 Tahap" atau "Siklus Air 5 Langkah". Makin spesifik, makin baik hasil AI.</div>
+      <div class="tip green">🗺️ <b>Mind Map:</b> Sebutkan topik utama sebagai central node dan subtopik. Contoh: "Mind Map Sistem Pencernaan: lambung, usus halus, usus besar, hati, pankreas".</div>
+      <div class="tip purple">📋 <b>Poster Kelas:</b> Untuk SD dan SMP, selalu tambahkan "suitable for classroom wall display, A3 size" di akhir prompt. Harga jual Etsy lebih tinggi dengan spesifikasi ini.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span>📈</span> Niche Terlaris — Educational Infographic di Adobe Stock</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">
+        <div style="padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs)">
+          <div style="font-size:12px;font-weight:600;color:var(--text)">🫀 Anatomi Tubuh</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px">Jantung, Otak, Sistem Saraf — selalu evergreen</div>
+          <div style="font-size:11px;color:var(--red);font-weight:600;margin-top:4px">98% profitable</div>
+        </div>
+        <div style="padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs)">
+          <div style="font-size:12px;font-weight:600;color:var(--text)">🧬 Biologi Sel & DNA</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px">Mitosis, DNA Replication, Sel Eukariot</div>
+          <div style="font-size:11px;color:var(--blue);font-weight:600;margin-top:4px">95% profitable</div>
+        </div>
+        <div style="padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs)">
+          <div style="font-size:12px;font-weight:600;color:var(--text)">⚛️ Kimia & Fisika</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px">Tabel Periodik, Orbital, Gelombang</div>
+          <div style="font-size:11px;color:var(--amber);font-weight:600;margin-top:4px">90% profitable</div>
+        </div>
+        <div style="padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs)">
+          <div style="font-size:12px;font-weight:600;color:var(--text)">🌍 Geografi & Iklim</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px">Peta, Siklus Air, Ekosistem, Iklim</div>
+          <div style="font-size:11px;color:var(--green);font-weight:600;margin-top:4px">87% profitable</div>
+        </div>
+        <div style="padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs)">
+          <div style="font-size:12px;font-weight:600;color:var(--text)">💻 IT & Computer Science</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px">OSI Model, Algoritma, Cloud, DevOps</div>
+          <div style="font-size:11px;color:var(--cyan);font-weight:600;margin-top:4px">85% profitable</div>
+        </div>
+        <div style="padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs)">
+          <div style="font-size:12px;font-weight:600;color:var(--text)">📜 Sejarah & Timeline</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px">Kemerdekaan RI, Perang Dunia, Kerajaan</div>
+          <div style="font-size:11px;color:var(--purple);font-weight:600;margin-top:4px">82% profitable</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /output-area -->
+</div><!-- /layout -->
+</div><!-- /app -->
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════════
+
+const JENJANG = {
+  sd:{
+    label:'SD', fullLabel:'Sekolah Dasar', age:'6-12 tahun',
+    styleDNA:{
+      base:'bright cheerful educational illustration, DK Eyewitness Kids encyclopedia style, friendly cartoon-like scientific accuracy, vibrant pastel color palette, large bold simple labels, fun engaging visual composition, child-friendly graphic design',
+      label_style:'large bold colorful text labels, simple vocabulary appropriate for ages 6-12',
+      color:'colorful pastel scheme — bright greens, blues, yellows, pinks, oranges',
+      quality:'crisp clean illustration, educational children textbook quality, no scary or overly complex elements'
+    },
+    mapel:{
+      ipa:{label:'IPA', icon:'🌿',
+        topics:['Tata Surya & Planet','Fotosintesis pada Tumbuhan','Rantai Makanan Hutan','Siklus Air (Hujan)','Metamorfosis Kupu-Kupu','Bagian Tubuh Manusia','Ekosistem Laut','Proses Erupsi Gunung Berapi','Struktur Bumi (Lapisan)','Magnet & Kutub Magnet']},
+      ips:{label:'IPS', icon:'🗺️',
+        topics:['Peta Provinsi Indonesia','Pahlawan Nasional Indonesia','Kebudayaan Daerah Nusantara','Sumber Daya Alam Indonesia','Adat Istiadat 5 Suku','Peta Benua Dunia','Profesi dan Pekerjaan','Alat Transportasi Darat Air Udara']},
+      mtk:{label:'Matematika', icon:'📏',
+        topics:['Bangun Datar (Persegi, Lingkaran, Segitiga)','Bangun Ruang (Kubus, Balok, Tabung)','Pecahan Sederhana','Pengukuran Panjang & Berat','Diagram Batang & Lingkaran','Satuan Waktu','Luas & Keliling Bangun','Operasi Hitung Campuran']},
+      agama:{label:'Agama / PAI', icon:'🕌',
+        topics:['Rukun Islam 5 Pilar','Rukun Iman 6 Perkara','Kisah Nabi Muhammad SAW','Adab & Akhlak Mulia','Sifat Allah (Asmaul Husna)','Tata Cara Wudu','Tata Cara Sholat 5 Waktu','Kisah Nabi Ibrahim AS']}
+    }
+  },
+  smp:{
+    label:'SMP', fullLabel:'Sekolah Menengah Pertama', age:'12-15 tahun',
+    styleDNA:{
+      base:'educational textbook infographic, DK Eyewitness Encyclopedia style, accurate scientific diagrams, clean professional color-coding, intermediate complexity, clear labeled sections with technical accuracy',
+      label_style:'clear scientific labels with terminology, intermediate vocabulary for ages 12-15',
+      color:'structured color palette — deep blue, emerald green, amber, red for key systems',
+      quality:'DK Eyewitness quality, Biology/Science textbook standard, museum educational panel quality'
+    },
+    mapel:{
+      biologi:{label:'Biologi', icon:'🧬',
+        topics:['Struktur Sel Hewan & Tumbuhan','Fotosintesis & Respirasi Sel','Reproduksi Tumbuhan (Generatif & Vegetatif)','Sistem Peredaran Darah','Sistem Pencernaan Manusia','Ekosistem & Rantai Makanan','Klasifikasi Makhluk Hidup (Kingdom)','Virus & Bakteri Patogen','Jaringan Tumbuhan (Epidermis, Mesofil)','Sistem Pernapasan Manusia']},
+      fisika:{label:'Fisika', icon:'⚡',
+        topics:['Gerak Lurus & Hukum Newton','Gelombang & Bunyi','Cahaya & Optika (Cermin, Lensa)','Listrik Statis','Rangkaian Listrik Sederhana','Tekanan Fluida (Hukum Pascal)','Suhu & Kalor','Energi & Usaha Mekanis','Tata Surya & Gravitasi','Elektromagnetik & Induksi']},
+      kimia:{label:'Kimia', icon:'⚗️',
+        topics:['Atom, Ion & Molekul','Tabel Periodik Unsur','Ikatan Kimia (Kovalen & Ionik)','Reaksi Kimia & Persamaan','Asam-Basa-Garam (pH)','Larutan Elektrolit & Non-Elektrolit','Senyawa Organik Dasar','Pemisahan Campuran (Distilasi, Filtrasi)']},
+      ips:{label:'IPS / Sejarah', icon:'🏛️',
+        topics:['Kerajaan Hindu-Buddha Nusantara','Kerajaan Islam di Indonesia','Penjajahan VOC & Perlawanan','Sumpah Pemuda 1928','Proklamasi Kemerdekaan RI','Peta Geografi Ekonomi Indonesia','Ekonomi Pasar & Uang','Pergerakan Nasional Indonesia']},
+      mtk:{label:'Matematika', icon:'📐',
+        topics:['Persamaan & Pertidaksamaan Linear','Teorema Pythagoras','Transformasi Geometri','Statistika & Probabilitas','Aljabar & Fungsi','Himpunan & Venn Diagram','Bangun Ruang Sisi Lengkung','Sistem Koordinat Kartesius']}
+    }
+  },
+  sma:{
+    label:'SMA', fullLabel:'Sekolah Menengah Atas', age:'15-18 tahun',
+    styleDNA:{
+      base:'museum exhibit quality scientific infographic, WIRED magazine editorial illustration aesthetic, ultra-detailed technical diagram, photorealistic 3D teardown elements, precise scientific annotations, professional academic color coding, iFixit teardown meets Science journal',
+      label_style:'precise scientific terminology, academic-level vocabulary, numbered callout boxes, measurement annotations',
+      color:'sophisticated scientific palette — deep navy, crimson red, gold, emerald, electric blue — each system distinctly color-coded',
+      quality:'museum-grade scientific illustration, Nature/WIRED magazine editorial quality, 8K ultra-detail photorealistic render'
+    },
+    mapel:{
+      biologi:{label:'Biologi', icon:'🧬',
+        topics:['DNA, RNA & Sintesis Protein','Pembelahan Sel Mitosis & Meiosis','Sistem Imun & Respons Antibodi','Evolusi Darwin & Mekanisme Seleksi Alam','Biodiversitas & Ekologi','Sistem Hormon & Endokrin','Sistem Saraf Pusat & Otak','Bioteknologi: Rekayasa Genetika','Siklus Calvin (Fotosintesis)','Hukum Mendel & Genetika']},
+      fisika:{label:'Fisika', icon:'⚛️',
+        topics:['Hukum Newton & Dinamika','Termodinamika (Mesin Carnot)','Spektrum Gelombang Elektromagnetik','Optika Geometri & Fisika','Induksi Elektromagnetik Faraday','Fisika Modern: Relativitas Einstein','Efek Fotolistrik & Foton','Dualisme Gelombang-Partikel','Radioaktivitas & Peluruhan','Dinamika Rotasi & Momen Inersia']},
+      kimia:{label:'Kimia', icon:'🧪',
+        topics:['Stoikiometri & Hukum Gas','Struktur Orbital Atom & SPU','Ikatan Kimia Lanjutan (Hibridisasi)','Termodinamika Kimia (Entalpi)','Kinetika Kimia & Orde Reaksi','Kesetimbangan Kimia (Ksp, Ka)','Elektrokimia & Sel Volta','Kimia Organik: Gugus Fungsi','Polimer, Karet & Material','Kimia Larutan & Titrasi']},
+      sejarah:{label:'Sejarah', icon:'📜',
+        topics:['Prasejarah & Peradaban Awal Nusantara','Kesultanan Mataram Islam','VOC & Sistem Tanam Paksa','Kebangkitan Nasional & Pergerakan','Perang Dunia II di Asia Pasifik','Kemerdekaan RI Agustus 1945','Perang Dingin & Gerakan Non-Blok','G30S & Orde Baru','Reformasi 1998','Sejarah Asia Tenggara (ASEAN)']},
+      ekonomi:{label:'Ekonomi', icon:'📊',
+        topics:['Permintaan, Penawaran & Harga Keseimbangan','Struktur Pasar (Monopoli, Oligopoli)','Sistem Ekonomi Dunia','Kebijakan Moneter Bank Indonesia','Kebijakan Fiskal & APBN','Perdagangan Internasional & Devisa','Indeks Harga & Inflasi','Ketenagakerjaan & Pengangguran','Akuntansi: Siklus Laporan Keuangan','Koperasi & Kewirausahaan']}
+    }
+  },
+  kuliah:{
+    label:'Kuliah', fullLabel:'Perguruan Tinggi', age:'18+ tahun',
+    styleDNA:{
+      base:'Nature/Science academic journal quality infographic, ultra-precise technical illustration, scientific reference diagram, sophisticated academic color coding, journal-quality annotation typography, research paper visual standard',
+      label_style:'technical academic terminology, precise nomenclature, reference numbers, SI unit annotations, statistical callouts',
+      color:'professional scientific palette — structured color system with systematic differentiation, monochrome base with key accent colors',
+      quality:'academic journal quality, Nature/Science magazine standard, ultra-detailed precision illustration, PhD-level scientific visualization'
+    },
+    mapel:{
+      kedokteran:{label:'Kedokteran / Biomed', icon:'🫀',
+        topics:['Anatomi Jantung & Sirkulasi Koroner','Sistem Saraf Pusat: Neuroanatomi','Imunologi Adaptif & Humoral','Farmakologi: Mekanisme Kerja Obat','Patofisiologi Penyakit Kardiovaskular','Biokimia: Siklus Krebs & Metabolisme','Histologi Jaringan Epitelial','Embriologi: Gastrulasi & Organogenesis','Neurologi: Sinapsis & Neurotransmitter','Kardiologi: EKG & Aritmia']},
+      teknik:{label:'Teknik (Sipil/Mesin/Elektro)', icon:'⚙️',
+        topics:['Rangkaian Listrik AC/DC & Thevenin','Termodinamika Teknik: Siklus Rankine','Mekanika Material: Tegangan & Regangan','Sistem Kontrol PID','Elektronika Daya: Inverter & Konverter','Konstruksi Baja: Sambungan & Momen','Mekanika Fluida: Persamaan Bernoulli','Transfer Kalor: Konduksi, Konveksi, Radiasi','Getaran Mekanis & Mode Shape','Pondasi Teknik Sipil: Tiang Pancang']},
+      komputer:{label:'Ilmu Komputer / TI', icon:'💻',
+        topics:['Struktur Data: Binary Tree & Graph','Arsitektur Komputer: Pipeline CPU','Jaringan Komputer: OSI 7 Layer Model','Basis Data: Normalisasi & Query','Sistem Operasi: Proses & Thread','Machine Learning: Neural Network Architecture','Keamanan Siber: PKI & Kriptografi','Cloud Architecture: Microservices','DevOps: CI/CD Pipeline & Container','Sistem Terdistribusi: CAP Theorem']},
+      ekonomi:{label:'Ekonomi / Manajemen', icon:'📈',
+        topics:['Makroekonomi: Model IS-LM','Mikroekonomi: Maximisasi Utilitas','Manajemen Keuangan: CAPM','Pemasaran Digital: Customer Journey','Rantai Pasok & Logistik','Akuntansi: Konsolidasi Laporan','Ekonometrika: Regresi OLS','Pasar Modal & Instrumen Derivatif','Manajemen Risiko Enterprise','Kewirausahaan: Business Model Canvas']},
+      hukum_sosial:{label:'Hukum / Sosial / Psikologi', icon:'⚖️',
+        topics:['Sistem Hukum Pancasila & UUD 1945','Hukum Pidana: Delik & Sanksi','Hukum Perdata: Kontrak & Perikatan','Hukum Internasional Publik','Psikologi Kognitif: Memori & Kognisi','Teori Kepribadian: Freud vs Humanistik','Sosiologi Organisasi & Birokrasi','Komunikasi Massa & Media Baru','Demokrasi & Sistem Tata Negara','Filsafat Ilmu & Metodologi Penelitian']}
+    }
+  }
+};
+
+const MODES = [
+  {id:'museum',icon:'🏛️',name:'Museum Teardown',desc:'3D isometric exploded view, callout boxes, annotation leader lines'},
+  {id:'proses',icon:'📊',name:'Diagram Proses',desc:'Flowchart langkah-langkah, panah alur, numbered steps'},
+  {id:'mindmap',icon:'🗺️',name:'Mind Map Visual',desc:'Central concept + branches, color-coded subtopics'},
+  {id:'poster',icon:'📋',name:'Poster Kelas',desc:'Educational wall poster, colorful sections, classroom display'},
+  {id:'blueprint',icon:'📐',name:'Blueprint Teknis',desc:'Technical blueprint, dark navy, white precision linework'},
+  {id:'timeline',icon:'📅',name:'Timeline / Kronologi',desc:'Horizontal/vertical timeline, milestones, date markers'},
+  {id:'compare',icon:'⚖️',name:'Perbandingan A vs B',desc:'Side-by-side comparison chart, pros/cons, feature matrix'},
+  {id:'cutaway',icon:'✂️',name:'Cross-Section Cutaway',desc:'Interior cutaway revealing layers, transparent outer shell'}
+];
+
+const FORMATS = {
+  digital:[
+    {id:'sq',n:'Square 1:1',d:'1080×1080',u:'Feed/Stock',ar:'1:1',w:1080,h:1080},
+    {id:'pt',n:'Portrait 4:5',d:'1080×1350',u:'Instagram/Print',ar:'4:5',w:1080,h:1350},
+    {id:'ls',n:'Landscape 16:9',d:'1920×1080',u:'YouTube/Slide',ar:'16:9',w:1920,h:1080}
+  ],
+  print:[
+    {id:'a4p',n:'A4 Portrait',d:'2480×3508',u:'Poster Cetak',ar:'1:√2',w:2480,h:3508},
+    {id:'a4l',n:'A4 Landscape',d:'3508×2480',u:'Infografis Cetak',ar:'√2:1',w:3508,h:2480},
+    {id:'a3p',n:'A3 Portrait',d:'3508×4961',u:'Poster Kelas Besar',ar:'1:√2',w:3508,h:4961}
+  ],
+  sosmed:[
+    {id:'story',n:'Story 9:16',d:'1080×1920',u:'IG/WA Story',ar:'9:16',w:1080,h:1920},
+    {id:'fb',n:'Facebook OG',d:'1200×630',u:'Link Preview',ar:'1.91:1',w:1200,h:630},
+    {id:'pin',n:'Pinterest',d:'1000×1500',u:'Pin/Board',ar:'2:3',w:1000,h:1500}
+  ]
+};
+
+// ══════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════
+let state = {
+  jenjang: 'sd',
+  mapel: null,
+  topik: '',
+  mode: 'museum',
+  bg: 'Pure White',
+  bgPrompt: 'pure white studio background #FFFFFF, clean product photography style, non-reflective',
+  plat: 'nb2',
+  fmt: 'digital',
+  sz: FORMATS.digital[0],
+  dpi: '300',
+  lang: 'id'
+};
+let selKw = new Set();
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+function init(){
+  renderModes();
+  renderFormats();
+  setJenjang('sd', document.querySelector('.jj.sel'));
+  updatePixelInfo();
+}
+
+// ══════════════════════════════════════════════════════════════
+// SETTERS
+// ══════════════════════════════════════════════════════════════
+function setJenjang(j, el){
+  document.querySelectorAll('.jj').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  state.jenjang = j;
+  // auto-select first mapel
+  const mapels = Object.keys(JENJANG[j].mapel);
+  state.mapel = mapels[0];
+  renderMapel();
+  renderTopics();
+}
+
+function renderMapel(){
+  const jData = JENJANG[state.jenjang];
+  const pills = document.getElementById('mapelPills');
+  pills.innerHTML = Object.entries(jData.mapel).map(([k,v])=>
+    `<span class="mp${k===state.mapel?' sel':''}" onclick="setMapel('${k}',this)">${v.icon} ${v.label}</span>`
+  ).join('');
+}
+
+function setMapel(m, el){
+  document.querySelectorAll('.mp').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  state.mapel = m;
+  renderTopics();
+}
+
+function renderTopics(){
+  const jData = JENJANG[state.jenjang];
+  if(!state.mapel||!jData.mapel[state.mapel]) return;
+  const topics = jData.mapel[state.mapel].topics;
+  document.getElementById('topikPills').innerHTML = topics.map(t=>
+    `<span class="tp" onclick="setTopik('${t.replace(/'/g,"\\'")}')">${t}</span>`
+  ).join('');
+}
+
+function setTopik(t){
+  document.getElementById('topikInput').value = t;
+  state.topik = t;
+}
+
+function renderModes(){
+  const g = document.getElementById('modeGrid');
+  g.innerHTML = MODES.map(m=>
+    `<div class="mode-card${m.id===state.mode?' sel':''}" onclick="setMode('${m.id}',this)">
+      <span class="mode-icon">${m.icon}</span>
+      <div class="mode-name">${m.name}</div>
+      <div class="mode-desc">${m.desc}</div>
+    </div>`
+  ).join('');
+}
+
+function setMode(m, el){
+  document.querySelectorAll('.mode-card').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  state.mode = m;
+}
+
+function setBg(el, label, prompt){
+  document.querySelectorAll('.bg-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  state.bg = label;
+  state.bgPrompt = prompt;
+}
+
+function setPlat(p, el){
+  document.querySelectorAll('.plat-btn').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  state.plat = p;
+}
+
+function setFmt(f, el){
+  document.querySelectorAll('.fmt-btn').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  state.fmt = f;
+  renderFormats();
+}
+
+function renderFormats(){
+  const g = document.getElementById('szGrid');
+  g.innerHTML = (FORMATS[state.fmt]||[]).map((f,i)=>
+    `<div class="sz-opt${i===0?' sel':''}" onclick="setSz(this,'${f.id}')">
+      <div class="sz-name">${f.n}</div>
+      <div class="sz-dim">${f.d}px</div>
+      <div class="sz-use">${f.u}</div>
+    </div>`
+  ).join('');
+  state.sz = FORMATS[state.fmt][0];
+  updatePixelInfo();
+}
+
+function setSz(el, id){
+  document.querySelectorAll('.sz-opt').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  state.sz = (FORMATS[state.fmt]||[]).find(f=>f.id===id)||state.sz;
+  updatePixelInfo();
+}
+
+function setDpi(d, el){
+  document.querySelectorAll('.dpi-btn').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  state.dpi = d;
+  updatePixelInfo();
+}
+
+function setLang(l, el){
+  document.querySelectorAll('.lang-btn').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  state.lang = l;
+}
+
+function updatePixelInfo(){
+  const {sz,dpi,fmt} = state;
+  if(!sz) return;
+  const scale = fmt==='digital'?1:parseInt(dpi)/300;
+  const w = Math.round(sz.w*scale), h = Math.round(sz.h*scale);
+  const ok = parseInt(dpi)>=300;
+  document.getElementById('pixelInfo').innerHTML =
+    `<span style="color:${ok?'var(--green)':'var(--amber)'}">${w}×${h}px @ ${dpi}DPI ${ok?'✅ Print ready':'⚠ Screen only'}</span>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// PROMPT BUILDER
+// ══════════════════════════════════════════════════════════════
+function getJenjangDNA(){
+  return JENJANG[state.jenjang].styleDNA;
+}
+
+function getLangLabel(){
+  return state.lang==='en'?'in English':state.lang==='both'?'bilingual (Bahasa Indonesia + English)':'in Bahasa Indonesia';
+}
+
+function getModeDNA(topik, jenjangLabel){
+  const dna = getJenjangDNA();
+  const mode = state.mode;
+  const bg = state.bgPrompt;
+  const lang = getLangLabel();
+
+  const modeMaps = {
+    museum:`museum-exhibit style technical infographic, 45-degree isometric 3D exploded teardown render, slightly tilted to reveal layers and internal structure, transparent outer sections with multiple cutaway views. Title block top-left: "${topik.toUpperCase()} — ${jenjangLabel.toUpperCase()}". 6-10 technical callout boxes connected via thin black leader lines, each showing component name + 1-line function descriptor. True spatial explosion, NOT vertical stack. Lighting: cool overhead diffused + warm underlighting + blue rim light on outer structure.`,
+    proses:`process flow diagram infographic, clear sequential numbered steps with directional arrows, each stage in a distinct color-coded box/bubble, flow lines showing relationships between steps. Title: "${topik} — Diagram Proses". Each step: icon + short label + brief description. Final step shows outcome/product. Clean flat design, easy to follow left-to-right or top-to-bottom flow.`,
+    mindmap:`visual mind map infographic, central concept node "${topik}" in the middle, major branches radiating outward, each branch with sub-branches for details, color-coded sections for different categories. Hierarchical structure with connecting lines, icons on each node, labels ${lang}. Balanced composition filling the frame.`,
+    poster:`educational classroom wall poster, bold title at top: "${topik}", organized sections with icons and labels, colorful illustrated diagrams, fact boxes and key information panels, suitable for classroom wall display. Layout: multiple visual zones, each clearly separated, easy to read from a distance.`,
+    blueprint:`technical blueprint style infographic, dark navy background, white precision linework and text, architectural/engineering drawing aesthetic, title block with project info, dimension annotations, cross-reference lines, grid overlay. Subject: "${topik}". Professional technical documentation style.`,
+    timeline:`chronological timeline infographic for "${topik}", horizontal or vertical timeline axis with clear date/period markers, milestone events with icons and descriptions, distinct visual markers for key moments, period spans shown with colored bars. Historical sequence clear and easy to follow.`,
+    compare:`comparison infographic "${topik}", two or more subjects side by side, matching criteria in each row, visual icons for each attribute, color coding: green for advantages, red/amber for disadvantages, neutral gray for similarities. Title: "${topik} — Perbandingan". Summary box at bottom.`,
+    cutaway:`technical cross-section cutaway infographic of "${topik}", transparent outer shell revealing internal layers and structures, each layer labeled with callout lines, material/composition annotations, depth and dimension visible through the cutaway. Scientific accuracy with artistic precision.`
+  };
+
+  return modeMaps[mode] || modeMaps.museum;
+}
+
+function buildPromptBody(topik){
+  const jData = JENJANG[state.jenjang];
+  const mapelData = state.mapel ? jData.mapel[state.mapel] : null;
+  const jLabel = jData.fullLabel;
+  const mapelLabel = mapelData ? mapelData.label : 'General Education';
+  const dna = jData.styleDNA;
+  const lang = getLangLabel();
+  const sz = state.sz;
+
+  return `[SUBJECT]: ${topik}
+[SUBJECT CLASS]: ${mapelLabel} | ${jLabel} (${jData.age})
+[INFOGRAPHIC TYPE]: ${MODES.find(m=>m.id===state.mode)?.name||state.mode}
+[PLATFORM TARGET]: Adobe Stock, Shutterstock, Etsy Educational Prints
+
+VISUAL STYLE DNA:
+${dna.base}
+
+INFOGRAPHIC DESIGN:
+${getModeDNA(topik, mapelLabel)}
+
+LABEL LANGUAGE: All text, labels, callouts, and annotations ${lang}.
+${state.lang==='both'?'Place Indonesian label first, English translation in parentheses below.':''}
+
+MATERIAL / SUBJECT STYLE:
+${dna.color}
+
+COMPOSITION:
+Background: ${state.bg} — ${state.bgPrompt}
+Text: ${dna.label_style}
+Accent colors: color-coded system for different components/categories
+Negative space: balanced, educational breathing room
+
+QUALITY SPECIFICATION:
+${dna.quality}
+Resolution: ${sz.w}×${sz.h} pixels at ${state.dpi} DPI${parseInt(state.dpi)>=300?' — print-ready, no pixelation':' — digital screen quality'}
+Aspect ratio: ${sz.ar}
+Output: single clean image, no watermarks except integrated educational labels`;
+}
+
+function buildNB2(topik){
+  return `Professional educational infographic of "${topik}".
+${buildPromptBody(topik)}
+
+Use Gemini's world knowledge to ensure subject accuracy.
+All labels and text must be correctly spelled and educationally accurate.
+No watermark. Output: ${state.sz.w}×${state.sz.h}px @ ${state.dpi}DPI.
+Negative: low quality, blurry, pixelated, watermark, incorrect scientific labels, oversimplified`;
+}
+
+function buildMJ(topik){
+  const jLabel = JENJANG[state.jenjang].label;
+  const modeKw = {museum:'isometric 3D exploded view, technical infographic, callout boxes, leader lines, museum exhibit quality',proses:'process flow diagram, sequential steps, directional arrows, numbered stages, clean flat design',mindmap:'visual mind map, central node, radiating branches, color coded, hierarchical',poster:'educational poster, classroom wall display, colorful sections, bold typography, illustrated',blueprint:'technical blueprint, dark navy background, white linework, engineering drawing, precision annotations',timeline:'chronological timeline, milestone markers, historical sequence, date labels, period spans',compare:'comparison chart, side by side, criteria matrix, color coded advantages, visual icons',cutaway:'cross section cutaway, internal layers visible, transparent outer shell, technical labels'}[state.mode]||'educational infographic, technical diagram';
+  const bgKw = state.bg.includes('White')?'pure white background':state.bg.includes('Navy')||state.bg.includes('Blueprint')?'dark navy background':state.bg.includes('Cream')?'warm cream background':state.bg.includes('Black')?'dark black background':'clean educational background';
+  return `${topik.toUpperCase()}, educational infographic, ${jLabel} level, ${modeKw}, ${JENJANG[state.jenjang].styleDNA.base.split(',').slice(0,3).join(',')}, ${bgKw}, color-coded annotations, educational labels, technical accuracy, professional design --ar ${state.sz.ar} --v 7 --stylize 850 --style raw
+
+--no cartoon low-poly, blurry text, watermark, low quality, incorrect labels, oversimplified`;
+}
+
+function buildDALLE(topik){
+  const jData = JENJANG[state.jenjang];
+  const mapelLabel = state.mapel ? jData.mapel[state.mapel]?.label : 'Education';
+  return `Create a professional ultra-detailed educational infographic of "${topik}".
+
+${buildPromptBody(topik)}
+
+Style reference: ${jData.styleDNA.base}
+
+Ensure all labels are educationally accurate for ${jData.fullLabel} level (${jData.age}).
+Photorealistic accuracy where appropriate. Clear, professional educational design.
+Output: ${state.sz.w}×${state.sz.h} pixels at ${state.dpi} DPI. No watermark.`;
+}
+
+function buildFirefly(topik){
+  return `Educational infographic: "${topik}"
+${buildPromptBody(topik)}
+
+Adobe Firefly style guidance: photorealistic high-quality educational illustration, appropriate for ${JENJANG[state.jenjang].fullLabel} students. Commercially safe for Adobe Stock submission. AI-generated educational content.
+Avoid: copyrighted characters, brand logos, real people, recognizable trademarked content.
+Output: ${state.sz.w}×${state.sz.h}px @ ${state.dpi}DPI. Clean single image.`;
+}
+
+function buildNative(topik){
+  const jData = JENJANG[state.jenjang];
+  const mapelData = state.mapel ? jData.mapel[state.mapel] : null;
+  if(state.lang==='en') return buildDALLE(topik);
+  return `Buat infografis edukasi profesional ultra-detail untuk topik: "${topik}"
+
+Jenjang: ${jData.fullLabel} (${jData.age})
+Mata Pelajaran: ${mapelData?.label||'Umum'}
+Jenis Infografis: ${MODES.find(m=>m.id===state.mode)?.name||state.mode}
+
+GAYA VISUAL:
+${jData.styleDNA.base}
+
+DESAIN INFOGRAFIS:
+${getModeDNA(topik, mapelData?.label||'Pendidikan')}
+
+LABEL: Semua teks, label, dan anotasi dalam ${state.lang==='both'?'Bahasa Indonesia (dengan terjemahan Inggris dalam tanda kurung)':'Bahasa Indonesia'}.
+Pastikan terminologi ilmiah akurat dan sesuai kurikulum ${jData.fullLabel}.
+
+BACKGROUND: ${state.bg}
+WARNA: ${jData.styleDNA.color}
+KUALITAS: ${jData.styleDNA.quality}
+
+Output: ${state.sz.w}×${state.sz.h}px @ ${state.dpi}DPI${parseInt(state.dpi)>=300?' — print-ready':''}.
+Tanpa watermark. Label edukasi terintegrasi dalam desain.`;
+}
+
+function buildAdobeMeta(topik){
+  const jData = JENJANG[state.jenjang];
+  const mapelData = state.mapel ? jData.mapel[state.mapel] : null;
+  const mapelLabel = mapelData?.label||'Education';
+  const jLabel = jData.label;
+  const modeLabel = MODES.find(m=>m.id===state.mode)?.name||'infographic';
+
+  const kws = [
+    'educational infographic','educational poster','infographic diagram',
+    'technical infographic','classroom poster','school education',
+    `${jLabel.toLowerCase()} education`,`${mapelLabel.toLowerCase()} infographic`,
+    `${mapelLabel.toLowerCase()} diagram`,`${mapelLabel.toLowerCase()} poster`,
+    'AI generated illustration','educational illustration','science poster',
+    'teaching material','learning resource','school infographic',
+    modeLabel.toLowerCase(),'visual learning','educational chart',
+    'academic illustration','study material','educational design',
+    ...topik.toLowerCase().split(/[\s,]+/).filter(w=>w.length>2).slice(0,6).map(w=>`${w} diagram`),
+    'white background','clean design','printable educational',
+    'digital download','wall art education','school wall art',
+    'infographic art','educational wall decor','teaching aid',
+    'science education','stem education','curriculum material'
+  ];
+
+  const uniq = [...new Set(kws)].slice(0,49);
+  const titleBase = `${topik} — Educational Infographic ${jLabel} | ${mapelLabel}`;
+  const title = titleBase.length>200 ? titleBase.substring(0,197)+'...' : titleBase;
+
+  return `TITLE (maks 200 char Adobe Stock):
+${title}
+
+DESCRIPTION:
+Professional ${modeLabel.toLowerCase()} educational infographic about "${topik}" for ${jData.fullLabel} students (${jData.age}). Subject: ${mapelLabel}. Clear labeled diagram with annotations in ${state.lang==='en'?'English':state.lang==='both'?'Indonesian & English':'Indonesian'}. Suitable for classroom display, educational material, and digital learning resources.
+
+KEYWORDS (${uniq.length} kata — paste ke Adobe Stock, max 49):
+${uniq.join(', ')}
+
+CATEGORY: Illustrations & Vectors → Education
+AI DECLARATION: ☑ Created using generative AI tools
+SUBMIT AS: Illustration (bukan Photo)
+CONTENT TYPE: ☑ People and Property are fictional`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// GENERATE
+// ══════════════════════════════════════════════════════════════
+function generate(){
+  const topik = (document.getElementById('topikInput').value.trim()) || '[TOPIK BELUM DIISI]';
+  if(topik==='[TOPIK BELUM DIISI]'){
+    document.getElementById('topikInput').focus();
+    document.getElementById('topikInput').style.borderColor='var(--red)';
+    setTimeout(()=>document.getElementById('topikInput').style.borderColor='',2000);
+    return;
+  }
+  state.topik = topik;
+
+  const platMap = {
+    nb2:{label:'NANO BANANA 2',color:'#d97706',badge:'Gemini Imagen 3',fn:buildNB2},
+    mj:{label:'MIDJOURNEY',color:'#5865F2',badge:'v7 --style raw',fn:buildMJ},
+    dalle:{label:'DALL·E 3',color:'#10a37f',badge:'GPT-4o',fn:buildDALLE},
+    firefly:{label:'ADOBE FIREFLY',color:'#FF0000',badge:'Stock-Safe',fn:buildFirefly}
+  };
+
+  const jData = JENJANG[state.jenjang];
+  const meta = buildAdobeMeta(topik);
+
+  let html = '';
+
+  // Active platform
+  const pp = platMap[state.plat];
+  if(pp){
+    html += mkPromptBlock(pp.label, pp.color, pp.badge, pp.fn(topik), `pb-main`, jData);
+  }
+
+  // Always show native
+  html += mkPromptBlock(
+    state.lang==='en'?'🇬🇧 ENGLISH':'state.lang'==='both'?'🌐 BILINGUAL':'🇮🇩 BAHASA INDONESIA',
+    state.lang==='en'?'#0d6efd':'#374151',
+    state.lang==='en'?'English Prompt':state.lang==='both'?'ID + EN':'Bahasa Indonesia',
+    buildNative(topik), `pb-native`, jData
+  );
+
+  // Adobe Stock metadata
+  html += `<div class="meta-block">
+    <div class="meta-header">
+      <div class="meta-title">📦 Adobe Stock Metadata — Siap Upload</div>
+      <button class="copy-btn" id="meta-cp-btn" onclick="cpBtn('meta-output','meta-cp-btn')">Copy Metadata</button>
+    </div>
+    <div class="meta-output" id="meta-output">${esc(meta)}</div>
+  </div>`;
+
+  document.getElementById('outputContainer').innerHTML = html;
+
+  // sync keywords
+  document.getElementById('topikInput').value = topik;
+  buildKeywords(topik);
+
+  // switch to output tab
+  swTab('output', document.querySelector('.tab.active'));
+  document.getElementById('tab-output').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function mkPromptBlock(label, color, badge, text, id, jData){
+  const sz = state.sz;
+  return `<div class="prompt-block">
+    <div class="pb-header">
+      <span class="platform-tag" style="background:${color}">${label}</span>
+      <span style="font-size:10px;color:var(--text3);padding:2px 8px;border-radius:4px;border:1px solid var(--border)">${badge}</span>
+      <span class="pb-meta">${sz.w}×${sz.h}px · ${state.dpi}DPI · ${jData.label} · ${state.lang.toUpperCase()}</span>
+      <button class="copy-btn" id="${id}-btn" onclick="cpBtn('${id}','${id}-btn')">Copy</button>
+    </div>
+    <div class="output-box" id="${id}">${esc(text)}</div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// VARIATIONS
+// ══════════════════════════════════════════════════════════════
+function generateVars(){
+  const topik = state.topik || document.getElementById('topikInput').value.trim() || '[TOPIK]';
+  const jData = JENJANG[state.jenjang];
+  const mapelLabel = state.mapel ? jData.mapel[state.mapel]?.label : 'Education';
+  const dna = jData.styleDNA.base;
+  const bg = state.bgPrompt;
+  const lang = getLangLabel();
+
+  const vars = [
+    {label:'VAR 1 — Overview / Hero Angle', color:'var(--blue)',
+     view:`Overview hero angle — 45-degree isometric, full subject visible, all major components labeled, balanced composition showing the complete system at once.`,
+     extra:`Show entire subject in full with all primary components labeled and clearly visible.`},
+    {label:'VAR 2 — Detail Zoom / Core Focus', color:'var(--purple)',
+     view:`Extreme close-up detail — macro focus on the most important/interesting internal component of "${topik}", ultra-crisp texture detail, single focal point.`,
+     extra:`Zoom into key mechanism or critical internal section. Maximum texture and material detail.`},
+    {label:'VAR 3 — Flat Diagram / Schematic', color:'var(--amber)',
+     view:`Perfect top-down flat lay schematic — orthographic bird's-eye view, all components arranged like a technical exploded parts layout, zero perspective distortion, blueprint-style guide.`,
+     extra:`Technical schematic layout, all parts separated with space between them, numbered/labeled each component.`}
+  ];
+
+  const grid = document.getElementById('varGrid');
+  grid.innerHTML = vars.map((v,i)=>`
+    <div class="var-card">
+      <div class="var-head">
+        <span style="color:${v.color}">${v.label}</span>
+        <button class="copy-btn" style="font-size:10px;padding:2px 7px" onclick="cpBtn('var${i+1}','var${i+1}-cp')">Copy</button>
+      </div>
+      <div class="var-box" id="var${i+1}">${esc(`SUBJECT: ${topik}
+JENJANG: ${jData.fullLabel} | ${mapelLabel}
+
+VIEW: ${v.view}
+
+STYLE: ${dna}
+${v.extra}
+
+LANGUAGE: All labels ${lang}
+BACKGROUND: ${bg}
+QUALITY: ${jData.styleDNA.quality}
+OUTPUT: ${state.sz.w}×${state.sz.h}px @ ${state.dpi}DPI. No watermark.`)}</div>
+    </div>`).join('');
+}
+
+function copyAllVars(){
+  const all = [1,2,3].map(i=>`=== VARIATION ${i} ===\n${document.getElementById('var'+i)?.textContent||''}`).join('\n\n');
+  navigator.clipboard.writeText(all);
+  showToast('toast-vars');
+}
+
+// ══════════════════════════════════════════════════════════════
+// KEYWORDS
+// ══════════════════════════════════════════════════════════════
+function buildKeywords(topikOverride){
+  const topik = topikOverride || state.topik || document.getElementById('topikInput').value.trim() || '';
+  const jData = JENJANG[state.jenjang];
+  const mapelData = state.mapel ? jData.mapel[state.mapel] : null;
+
+  const topikWords = topik.toLowerCase().split(/[\s,&\-\/]+/).filter(w=>w.length>2);
+  const jenjangKw = {sd:['elementary school','children education','kids learning','primary school','school poster'],smp:['middle school','junior high','science diagram','textbook illustration'],sma:['high school','senior high','science infographic','academic poster','STEM education'],kuliah:['university','college','academic','research illustration','scientific diagram']}[state.jenjang]||[];
+  const mapelKw = {ipa:['biology','science','nature','ecology'],biologi:['biology','anatomy','cell biology','life science'],fisika:['physics','mechanics','electricity','wave'],kimia:['chemistry','molecule','periodic table','chemical'],ips:['geography','history','social studies','map'],sejarah:['history','historical','timeline','chronicle'],mtk:['mathematics','geometry','algebra','calculus'],ekonomi:['economics','finance','market','business'],kedokteran:['medicine','anatomy','medical','healthcare','clinical'],teknik:['engineering','technical diagram','mechanical','electrical'],komputer:['computer science','programming','network','IT diagram'],hukum_sosial:['law','social science','psychology','governance']}[state.mapel]||['education','learning'];
+  const modeKw = {museum:['exploded view','teardown','museum exhibit','3D infographic','technical diagram'],proses:['process diagram','flowchart','step by step','workflow'],mindmap:['mind map','concept map','visual summary','knowledge map'],poster:['classroom poster','wall art','educational poster','school display'],blueprint:['blueprint','technical drawing','engineering diagram','schematic'],timeline:['timeline','chronology','historical sequence','milestones'],compare:['comparison chart','versus','comparison infographic','feature comparison'],cutaway:['cutaway diagram','cross section','internal view','layers diagram']}[state.mode]||[];
+
+  const all = [...new Set([
+    ...topikWords,
+    ...topikWords.map(w=>`${w} diagram`),
+    ...topikWords.map(w=>`${w} infographic`),
+    topik.toLowerCase(),
+    `${topik.toLowerCase()} diagram`,
+    `${topik.toLowerCase()} infographic`,
+    ...jenjangKw,...mapelKw,...modeKw,
+    'educational infographic','educational illustration','educational poster',
+    'infographic art','technical diagram','science illustration',
+    'AI generated','digital download','printable','wall art',
+    'clean design','white background','vector illustration',
+    'study material','teaching material','learning resource'
+  ])].slice(0,70);
+
+  selKw = new Set(all.slice(0,49));
+  renderKwGrid(all);
+  updateKwExport();
+}
+
+function renderKwGrid(kws){
+  document.getElementById('kwGrid').innerHTML = kws.map(k=>
+    `<span class="kw${selKw.has(k)?' sel':''}" onclick="toggleKw(this,'${k.replace(/'/,"\\'")}')"> ${k}</span>`
+  ).join('');
+  document.getElementById('kwCount').textContent = selKw.size;
+}
+
+function toggleKw(el, k){
+  if(selKw.has(k)) selKw.delete(k);
+  else if(selKw.size<49) selKw.add(k);
+  el.classList.toggle('sel', selKw.has(k));
+  document.getElementById('kwCount').textContent = selKw.size;
+  updateKwExport();
+}
+
+function updateKwExport(){
+  document.getElementById('kwExport').textContent = selKw.size>0 ? [...selKw].join(', ') : 'Belum ada keyword yang dipilih';
+}
+
+function kwSelectAll(){
+  document.querySelectorAll('.kw').forEach(el=>{const k=el.textContent.trim();if(selKw.size<49)selKw.add(k);el.classList.toggle('sel',selKw.has(k));});
+  document.getElementById('kwCount').textContent = selKw.size;
+  updateKwExport();
+}
+
+function kwDeselectAll(){
+  selKw.clear();
+  document.querySelectorAll('.kw').forEach(el=>el.classList.remove('sel'));
+  document.getElementById('kwCount').textContent = 0;
+  updateKwExport();
+}
+
+function copyKeywords(){
+  if(!selKw.size){alert('Pilih minimal 1 keyword!');return;}
+  navigator.clipboard.writeText([...selKw].join(', '));
+  showToast('toast-kw');
+}
+
+// ══════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════
+function swTab(id, btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  // find the button
+  if(btn&&btn.classList.contains('tab')) btn.classList.add('active');
+  else document.querySelectorAll('.tab').forEach(t=>{
+    if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes(`'${id}'`)) t.classList.add('active');
+  });
+}
+
+function cpBtn(srcId, btnId){
+  const el = document.getElementById(srcId);
+  if(!el) return;
+  navigator.clipboard.writeText(el.textContent||el.innerText);
+  const btn = document.getElementById(btnId);
+  if(btn){btn.textContent='✓ Copied';btn.classList.add('ok');setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('ok');},2000);}
+}
+
+function showToast(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.style.display='inline';
+  setTimeout(()=>el.style.display='none',2200);
+}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ══════════════════════════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
