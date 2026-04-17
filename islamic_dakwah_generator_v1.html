@@ -430,7 +430,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5;}
   <div class="card">
     <div class="char-lock">
       <div class="char-lock-title">🔒 KUNCI KARAKTER — DNA Konsistensi (wajib diisi)</div>
-      <input type="text" id="char-name" placeholder="Nama karakter: Cth. Zaid, Fatimah" style="margin-bottom:5px;"/>
+      <input type="text" id="char-name" placeholder="Nama karakter: Cth. Zaid, Fatimah" style="margin-bottom:5px;" oninput="renderPageInputs()"/>
       <input type="text" id="char-look" placeholder="Cth: baju koko biru dongker, peci putih, kulit sawo matang, wajah bulat ceria, usia 7 tahun"/>
       <div style="font-size:9.5px;color:#0e5c30;margin-top:5px;line-height:1.5;">💡 Makin detail makin konsisten. Sertakan: warna baju, warna kulit, model rambut/hijab, ekspresi khas, usia perkiraan.</div>
     </div>
@@ -1305,6 +1305,8 @@ function selectBookTopic(el, id, label) {
   el.classList.add('sel');
   selectedBookTopic = id;
   selectedBookTopicLabel = label;
+  // FIX: refresh scene placeholder sesuai topik baru
+  renderPageInputs();
 }
 
 function selectKarakter(el, id, label) {
@@ -1324,16 +1326,89 @@ function toggleActivity(el, act) {
   }
 }
 
+// ── TOPIC SCENE SUGGESTIONS — arc cerita per topik ──
+// Setiap topik punya 8 scene yang membentuk arc cerita lengkap.
+// Scene ke-i → scenes[i % scenes.length] agar tidak index-out-of-bounds.
+const topicSceneSuggestions = {
+  'hewan-alquran': [
+    n => `${n} menemukan lebah madu di taman masjid dan bertanya-tanya`,
+    n => `${n} bertanya kepada Ustaz: "Mengapa lebah disebutkan di dalam Al-Quran?"`,
+    n => `${n} dan Ayah membaca Surah An-Nahl bersama — belajar tentang lebah`,
+    n => `${n} mengamati lebah bekerja keras mengumpulkan sari bunga dengan tekun`,
+    n => `Ustaz menjelaskan hewan-hewan lain dalam Al-Quran: laba-laba, semut, gajah`,
+    n => `${n} belajar hikmah: hewan pun bertasbih kepada Allah dengan caranya`,
+    n => `${n} berbagi cerita tentang hewan Al-Quran kepada adik dan teman-teman`,
+    n => `${n} berdoa: "Ya Allah, jadikan aku seperti lebah — selalu memberi manfaat"`,
+  ],
+  'kisah-nabi': [
+    n => `${n} duduk melingkar bersama teman, siap mendengar kisah para Nabi`,
+    n => `Ustaz bercerita tentang Nabi Ibrahim yang berani menolak menyembah berhala`,
+    n => `${n} mendengar kisah Nabi Musa yang tabah memimpin Bani Israil`,
+    n => `${n} bertanya: "Bagaimana Nabi Yusuf bisa sabar saat dibuang ke dalam sumur?"`,
+    n => `Ustaz menjelaskan: para Nabi kuat karena mereka yakin pertolongan Allah selalu ada`,
+    n => `${n} sangat kagum mendengar ketabahan Nabi Ayyub dalam cobaan panjang`,
+    n => `${n} terinspirasi dan berjanji meneladani sabar dan jujur seperti para Nabi`,
+    n => `${n} menceritakan kembali kisah Nabi kepada adiknya sebelum tidur`,
+  ],
+  'akhlak': [
+    n => `${n} berpamitan kepada orang tua dengan cium tangan sebelum ke sekolah`,
+    n => `Di jalan, ${n} menemukan dompet terjatuh dan memilih untuk mengembalikan`,
+    n => `${n} membantu teman yang kesulitan membawa buku-buku yang berat`,
+    n => `${n} minta maaf dengan tulus kepada teman yang tidak sengaja disakiti`,
+    n => `${n} berbagi bekal makanan dengan teman yang lupa membawa`,
+    n => `Ibu memuji ${n}: "Jujur dan tolong-menolong adalah akhlak terpuji"`,
+    n => `${n} mengucapkan terima kasih kepada Pak Guru dengan senyum tulus`,
+    n => `${n} berdoa: "Ya Allah, perbaiki akhlakku seperti akhlak Rasulullah"`,
+  ],
+  'ramadan': [
+    n => `${n} terbangun saat sahur — semangat menyambut Ramadan`,
+    n => `${n} dan keluarga makan sahur bersama dengan penuh keberkahan`,
+    n => `${n} belajar makna puasa: menahan diri untuk meraih ridha Allah`,
+    n => `${n} membaca Al-Quran setelah Dzuhur, suasana Ramadan yang tenang`,
+    n => `${n} ikut ayah ke masjid untuk sholat Tarawih bersama jamaah`,
+    n => `${n} ikut membagikan takjil kepada orang yang berpuasa di pinggir jalan`,
+    n => `Malam Lailatul Qadr — ${n} berdoa sungguh-sungguh bersama keluarga`,
+    n => `Hari Idul Fitri! ${n} berpakaian rapi, bersalaman dan saling bermaaf-maafan`,
+  ],
+  'doa-harian': [
+    n => `${n} berdoa sebelum makan: "Bismillah" sambil duduk rapi bersama keluarga`,
+    n => `${n} berdoa sebelum tidur dan berbaring ke sisi kanan dengan tenang`,
+    n => `Pagi hari, ${n} berdoa saat keluar rumah: memohon perlindungan Allah`,
+    n => `${n} mengajarkan doa masuk kamar mandi kepada adiknya yang kecil`,
+    n => `${n} berdoa saat naik kendaraan bersama ayah menuju sekolah`,
+    n => `${n} berdoa saat melihat hujan: bersyukur atas rahmat Allah`,
+    n => `${n} berdoa sebelum belajar: "Robbizidni ilma" — mohon tambah ilmu`,
+    n => `${n} mengajak teman-teman untuk sama-sama menghafalkan doa harian`,
+  ],
+  'sahabat-nabi': [
+    n => `${n} bertanya kepada Ustaz: "Siapakah sahabat Nabi yang paling setia?"`,
+    n => `Ustaz bercerita tentang Abu Bakar Ash-Shiddiq yang selalu mendampingi Nabi`,
+    n => `${n} mendengar kisah Umar bin Khattab yang tegas namun sangat adil`,
+    n => `${n} kagum mendengar kisah Ali bin Abi Thalib yang pemberani dan cerdas`,
+    n => `Ustaz bercerita tentang Bilal bin Rabah — budak yang jadi muadzin termulia`,
+    n => `${n} mendengar kisah Khadijah r.a. yang dengan setia mendukung Rasulullah`,
+    n => `Ustaz menjelaskan: para sahabat setia karena iman mereka sangat kuat`,
+    n => `${n} terinspirasi dan menulis nama-nama sahabat serta perjuangan mereka`,
+  ],
+};
+
 // ── BOOK PAGE INPUTS ──
 function renderPageInputs() {
   const count = parseInt(document.getElementById('page-count').value) || 5;
   const container = document.getElementById('scene-inputs');
   const existing = Array.from(document.querySelectorAll('.scene-input-val')).map(i => i.value);
+  // FIX: gunakan nama karakter dari input + saran scene per topik
+  const charName = document.getElementById('char-name').value.trim() || 'Zaid';
+  const scenes = topicSceneSuggestions[selectedBookTopic] || [];
   container.innerHTML = '';
   for (let i = 0; i < count; i++) {
     const val = existing[i] || '';
+    const sceneGen = scenes[i % scenes.length];
+    const ph = sceneGen
+      ? sceneGen(charName)
+      : `Hal ${i+1}: cerita tentang ${selectedBookTopicLabel || 'topik islami'} dengan ${charName}`;
     container.innerHTML += `<div class="scene-row">
-      <input type="text" class="scene-input-val" placeholder="Hal ${i+1}: Cth. Zaid menemukan lebah madu di taman masjid" value="${escAttr(val)}"/>
+      <input type="text" class="scene-input-val" placeholder="${escAttr(ph)}" value="${escAttr(val)}"/>
     </div>`;
   }
 }
