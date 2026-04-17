@@ -15,6 +15,9 @@
   --red:#ef4444;--red-bg:rgba(239,68,68,.13);--red-bd:rgba(239,68,68,.3);
   --purple:#a855f7;--purple-bg:rgba(168,85,247,.13);--purple-bd:rgba(168,85,247,.3);
   --cyan:#06b6d4;--cyan-bg:rgba(6,182,212,.13);--cyan-bd:rgba(6,182,212,.3);
+  --gold:#d4a017;--gold-bg:rgba(212,160,23,.13);--gold-bd:rgba(212,160,23,.35);
+  --sage:#4a7c59;--sage-bg:rgba(74,124,89,.13);--sage-bd:rgba(74,124,89,.3);
+  --teal:#0e7490;--teal-bg:rgba(14,116,144,.13);--teal-bd:rgba(14,116,144,.3);
   --r:10px;--rs:6px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -28,6 +31,15 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .hdr p{font-size:12px;color:var(--text2);margin-top:3px;line-height:1.5}
 .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .chip{font-size:11px;padding:2px 9px;border-radius:20px;border:1px solid var(--border);color:var(--text3)}
+
+/* Channel switcher */
+.ch-row{display:flex;gap:6px}
+.ch-btn{flex:1;font-size:12px;font-weight:600;padding:9px 6px;border:1.5px solid var(--border);border-radius:var(--rs);cursor:pointer;text-align:center;background:var(--bg3);color:var(--text2);transition:.15s;line-height:1.3}
+.ch-btn:hover{opacity:.85}
+.ch-btn.sel.edu{border-color:var(--blue-bd);background:var(--blue-bg);color:var(--blue)}
+.ch-btn.sel.dakwah{border-color:var(--gold-bd);background:var(--gold-bg);color:var(--gold)}
+.dakwah-accent{border-color:var(--gold-bd) !important}
+.mode-card.sel.dakwah-mode{border-color:var(--gold-bd);background:var(--gold-bg)}
 
 /* Two column layout */
 .layout{display:grid;grid-template-columns:300px 1fr;gap:14px}
@@ -195,14 +207,15 @@ button.small.success{background:var(--green-bg);color:var(--green);border-color:
   <div class="hdr-icon">🎓</div>
   <div>
     <h1>Edu Infographic Prompt Studio</h1>
-    <p>Generator prompt infografis edukasi untuk SD, SMP, SMA, dan Perguruan Tinggi — Museum Teardown, Poster Kelas, Diagram Proses, dan lebih banyak lagi. Dioptimasi untuk Adobe Stock & stock market.</p>
+    <p>Generator prompt infografis untuk <b>Edukasi Sekolah</b> (SD/SMP/SMA/Kuliah) & <b>Dakwah Islam</b> (Quran, Asmaul Husna, Akhlak, Ramadan, Seerah). 11 gaya visual, 4 platform AI. Dioptimasi Adobe Stock & Etsy.</p>
     <div class="chips">
       <span class="chip">Gemini (NB2)</span>
       <span class="chip">Midjourney v7</span>
       <span class="chip">DALL·E 3</span>
       <span class="chip">Adobe Firefly</span>
+      <span class="chip">☪️ Dakwah Islam</span>
       <span class="chip">Adobe Stock</span>
-      <span class="chip">v1.0</span>
+      <span class="chip">v2.0</span>
     </div>
   </div>
 </div>
@@ -211,31 +224,19 @@ button.small.success{background:var(--green-bg);color:var(--green);border-color:
 <!-- ═══════════════════════ SIDEBAR ═══════════════════════ -->
 <div class="sidebar">
 
-  <!-- 1. Jenjang -->
+  <!-- 0. Channel -->
   <div class="card">
-    <div class="card-title"><span>🏫</span> Jenjang Pendidikan</div>
-    <div class="jenjang-grid" id="jenjangGrid">
-      <div class="jj sel" onclick="setJenjang('sd',this)">
-        <div class="jj-icon">📚</div>
-        <div class="jj-label">SD</div>
-        <div class="jj-sub">Kelas 1–6 · 6-12 thn</div>
-      </div>
-      <div class="jj" onclick="setJenjang('smp',this)">
-        <div class="jj-icon">📐</div>
-        <div class="jj-label">SMP</div>
-        <div class="jj-sub">Kelas 7–9 · 12-15 thn</div>
-      </div>
-      <div class="jj" onclick="setJenjang('sma',this)">
-        <div class="jj-icon">🔬</div>
-        <div class="jj-label">SMA</div>
-        <div class="jj-sub">Kelas 10–12 · 15-18 thn</div>
-      </div>
-      <div class="jj" onclick="setJenjang('kuliah',this)">
-        <div class="jj-icon">🎓</div>
-        <div class="jj-label">Kuliah</div>
-        <div class="jj-sub">S1/S2/S3 · 18+ thn</div>
-      </div>
+    <div class="card-title"><span>📡</span> Channel Konten</div>
+    <div class="ch-row">
+      <div class="ch-btn edu sel" id="chEdu" onclick="setChannel('edu',this)">🎓<br><span style="font-size:10px">Edukasi Sekolah</span></div>
+      <div class="ch-btn dakwah" id="chDakwah" onclick="setChannel('dakwah',this)">☪️<br><span style="font-size:10px">Dakwah Islam</span></div>
     </div>
+  </div>
+
+  <!-- 1. Jenjang / Kategori -->
+  <div class="card">
+    <div class="card-title" id="jenjangCardTitle"><span id="jenjangCardIcon">🏫</span> <span id="jenjangCardLabel">Jenjang Pendidikan</span></div>
+    <div class="jenjang-grid" id="jenjangGrid"></div>
   </div>
 
   <!-- 2. Mapel -->
@@ -271,6 +272,8 @@ button.small.success{background:var(--green-bg);color:var(--green);border-color:
       <div class="bg-opt" onclick="setBg(this,'Soft Gray','soft light gray #F5F5F5, neutral technical background')"><div class="bg-sw" style="background:#F5F5F5"></div>Abu-abu</div>
       <div class="bg-opt" onclick="setBg(this,'Pastel Yellow (SD Friendly)','soft pastel yellow #FFFBEB, cheerful educational background for children')"><div class="bg-sw" style="background:#FFFBEB"></div>Pastel</div>
       <div class="bg-opt" onclick="setBg(this,'Transparent','transparent background, PNG-ready, alpha channel for compositing')"><div class="bg-sw" style="background:repeating-conic-gradient(#ccc 0% 25%,#fff 0% 50%) 0 0/12px 12px"></div>Transparan</div>
+      <div class="bg-opt" onclick="setBg(this,'Cream Parchment Islamic','warm cream parchment background #FAF3E0, aged manuscript texture, Islamic academic style, soft golden undertone')"><div class="bg-sw" style="background:#FAF3E0"></div>☪️ Krem</div>
+      <div class="bg-opt" onclick="setBg(this,'Sage Green Islamic','deep sage green #2E5C3F, Islamic mosque color, spiritual and calming atmosphere')"><div class="bg-sw" style="background:#2E5C3F"></div>☪️ Hijau</div>
     </div>
   </div>
 
@@ -453,6 +456,50 @@ button.small.success{background:var(--green-bg);color:var(--green);border-color:
         </div>
       </div>
     </div>
+    <!-- ── DAKWAH MARKET SECTION ── -->
+    <div class="card">
+      <div class="card-title"><span>☪️</span> Niche Terlaris — Dakwah Islam di Platform Digital</div>
+      <div class="tip" style="border-left-color:var(--gold);margin-bottom:8px">
+        💡 <b>Market Insight:</b> Konten Islam di Etsy & Creative Market tumbuh <b>40% per tahun</b>. Gaya <b>3D Clay Diorama</b> (seperti contoh yang kamu kirim) command <b>20-30% price premium</b>. Mulai dari Akhlak + Ramadan + Asmaul Husna untuk ROI terbaik.
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">
+        <div style="padding:8px;background:var(--bg);border:1px solid var(--gold-bd);border-radius:var(--rs)">
+          <div style="font-size:12px;font-weight:600;color:var(--gold)">☪️ Akhlak & Karakter</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px">4 Golongan, 7 Naungan Allah, Sifat Mukmin</div>
+          <div style="font-size:11px;color:var(--gold);font-weight:600;margin-top:4px">🔥 #1 Terlaris</div>
+        </div>
+        <div style="padding:8px;background:var(--bg);border:1px solid var(--gold-bd);border-radius:var(--rs)">
+          <div style="font-size:12px;font-weight:600;color:var(--gold)">🌙 Ramadan & Eid</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px">Seasonal — volume tinggi saat Ramadan</div>
+          <div style="font-size:11px;color:var(--gold);font-weight:600;margin-top:4px">🔥 High Season</div>
+        </div>
+        <div style="padding:8px;background:var(--bg);border:1px solid var(--gold-bd);border-radius:var(--rs)">
+          <div style="font-size:12px;font-weight:600;color:var(--gold)">☪️ Asmaul Husna</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px">99 Nama — selalu evergreen, harga premium</div>
+          <div style="font-size:11px;color:var(--gold);font-weight:600;margin-top:4px">💎 Premium Price</div>
+        </div>
+        <div style="padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs)">
+          <div style="font-size:12px;font-weight:600;color:var(--text)">📖 Quran & Hadits</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px">Ayat Kursi, Arba'in, Surah Pilihan</div>
+          <div style="font-size:11px;color:var(--green);font-weight:600;margin-top:4px">95% evergreen</div>
+        </div>
+        <div style="padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs)">
+          <div style="font-size:12px;font-weight:600;color:var(--text)">🕌 Rukun & Ibadah</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px">Panduan Sholat, Wudhu, Rukun Islam/Iman</div>
+          <div style="font-size:11px;color:var(--blue);font-weight:600;margin-top:4px">Edu + Sosmed</div>
+        </div>
+        <div style="padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--rs)">
+          <div style="font-size:12px;font-weight:600;color:var(--text)">🕌 Seerah & Sejarah</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px">Kisah Nabi, Sahabat, Wali Songo</div>
+          <div style="font-size:11px;color:var(--purple);font-weight:600;margin-top:4px">Niche Premium</div>
+        </div>
+      </div>
+      <hr>
+      <div class="card-title" style="margin-top:8px"><span>🎨</span> Gaya Visual Terbaik untuk Dakwah</div>
+      <div class="tip" style="border-left-color:var(--gold)">🏺 <b>3D Clay Diorama</b> (seperti contoh gambar): Clay figures Muslim berpakaian sopan, warna earth tone hangat, suasana cozy spiritual. <b>+25% harga jual</b> di Etsy vs flat design.</div>
+      <div class="tip amber">✍️ <b>Kaligrafi Poster</b>: Arabic calligraphy sebagai focal point + infografis pendukung. Cocok untuk Asmaul Husna & Ayat Al-Quran. Pilih background Dark Navy atau Sage Green Islamic.</div>
+      <div class="tip green">🔷 <b>Infografis Geometri Islami</b>: Border pola geometri Islam + layout flat clean. Cocok untuk Rukun Islam/Iman, Doa & Dzikir. Gunakan gold & green palette.</div>
+    </div>
   </div>
 
 </div><!-- /output-area -->
@@ -463,6 +510,114 @@ button.small.success{background:var(--green-bg);color:var(--green);border-color:
 // ══════════════════════════════════════════════════════════════
 // DATA
 // ══════════════════════════════════════════════════════════════
+
+// Helper — returns active data based on channel
+function getCurrData(){ return typeof state!=='undefined'&&state.channel==='dakwah' ? DAKWAH : JENJANG; }
+
+const DAKWAH = {
+  quran:{
+    label:'Quran & Hadits', icon:'📖', fullLabel:'Al-Quran & Hadits', age:'Semua Usia',
+    styleDNA:{
+      base:'Islamic educational infographic, 3D clay miniature diorama style, warm earth tones palette, subtle Arabic calligraphy accents, Islamic geometric pattern border details, professional dakwah poster quality, clean informative layout with spiritual reverence',
+      label_style:'elegant bilingual labels — Arabic term + Bahasa Indonesia meaning, Quran verse citation in parentheses, respectful and clear typography',
+      color:'warm Islamic earth palette — parchment cream #FAF3E0, sacred gold #D4A017, deep forest green #2D5016, terracotta clay #C17817, soft white',
+      quality:'premium dakwah content quality, mosque and Islamic center display ready, culturally and religiously respectful, suitable for social media and print'
+    },
+    mapel:{
+      ayat_pilihan:{label:'Ayat Pilihan Al-Quran', icon:'📿',
+        topics:['Surah Al-Fatiha — 7 Ayat Pembuka','Ayat Kursi (Al-Baqarah: 255)','Surah Al-Ikhlas, Al-Falaq, An-Nas (3 Qul)','Surah Al-Kahfi — 10 Ayat Pertama & Terakhir','Surah Yasin — Ayat Kunci & Maknanya','Surah Ar-Rahman — 31 Nikmat Allah','Surah Al-Mulk — Penjaga dari Azab Kubur','Surah Al-Waqiah — Keutamaan & Isinya','Ayat-Ayat tentang Rezeki dalam Al-Quran','Doa & Dzikir Harian dari Al-Quran']},
+      hadits_tematik:{label:'Hadits Tematik', icon:'📜',
+        topics:['40 Hadits Arba\'in Nawawi — Kompendium','Hadits tentang Akhlak & Perilaku Mulia','Hadits Keutamaan Ilmu & Menuntut Ilmu','Hadits Silaturahmi & Persaudaraan Islam','Hadits tentang Rezeki, Sedekah & Infak','Hadits Sabar, Syukur & Ridha','Hadits tentang Niat & Keikhlasan Amal','Hadits Keutamaan Sholat & Puasa','Hadits tentang Berbakti kepada Orang Tua','Hadits Adab Makan, Minum & Keseharian']},
+      tafsir_visual:{label:'Tafsir & Makna Visual', icon:'🔍',
+        topics:['Makna Bismillah & Basmallah','Tafsir Surah Al-Ashr — Waktu & Kerugian','Al-Quran tentang Penciptaan Alam Semesta','Janji-Janji Allah kepada Orang Beriman','Tafsir Kisah Nabi Yusuf AS dalam Al-Quran','Hikmah Surah Al-Kahfi — 4 Kisah Utama','Al-Quran & Isyarat Ilmiah (Sains)','Nama-Nama Surga dalam Al-Quran','Nama-Nama Neraka & Tingkatannya','Sifat-Sifat Orang Bertakwa dalam Al-Quran']}
+    }
+  },
+  asmaul_husna:{
+    label:'Asmaul Husna', icon:'☪️', fullLabel:'99 Asmaul Husna — Nama-Nama Allah SWT', age:'Semua Usia',
+    styleDNA:{
+      base:'elegant Islamic calligraphy infographic, premium Arabic typography (Naskh/Thuluth style) as central artwork, Islamic geometric mandala border, gold and deep emerald green color scheme, luxury spiritual poster quality, reverent and visually stunning composition',
+      label_style:'large Arabic calligraphy (Naskh font) centered, gold highlighted name, clear Indonesian meaning below, Quran/Hadits reference in small italic',
+      color:'gold and emerald royalty palette — deep emerald #1B4332, sacred gold #D4A017, parchment cream #FAF3E0, rich midnight navy #0D1B2A, pearl white',
+      quality:'premium framed artwork quality, mosque and Islamic library display ready, Etsy bestseller quality, culturally and religiously respectful at highest standard'
+    },
+    mapel:{
+      individual_cards:{label:'Kartu Individual Nama Allah', icon:'🌟',
+        topics:['Ar-Rahman & Ar-Rahim (Maha Pengasih & Penyayang)','Al-Malik (Maha Merajai)','Al-Quddus (Maha Suci)','Al-Aziz & Al-Jabbar (Maha Perkasa)','Al-Khaliq & Al-Bari (Sang Pencipta)','Ar-Razzaq (Maha Pemberi Rezeki)','Al-Fattah (Maha Pembuka Pintu Rahmat)','Al-Alim (Maha Mengetahui Segalanya)','As-Sami & Al-Basir (Maha Mendengar & Melihat)','Al-Lathif (Maha Lembut & Halus)']},
+      kompendium_99:{label:'Kompendium 99 Nama', icon:'📋',
+        topics:['Asmaul Husna Lengkap 99 Nama (Full Grid)','Kelompok 10 Sifat Rahmat & Kasih Sayang','Kelompok Sifat Kekuatan & Keagungan Allah','Kelompok Sifat Ilmu, Hikmah & Bijaksana','Kelompok Sifat Kehendak & Kuasa Mutlak','Asmaul Husna untuk Anak-Anak (Visual Fun)','Panduan Dzikir Harian dengan Asmaul Husna','Kalender Asmaul Husna 99 Hari']},
+      aplikasi_hidup:{label:'Hikmah & Aplikasi Hidup', icon:'💚',
+        topics:['Al-Ghaffar — Kekuatan Memaafkan & Dimaafkan','Ar-Rahim — Kasih Sayang dalam Keluarga','As-Sabur — Bersabar dalam Ujian Hidup','Al-Karim — Murah Hati & Kedermawanan','Al-Wadud — Mencintai & Dicintai karena Allah','Al-Mujeeb — Keyakinan Bahwa Doa Dikabulkan','Al-Hadi — Selalu Minta Petunjuk Allah','Al-Barr — Berbuat Kebaikan kepada Semua']}
+    }
+  },
+  rukun_ibadah:{
+    label:'Rukun & Ibadah', icon:'🕌', fullLabel:'Rukun Islam, Rukun Iman & Tata Cara Ibadah', age:'Semua Usia',
+    styleDNA:{
+      base:'Islamic instructional infographic, 3D clay diorama educational style, warm beige-green-gold palette, Islamic architectural accents (mosque dome silhouettes, geometric tiles), clear step-by-step numbered instructional layout, clean professional dakwah quality',
+      label_style:'clear Arabic term + Indonesian explanation, numbered steps with circular icon badges, accessible vocabulary for all ages from children to adults',
+      color:'warm Islamic green palette — mosque green #2E7D32, soft cream #FFF9F0, brown terracotta #8D4E24, sacred gold #D4A017, light sage #A8CBB0',
+      quality:'Islamic school wall display quality, Sunday school (TPA/TPQ) materials standard, halaqah handout print quality, social media dakwah ready'
+    },
+    mapel:{
+      rukun_islam:{label:'Rukun Islam & Ibadah', icon:'🏛️',
+        topics:['5 Rukun Islam — Infografis Lengkap','Tata Cara Sholat 5 Waktu (Gerakan & Bacaan)','Panduan Wudhu Lengkap Langkah demi Langkah','Tata Cara Tayammum (Pengganti Wudhu)','Tuntunan Puasa Ramadan — Syarat & Rukun','Panduan Zakat Fitrah (Waktu, Kadar, Cara)','Panduan Zakat Maal & Nisab','Ibadah Haji — Manasik Singkat Visual','Ibadah Umrah — Panduan Lengkap','Sholat Sunnah & Keutamaannya']},
+      rukun_iman:{label:'Rukun Iman & Aqidah', icon:'💫',
+        topics:['6 Rukun Iman — Infografis Lengkap','Iman kepada Allah — Tauhid Rububiyah & Uluhiyah','Iman kepada Malaikat — Nama & Tugas Mereka','Iman kepada Kitab-Kitab Allah (Al-Quran, Injil, Taurat, Zabur)','Iman kepada Para Nabi & Rasul (25 Nabi)','Iman kepada Hari Kiamat — Tanda & Tahapannya','Iman kepada Qada & Qadar Allah','Pilar Aqidah Islam yang Benar','Perbedaan Muslim, Mukmin & Muttaqin','Tauhid vs Syirik — Memahami Perbedaannya']},
+      doa_dzikir:{label:'Doa, Dzikir & Wirid', icon:'🤲',
+        topics:['Dzikir Pagi & Petang Lengkap','Doa Sebelum & Sesudah Makan','Doa Masuk & Keluar Masjid','Doa Untuk Kedua Orang Tua','Doa Sebelum Tidur & Bangun Pagi','Dzikir Setelah Sholat Fardhu','Doa Ketika Hujan & Setelah Hujan','Istighfar & Kalimat Taubat','Doa Mohon Rezeki Berkah','Kumpulan Doa Harian Anak Muslim']}
+    }
+  },
+  ramadan_eid:{
+    label:'Ramadan & Hari Raya', icon:'🌙', fullLabel:'Ramadan, Eid Al-Fitr & Eid Al-Adha', age:'Semua Usia',
+    styleDNA:{
+      base:'festive Islamic seasonal infographic, 3D clay celebration diorama style, warm Ramadan night palette, lantern and crescent moon motifs as decorative elements, joyful yet spiritually reverent composition, social media and WhatsApp broadcast optimized design',
+      label_style:'celebratory bold Arabic + Indonesian, crescent and star decorative elements, warm welcoming typography with Islamic geometric border accents',
+      color:'Ramadan festive palette — deep teal night #0D4F5C, lantern gold #D4A017, crescent silver #C0C8D0, warm orange glow #E07B39, deep purple night sky #2D1B5E, ivory white',
+      quality:'Instagram Feed & Story quality, WhatsApp broadcast dakwah quality, Etsy Ramadan seasonal bestseller quality'
+    },
+    mapel:{
+      panduan_ramadan:{label:'Panduan & Amalan Ramadan', icon:'🌙',
+        topics:['Jadwal Puasa & Doa Niat Ramadan','Keutamaan 30 Malam Ramadan (Per-10 Malam)','Panduan Sahur & Berbuka Puasa Sehat','Lailatul Qadr — Tanda & Cara Meraihnya','Amalan Sunnah Utama di Bulan Ramadan','Quran Reading Tracker 30 Juz Ramadan','Itikaf di 10 Malam Terakhir Ramadan','Zakat Fitrah — Waktu, Kadar & Cara Distribusi','Ramadan untuk Anak-Anak (Visual Anak)','Doa-Doa Pilihan Selama Bulan Ramadan']},
+      hari_raya:{label:'Hari Raya Idul Fitri & Adha', icon:'🎉',
+        topics:['Panduan Sholat Idul Fitri — Tata Cara Lengkap','Adab & Sunnah Hari Raya (Takbir, Pakaian, dll.)','Idul Adha — Sejarah, Makna & Hikmah Kurban','Tata Cara Penyembelihan Hewan Kurban','Distribusi Daging Kurban — Siapa Dapat Apa','Silaturahmi & Tradisi Lebaran Islami','Sholat Tahajud & Doa Malam Raya','Keutamaan Bulan Syawal & Puasa 6 Hari']},
+      kalender_hijriah:{label:'Kalender & Hari Besar Islam', icon:'📅',
+        topics:['Kalender Hijriah 12 Bulan & Keutamaannya','Maulid Nabi Muhammad SAW — Sejarah & Hikmah','Isra Mi\'raj — Perjalanan Agung & Perintah Sholat','Tahun Baru Hijriah (1 Muharram) & Maknanya','Puasa Asyura (10 Muharram) — Keutamaan','Nuzulul Quran (17 Ramadan) — Sejarah Turunnya','Hari Arafah (9 Dzulhijjah) — Keutamaan Puasa','Bulan Mulia dalam Islam (Ashurul Hurum)']}
+    }
+  },
+  akhlak:{
+    label:'Akhlak & Karakter', icon:'✨', fullLabel:'Akhlak Mulia & Karakter Islami', age:'Semua Usia',
+    styleDNA:{
+      base:'inspirational Islamic character infographic, 3D clay people illustration style with diverse Muslim characters in modest clothing (hijab, kopiah), warm encouraging color palette, motivational poster aesthetic, positive and uplifting visual tone suitable for home, school and mosque display',
+      label_style:'warm inspirational typography, bold key value word in gold, supporting Quran/Hadits quote citation below, accessible for all ages',
+      color:'warm motivational palette — sage green #4A7C59, warm gold #D4A017, soft coral #E8875A, cream parchment #FAF3E0, deep earthy brown #3D2B1A',
+      quality:'motivational Islamic poster quality, suitable for classroom and mosque wall display, social media dakwah content, Etsy Islamic home decor'
+    },
+    mapel:{
+      sifat_mulia:{label:'Nilai & Sifat Islami', icon:'💎',
+        topics:['Jujur (Shiddiq) — Nilai Utama dalam Islam','Amanah — Dapat Dipercaya & Bertanggung Jawab','Sabar — Keutamaan & Cara Melatihnya','Syukur — Bersyukur kepada Allah','Ikhlas — Amal Tanpa Mengharap Pujian','Tawadhu — Rendah Hati Bukan Minder','Dermawan & Sedekah — Investasi Akhirat','Pemaaf — Memaafkan demi Allah SWT','Adil — Berlaku Adil kepada Semua','Tawakal — Ikhtiar Maksimal lalu Berserah']},
+      adab_kehidupan:{label:'Adab Kehidupan Sehari-hari', icon:'🤝',
+        topics:['Adab kepada Orang Tua (Birrul Walidain)','Adab Bergaul dengan Teman Muslim','Adab Menuntut Ilmu dalam Islam','Adab Makan & Minum Islami','Adab Berbicara — Menjaga Lisan dari Ghibah','Adab Berpakaian Muslim & Muslimah','Adab di Masjid & Tempat Ibadah','Adab Bertamu & Menerima Tamu','Adab Menggunakan Media Sosial Islami','Larangan Ghibah, Fitnah & Namimah']},
+      golongan_mulia:{label:'Golongan Dimuliakan Allah', icon:'👑',
+        topics:['4 Golongan Diharamkan Api Neraka (Hayyin, Layyin, Qarib, Sahl)','7 Golongan dalam Naungan Allah di Padang Mahsyar','Ciri-Ciri Mukmin Sejati (Surah Al-Mu\'minun 1-11)','10 Sahabat yang Dijanjikan Surga (Ashratul Mubassyirin)','Golongan yang Doanya Selalu Dikabulkan Allah','Tanda-Tanda Orang Munafik (3 Tanda)','Keutamaan & Derajat Orang Berilmu','Sifat Hamba Ar-Rahman (Al-Furqan 63-74)']}
+    }
+  },
+  seerah_sejarah:{
+    label:'Seerah & Sejarah Islam', icon:'🕌', fullLabel:'Seerah Nabi Muhammad SAW & Sejarah Peradaban Islam', age:'Semua Usia',
+    styleDNA:{
+      base:'Islamic historical narrative infographic, illustrated timeline diorama style, warm desert and golden palette, Arabic calligraphy accents, iconic Islamic architecture elements (Masjidil Haram, Masjid Nabawi silhouettes), storytelling visual journey through Islamic history',
+      label_style:'historical labels with Hijri + Masehi dual dating, Arabic name in original script + transliteration + Indonesian, location markers on historical maps',
+      color:'historical Islamic desert palette — warm sand #D4B896, deep terracotta brick #8B4513, desert sky blue #4A90D9, sacred gold #D4A017, dark olive green #4A5240, deep amber',
+      quality:'museum exhibit Islamic historical illustration quality, Islamic library and mosque display standard, educational institution publication quality'
+    },
+    mapel:{
+      seerah_nabi:{label:'Seerah Nabi Muhammad SAW', icon:'☪️',
+        topics:['Kelahiran & Masa Kecil Nabi Muhammad SAW','Masa Remaja & Gelar Al-Amin','Peristiwa Bi\'tsah — Wahyu Pertama di Gua Hira','Hijrah dari Makkah ke Madinah (622 M)','Perang Badar — Kemenangan Pertama Islam','Perjanjian Hudaibiyah — Strategi Dakwah','Fathu Makkah — Pembebasan Tanpa Darah','Haji Wada & Khutbah Perpisahan Rasul','Wafatnya Rasulullah SAW (632 M)','Isra Mi\'raj — Perjalanan Luar Biasa & Perintah Sholat']},
+      para_nabi_rasul:{label:'Para Nabi & Rasul', icon:'⭐',
+        topics:['25 Nabi & Rasul dalam Islam — Kompendium','Ulul Azmi — 5 Nabi Terkuat & Ujian Mereka','Kisah Nabi Ibrahim AS — Bapak Para Nabi','Kisah Nabi Musa AS & Firaun (Keluaran)','Kisah Nabi Isa AS dalam Perspektif Islam','Kisah Nabi Yusuf AS — Kisah Terbaik Al-Quran','Kisah Nabi Nuh AS & Bahtera Agung','Kisah Nabi Sulaiman AS & Kerajaannya','Kisah Nabi Ayub AS — Kesabaran Tiada Tanding','Mukjizat Para Nabi yang Diabadikan Al-Quran']},
+      peradaban_islam:{label:'Peradaban & Sejarah Islam', icon:'🏛️',
+        topics:['Masa Khulafaur Rasyidin (Abu Bakar, Umar, Utsman, Ali)','Dinasti Umayyah — Ekspansi Islam ke Eropa','Dinasti Abbasiyah & Zaman Keemasan Islam','Ilmuwan Muslim Dunia (Ibnu Sina, Al-Khawarizmi, Al-Biruni)','Masuknya Islam ke Nusantara — Jalur & Bukti','Wali Songo — Penyebaran Islam di Jawa','Kesultanan Islam di Indonesia (Demak, Mataram, Aceh)','Perempuan Mulia dalam Sejarah Islam']}
+    }
+  }
+};
 
 const JENJANG = {
   sd:{
@@ -557,7 +712,11 @@ const MODES = [
   {id:'blueprint',icon:'📐',name:'Blueprint Teknis',desc:'Technical blueprint, dark navy, white precision linework'},
   {id:'timeline',icon:'📅',name:'Timeline / Kronologi',desc:'Horizontal/vertical timeline, milestones, date markers'},
   {id:'compare',icon:'⚖️',name:'Perbandingan A vs B',desc:'Side-by-side comparison chart, pros/cons, feature matrix'},
-  {id:'cutaway',icon:'✂️',name:'Cross-Section Cutaway',desc:'Interior cutaway revealing layers, transparent outer shell'}
+  {id:'cutaway',icon:'✂️',name:'Cross-Section Cutaway',desc:'Interior cutaway revealing layers, transparent outer shell'},
+  // ── Dakwah-specific modes ──
+  {id:'clay3d',icon:'🏺',name:'3D Clay Diorama',desc:'Clay miniature scene, warm earth tones, 3D Muslim figures, cozy & warm'},
+  {id:'kaligrafi',icon:'✍️',name:'Kaligrafi Poster',desc:'Arabic calligraphy centerpiece, gold on dark, Islamic geometric border'},
+  {id:'islami_info',icon:'🔷',name:'Infografis Islami',desc:'Islamic geometric pattern frame, flat clean design, gold & green palette'}
 ];
 
 const FORMATS = {
@@ -582,6 +741,7 @@ const FORMATS = {
 // STATE
 // ══════════════════════════════════════════════════════════════
 let state = {
+  channel: 'edu',
   jenjang: 'sd',
   mapel: null,
   topik: '',
@@ -602,8 +762,50 @@ let selKw = new Set();
 function init(){
   renderModes();
   renderFormats();
-  setJenjang('sd', document.querySelector('.jj.sel'));
+  renderJenjangGrid();
   updatePixelInfo();
+}
+
+function setChannel(ch, el){
+  state.channel = ch;
+  document.querySelectorAll('.ch-btn').forEach(e=>e.classList.remove('sel'));
+  el.classList.add('sel');
+  // update card title
+  const icon = document.getElementById('jenjangCardIcon');
+  const label = document.getElementById('jenjangCardLabel');
+  if(ch==='dakwah'){
+    icon.textContent='☪️';
+    label.textContent='Kategori Dakwah Islam';
+  } else {
+    icon.textContent='🏫';
+    label.textContent='Jenjang Pendidikan';
+  }
+  renderJenjangGrid();
+}
+
+function renderJenjangGrid(){
+  const data = getCurrData();
+  const keys = Object.keys(data);
+  const g = document.getElementById('jenjangGrid');
+  g.innerHTML = keys.map((k,i)=>{
+    const d = data[k];
+    const isSel = i===0 && !state.jenjang || state.jenjang===k;
+    return `<div class="jj${isSel?' sel':''}" onclick="setJenjang('${k}',this)">
+      <div class="jj-icon">${d.icon||'📖'}</div>
+      <div class="jj-label">${d.label}</div>
+      <div class="jj-sub">${d.age}</div>
+    </div>`;
+  }).join('');
+  // set first as default if current not in data
+  if(!data[state.jenjang]){
+    state.jenjang = keys[0];
+    const firstEl = g.querySelector('.jj');
+    if(firstEl) firstEl.classList.add('sel');
+  }
+  const mapels = Object.keys(data[state.jenjang].mapel);
+  state.mapel = mapels[0];
+  renderMapel();
+  renderTopics();
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -614,14 +816,16 @@ function setJenjang(j, el){
   el.classList.add('sel');
   state.jenjang = j;
   // auto-select first mapel
-  const mapels = Object.keys(JENJANG[j].mapel);
+  const data = getCurrData();
+  const mapels = Object.keys(data[j].mapel);
   state.mapel = mapels[0];
   renderMapel();
   renderTopics();
 }
 
 function renderMapel(){
-  const jData = JENJANG[state.jenjang];
+  const jData = getCurrData()[state.jenjang];
+  if(!jData) return;
   const pills = document.getElementById('mapelPills');
   pills.innerHTML = Object.entries(jData.mapel).map(([k,v])=>
     `<span class="mp${k===state.mapel?' sel':''}" onclick="setMapel('${k}',this)">${v.icon} ${v.label}</span>`
@@ -636,8 +840,8 @@ function setMapel(m, el){
 }
 
 function renderTopics(){
-  const jData = JENJANG[state.jenjang];
-  if(!state.mapel||!jData.mapel[state.mapel]) return;
+  const jData = getCurrData()[state.jenjang];
+  if(!jData||!state.mapel||!jData.mapel[state.mapel]) return;
   const topics = jData.mapel[state.mapel].topics;
   document.getElementById('topikPills').innerHTML = topics.map(t=>
     `<span class="tp" onclick="setTopik('${t.replace(/'/g,"\\'")}')">${t}</span>`
@@ -733,7 +937,7 @@ function updatePixelInfo(){
 // PROMPT BUILDER
 // ══════════════════════════════════════════════════════════════
 function getJenjangDNA(){
-  return JENJANG[state.jenjang].styleDNA;
+  return getCurrData()[state.jenjang].styleDNA;
 }
 
 function getLangLabel(){
@@ -754,14 +958,18 @@ function getModeDNA(topik, jenjangLabel){
     blueprint:`technical blueprint style infographic, dark navy background, white precision linework and text, architectural/engineering drawing aesthetic, title block with project info, dimension annotations, cross-reference lines, grid overlay. Subject: "${topik}". Professional technical documentation style.`,
     timeline:`chronological timeline infographic for "${topik}", horizontal or vertical timeline axis with clear date/period markers, milestone events with icons and descriptions, distinct visual markers for key moments, period spans shown with colored bars. Historical sequence clear and easy to follow.`,
     compare:`comparison infographic "${topik}", two or more subjects side by side, matching criteria in each row, visual icons for each attribute, color coding: green for advantages, red/amber for disadvantages, neutral gray for similarities. Title: "${topik} — Perbandingan". Summary box at bottom.`,
-    cutaway:`technical cross-section cutaway infographic of "${topik}", transparent outer shell revealing internal layers and structures, each layer labeled with callout lines, material/composition annotations, depth and dimension visible through the cutaway. Scientific accuracy with artistic precision.`
+    cutaway:`technical cross-section cutaway infographic of "${topik}", transparent outer shell revealing internal layers and structures, each layer labeled with callout lines, material/composition annotations, depth and dimension visible through the cutaway. Scientific accuracy with artistic precision.`,
+    // ── Dakwah modes ──
+    clay3d:`3D clay miniature diorama scene illustrating "${topik}", warm earth-tone clay figurines of Muslim characters (modest clothing, hijab, kopiah), cozy and spiritually warm atmosphere, soft ambient lighting on clay texture, miniature Islamic props (small Quran book, prayer beads, miniature mosque), informative text boxes with Arabic term + Indonesian meaning, professional dakwah social media quality. Background: ${bg}. Labels ${lang}.`,
+    kaligrafi:`premium Islamic calligraphy poster for "${topik}", large beautiful Arabic calligraphy text as central artwork (Naskh or Thuluth style), gold calligraphy on deep background, ornamental Islamic geometric border (arabesque patterns), smaller explanatory text in elegant Indonesian typography below, suitable for framing. Labels ${lang}. Professional mosque-display quality.`,
+    islami_info:`clean Islamic-style infographic about "${topik}", Islamic geometric pattern border frame (zellige tile pattern), structured flat design layout, gold and deep green color scheme, well-organized information boxes, crescent and star decorative elements, each section clearly separated, professional dakwah educational quality. Labels ${lang}. Background: ${bg}.`
   };
 
   return modeMaps[mode] || modeMaps.museum;
 }
 
 function buildPromptBody(topik){
-  const jData = JENJANG[state.jenjang];
+  const jData = getCurrData()[state.jenjang];
   const mapelData = state.mapel ? jData.mapel[state.mapel] : null;
   const jLabel = jData.fullLabel;
   const mapelLabel = mapelData ? mapelData.label : 'General Education';
@@ -810,16 +1018,18 @@ Negative: low quality, blurry, pixelated, watermark, incorrect scientific labels
 }
 
 function buildMJ(topik){
-  const jLabel = JENJANG[state.jenjang].label;
-  const modeKw = {museum:'isometric 3D exploded view, technical infographic, callout boxes, leader lines, museum exhibit quality',proses:'process flow diagram, sequential steps, directional arrows, numbered stages, clean flat design',mindmap:'visual mind map, central node, radiating branches, color coded, hierarchical',poster:'educational poster, classroom wall display, colorful sections, bold typography, illustrated',blueprint:'technical blueprint, dark navy background, white linework, engineering drawing, precision annotations',timeline:'chronological timeline, milestone markers, historical sequence, date labels, period spans',compare:'comparison chart, side by side, criteria matrix, color coded advantages, visual icons',cutaway:'cross section cutaway, internal layers visible, transparent outer shell, technical labels'}[state.mode]||'educational infographic, technical diagram';
-  const bgKw = state.bg.includes('White')?'pure white background':state.bg.includes('Navy')||state.bg.includes('Blueprint')?'dark navy background':state.bg.includes('Cream')?'warm cream background':state.bg.includes('Black')?'dark black background':'clean educational background';
-  return `${topik.toUpperCase()}, educational infographic, ${jLabel} level, ${modeKw}, ${JENJANG[state.jenjang].styleDNA.base.split(',').slice(0,3).join(',')}, ${bgKw}, color-coded annotations, educational labels, technical accuracy, professional design --ar ${state.sz.ar} --v 7 --stylize 850 --style raw
+  const jLabel = getCurrData()[state.jenjang].label;
+  const modeKw = {museum:'isometric 3D exploded view, technical infographic, callout boxes, leader lines, museum exhibit quality',proses:'process flow diagram, sequential steps, directional arrows, numbered stages, clean flat design',mindmap:'visual mind map, central node, radiating branches, color coded, hierarchical',poster:'educational poster, classroom wall display, colorful sections, bold typography, illustrated',blueprint:'technical blueprint, dark navy background, white linework, engineering drawing, precision annotations',timeline:'chronological timeline, milestone markers, historical sequence, date labels, period spans',compare:'comparison chart, side by side, criteria matrix, color coded advantages, visual icons',cutaway:'cross section cutaway, internal layers visible, transparent outer shell, technical labels',clay3d:'3D clay miniature diorama, clay figurines, warm earth tones, cozy atmosphere, tactile clay texture',kaligrafi:'arabic calligraphy centerpiece, gold calligraphy, islamic geometric border, spiritual poster',islami_info:'islamic geometric pattern border, arabesque frame, flat clean infographic, gold green palette'}[state.mode]||'educational infographic, technical diagram';
+  const bgKw = state.bg.includes('White')?'pure white background':state.bg.includes('Navy')||state.bg.includes('Blueprint')?'dark navy background':state.bg.includes('Cream')?'warm cream parchment background':state.bg.includes('Black')?'dark black background':state.bg.includes('Hijau')||state.bg.includes('Sage')?'deep sage green background, islamic green':'clean background';
+  const currDNA = getCurrData()[state.jenjang].styleDNA.base.split(',').slice(0,3).join(',');
+  const isIslamic = state.channel==='dakwah';
+  return `${topik.toUpperCase()}, ${isIslamic?'Islamic infographic, dakwah content':'educational infographic'}, ${jLabel}${isIslamic?' islamic category':' level'}, ${modeKw}, ${currDNA}, ${bgKw}, ${isIslamic?'gold and green palette, Arabic typography accents, Islamic design':'color-coded annotations, educational labels'}, technical accuracy, professional design --ar ${state.sz.ar} --v 7 --stylize 850 --style raw
 
---no cartoon low-poly, blurry text, watermark, low quality, incorrect labels, oversimplified`;
+--no cartoon low-poly, blurry text, watermark, low quality, incorrect labels, ${isIslamic?'offensive content, inappropriate islamic imagery':'oversimplified'}`;
 }
 
 function buildDALLE(topik){
-  const jData = JENJANG[state.jenjang];
+  const jData = getCurrData()[state.jenjang];
   const mapelLabel = state.mapel ? jData.mapel[state.mapel]?.label : 'Education';
   return `Create a professional ultra-detailed educational infographic of "${topik}".
 
@@ -836,13 +1046,13 @@ function buildFirefly(topik){
   return `Educational infographic: "${topik}"
 ${buildPromptBody(topik)}
 
-Adobe Firefly style guidance: photorealistic high-quality educational illustration, appropriate for ${JENJANG[state.jenjang].fullLabel} students. Commercially safe for Adobe Stock submission. AI-generated educational content.
+Adobe Firefly style guidance: photorealistic high-quality ${state.channel==='dakwah'?'Islamic dakwah illustration':'educational illustration'}, appropriate for ${getCurrData()[state.jenjang].fullLabel}${state.channel==='dakwah'?' content':' students'}. Commercially safe for Adobe Stock submission. AI-generated content.
 Avoid: copyrighted characters, brand logos, real people, recognizable trademarked content.
 Output: ${state.sz.w}×${state.sz.h}px @ ${state.dpi}DPI. Clean single image.`;
 }
 
 function buildNative(topik){
-  const jData = JENJANG[state.jenjang];
+  const jData = getCurrData()[state.jenjang];
   const mapelData = state.mapel ? jData.mapel[state.mapel] : null;
   if(state.lang==='en') return buildDALLE(topik);
   return `Buat infografis edukasi profesional ultra-detail untuk topik: "${topik}"
@@ -869,42 +1079,70 @@ Tanpa watermark. Label edukasi terintegrasi dalam desain.`;
 }
 
 function buildAdobeMeta(topik){
-  const jData = JENJANG[state.jenjang];
+  const jData = getCurrData()[state.jenjang];
   const mapelData = state.mapel ? jData.mapel[state.mapel] : null;
   const mapelLabel = mapelData?.label||'Education';
   const jLabel = jData.label;
   const modeLabel = MODES.find(m=>m.id===state.mode)?.name||'infographic';
 
-  const kws = [
-    'educational infographic','educational poster','infographic diagram',
-    'technical infographic','classroom poster','school education',
-    `${jLabel.toLowerCase()} education`,`${mapelLabel.toLowerCase()} infographic`,
-    `${mapelLabel.toLowerCase()} diagram`,`${mapelLabel.toLowerCase()} poster`,
-    'AI generated illustration','educational illustration','science poster',
-    'teaching material','learning resource','school infographic',
-    modeLabel.toLowerCase(),'visual learning','educational chart',
-    'academic illustration','study material','educational design',
-    ...topik.toLowerCase().split(/[\s,]+/).filter(w=>w.length>2).slice(0,6).map(w=>`${w} diagram`),
-    'white background','clean design','printable educational',
-    'digital download','wall art education','school wall art',
-    'infographic art','educational wall decor','teaching aid',
-    'science education','stem education','curriculum material'
-  ];
+  let kws, titleBase, description;
+
+  if(state.channel==='dakwah'){
+    const topikKws = topik.toLowerCase().split(/[\s,]+/).filter(w=>w.length>2).slice(0,5);
+    kws = [
+      'islamic infographic','islamic poster','islamic illustration','dakwah content',
+      'muslim education','islamic art','islamic design','quran infographic',
+      `${mapelLabel.toLowerCase()} infographic`,`${mapelLabel.toLowerCase()} poster`,
+      `${jLabel.toLowerCase()} islamic`,`${topik.toLowerCase()}`,
+      ...topikKws.map(w=>`${w} islamic`),
+      ...topikKws.map(w=>`${w} infographic`),
+      'AI generated islamic','digital download','printable islamic',
+      'islamic wall art','muslim home decor','halal','islamic education',
+      'mosque display','islamic digital content','muslim lifestyle',
+      'arabic calligraphy','islamic geometric','islamic typography',
+      modeLabel.toLowerCase(),'islamic family','religious infographic',
+      'spiritual poster','islamic reminder','muslim community',
+      'indonesian islamic','indonesia muslim','dakwah indonesia',
+      'islamic social media','islamic printable','masjid display',
+      'eid mubarak','ramadan','quran verse','hadith','sunnah'
+    ];
+    titleBase = `${topik} — Islamic Infographic | ${jLabel} | ${mapelLabel}`;
+    description = `Professional Islamic infographic about "${topik}". Category: ${jLabel} — ${mapelLabel}. Design style: ${modeLabel}. Labels in ${state.lang==='en'?'English':state.lang==='both'?'Indonesian & English':'Bahasa Indonesia'}. Suitable for mosque display, Islamic school, social media dakwah, and Islamic home decor.`;
+  } else {
+    const topikKws = topik.toLowerCase().split(/[\s,]+/).filter(w=>w.length>2).slice(0,6);
+    kws = [
+      'educational infographic','educational poster','infographic diagram',
+      'technical infographic','classroom poster','school education',
+      `${jLabel.toLowerCase()} education`,`${mapelLabel.toLowerCase()} infographic`,
+      `${mapelLabel.toLowerCase()} diagram`,`${mapelLabel.toLowerCase()} poster`,
+      'AI generated illustration','educational illustration','science poster',
+      'teaching material','learning resource','school infographic',
+      modeLabel.toLowerCase(),'visual learning','educational chart',
+      'academic illustration','study material','educational design',
+      ...topikKws.map(w=>`${w} diagram`),
+      'white background','clean design','printable educational',
+      'digital download','wall art education','school wall art',
+      'infographic art','educational wall decor','teaching aid',
+      'science education','stem education','curriculum material'
+    ];
+    titleBase = `${topik} — Educational Infographic ${jLabel} | ${mapelLabel}`;
+    description = `Professional ${modeLabel.toLowerCase()} educational infographic about "${topik}" for ${jData.fullLabel} students (${jData.age}). Subject: ${mapelLabel}. Clear labeled diagram with annotations in ${state.lang==='en'?'English':state.lang==='both'?'Indonesian & English':'Indonesian'}. Suitable for classroom display, educational material, and digital learning resources.`;
+  }
 
   const uniq = [...new Set(kws)].slice(0,49);
-  const titleBase = `${topik} — Educational Infographic ${jLabel} | ${mapelLabel}`;
   const title = titleBase.length>200 ? titleBase.substring(0,197)+'...' : titleBase;
+  const category = state.channel==='dakwah' ? 'Religion & Spirituality → Islam' : 'Illustrations & Vectors → Education';
 
   return `TITLE (maks 200 char Adobe Stock):
 ${title}
 
 DESCRIPTION:
-Professional ${modeLabel.toLowerCase()} educational infographic about "${topik}" for ${jData.fullLabel} students (${jData.age}). Subject: ${mapelLabel}. Clear labeled diagram with annotations in ${state.lang==='en'?'English':state.lang==='both'?'Indonesian & English':'Indonesian'}. Suitable for classroom display, educational material, and digital learning resources.
+${description}
 
 KEYWORDS (${uniq.length} kata — paste ke Adobe Stock, max 49):
 ${uniq.join(', ')}
 
-CATEGORY: Illustrations & Vectors → Education
+CATEGORY: ${category}
 AI DECLARATION: ☑ Created using generative AI tools
 SUBMIT AS: Illustration (bukan Photo)
 CONTENT TYPE: ☑ People and Property are fictional`;
@@ -930,7 +1168,7 @@ function generate(){
     firefly:{label:'ADOBE FIREFLY',color:'#FF0000',badge:'Stock-Safe',fn:buildFirefly}
   };
 
-  const jData = JENJANG[state.jenjang];
+  const jData = getCurrData()[state.jenjang];
   const meta = buildAdobeMeta(topik);
 
   let html = '';
@@ -975,7 +1213,7 @@ function mkPromptBlock(label, color, badge, text, id, jData){
     <div class="pb-header">
       <span class="platform-tag" style="background:${color}">${label}</span>
       <span style="font-size:10px;color:var(--text3);padding:2px 8px;border-radius:4px;border:1px solid var(--border)">${badge}</span>
-      <span class="pb-meta">${sz.w}×${sz.h}px · ${state.dpi}DPI · ${jData.label} · ${state.lang.toUpperCase()}</span>
+      <span class="pb-meta">${sz.w}×${sz.h}px · ${state.dpi}DPI · ${state.channel==='dakwah'?'☪️ ':''} ${jData.label} · ${state.lang.toUpperCase()}</span>
       <button class="copy-btn" id="${id}-btn" onclick="cpBtn('${id}','${id}-btn')">Copy</button>
     </div>
     <div class="output-box" id="${id}">${esc(text)}</div>
@@ -987,7 +1225,7 @@ function mkPromptBlock(label, color, badge, text, id, jData){
 // ══════════════════════════════════════════════════════════════
 function generateVars(){
   const topik = state.topik || document.getElementById('topikInput').value.trim() || '[TOPIK]';
-  const jData = JENJANG[state.jenjang];
+  const jData = getCurrData()[state.jenjang];
   const mapelLabel = state.mapel ? jData.mapel[state.mapel]?.label : 'Education';
   const dna = jData.styleDNA.base;
   const bg = state.bgPrompt;
@@ -1038,27 +1276,30 @@ function copyAllVars(){
 // ══════════════════════════════════════════════════════════════
 function buildKeywords(topikOverride){
   const topik = topikOverride || state.topik || document.getElementById('topikInput').value.trim() || '';
-  const jData = JENJANG[state.jenjang];
+  const jData = getCurrData()[state.jenjang];
   const mapelData = state.mapel ? jData.mapel[state.mapel] : null;
 
   const topikWords = topik.toLowerCase().split(/[\s,&\-\/]+/).filter(w=>w.length>2);
-  const jenjangKw = {sd:['elementary school','children education','kids learning','primary school','school poster'],smp:['middle school','junior high','science diagram','textbook illustration'],sma:['high school','senior high','science infographic','academic poster','STEM education'],kuliah:['university','college','academic','research illustration','scientific diagram']}[state.jenjang]||[];
-  const mapelKw = {ipa:['biology','science','nature','ecology'],biologi:['biology','anatomy','cell biology','life science'],fisika:['physics','mechanics','electricity','wave'],kimia:['chemistry','molecule','periodic table','chemical'],ips:['geography','history','social studies','map'],sejarah:['history','historical','timeline','chronicle'],mtk:['mathematics','geometry','algebra','calculus'],ekonomi:['economics','finance','market','business'],kedokteran:['medicine','anatomy','medical','healthcare','clinical'],teknik:['engineering','technical diagram','mechanical','electrical'],komputer:['computer science','programming','network','IT diagram'],hukum_sosial:['law','social science','psychology','governance']}[state.mapel]||['education','learning'];
-  const modeKw = {museum:['exploded view','teardown','museum exhibit','3D infographic','technical diagram'],proses:['process diagram','flowchart','step by step','workflow'],mindmap:['mind map','concept map','visual summary','knowledge map'],poster:['classroom poster','wall art','educational poster','school display'],blueprint:['blueprint','technical drawing','engineering diagram','schematic'],timeline:['timeline','chronology','historical sequence','milestones'],compare:['comparison chart','versus','comparison infographic','feature comparison'],cutaway:['cutaway diagram','cross section','internal view','layers diagram']}[state.mode]||[];
+  const jenjangKw = {sd:['elementary school','children education','kids learning','primary school','school poster'],smp:['middle school','junior high','science diagram','textbook illustration'],sma:['high school','senior high','science infographic','academic poster','STEM education'],kuliah:['university','college','academic','research illustration','scientific diagram'],
+    // dakwah categories
+    quran:['quran infographic','hadith poster','islamic quote','quran verse art'],asmaul_husna:['asmaul husna','99 names of allah','islamic names','allah names poster'],rukun_ibadah:['pillars of islam','islamic prayer guide','wudu steps','islamic worship'],ramadan_eid:['ramadan poster','eid mubarak','ramadan guide','islamic seasonal'],akhlak:['islamic character','muslim values','akhlak poster','islamic motivation'],seerah_sejarah:['islamic history','prophet muhammad','seerah infographic','islamic timeline']}[state.jenjang]||[];
+  const mapelKw = state.channel==='dakwah'
+    ? ['islamic infographic','dakwah poster','muslim education','islamic art','islamic design','halal','Islamic wall art','Muslim lifestyle','islamic digital download','mosque display','islamic printable','quran art','muslim family','islamic home decor']
+    : {ipa:['biology','science','nature','ecology'],biologi:['biology','anatomy','cell biology','life science'],fisika:['physics','mechanics','electricity','wave'],kimia:['chemistry','molecule','periodic table','chemical'],ips:['geography','history','social studies','map'],sejarah:['history','historical','timeline','chronicle'],mtk:['mathematics','geometry','algebra','calculus'],ekonomi:['economics','finance','market','business'],kedokteran:['medicine','anatomy','medical','healthcare','clinical'],teknik:['engineering','technical diagram','mechanical','electrical'],komputer:['computer science','programming','network','IT diagram'],hukum_sosial:['law','social science','psychology','governance']}[state.mapel]||['education','learning'];
+  const modeKw = {museum:['exploded view','teardown','museum exhibit','3D infographic','technical diagram'],proses:['process diagram','flowchart','step by step','workflow'],mindmap:['mind map','concept map','visual summary','knowledge map'],poster:['classroom poster','wall art','educational poster','school display'],blueprint:['blueprint','technical drawing','engineering diagram','schematic'],timeline:['timeline','chronology','historical sequence','milestones'],compare:['comparison chart','versus','comparison infographic','feature comparison'],cutaway:['cutaway diagram','cross section','internal view','layers diagram'],clay3d:['3D clay','clay miniature','clay diorama','clay illustration','3D figurine'],kaligrafi:['arabic calligraphy','calligraphy art','islamic calligraphy','arabic typography'],islami_info:['islamic geometric','arabesque','islamic pattern','geometric border']}[state.mode]||[];
+
+  const baseTags = state.channel==='dakwah'
+    ? ['islamic infographic','islamic illustration','islamic poster','dakwah content','AI generated islamic','digital download','printable islamic','islamic wall art','muslim home decor','islamic educational']
+    : ['educational infographic','educational illustration','educational poster','infographic art','technical diagram','science illustration','AI generated','digital download','printable','wall art','clean design','white background','study material','teaching material','learning resource'];
 
   const all = [...new Set([
     ...topikWords,
     ...topikWords.map(w=>`${w} diagram`),
     ...topikWords.map(w=>`${w} infographic`),
     topik.toLowerCase(),
-    `${topik.toLowerCase()} diagram`,
+    `${topik.toLowerCase()} ${state.channel==='dakwah'?'islamic poster':'diagram'}`,
     `${topik.toLowerCase()} infographic`,
-    ...jenjangKw,...mapelKw,...modeKw,
-    'educational infographic','educational illustration','educational poster',
-    'infographic art','technical diagram','science illustration',
-    'AI generated','digital download','printable','wall art',
-    'clean design','white background','vector illustration',
-    'study material','teaching material','learning resource'
+    ...jenjangKw,...mapelKw,...modeKw,...baseTags
   ])].slice(0,70);
 
   selKw = new Set(all.slice(0,49));
