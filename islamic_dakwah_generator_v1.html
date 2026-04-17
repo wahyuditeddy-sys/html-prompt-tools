@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Islamic Dakwah Prompt Generator v2</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --gr:#1a7a4a;--gr2:#2da05e;--gr3:#d4f0e2;--gr4:#f0fbf6;
+  --gd:#c9a227;--gd2:#f0c940;--gd3:#fdf5d4;--gd4:#fffdf0;
+  --nv:#1a2e4a;--nv2:#2d4a7a;--nv3:#dce8f8;
+  --cr:#c94040;--cr3:#fde8e8;
+  --pu:#6b3fa0;--pu3:#ede5f8;
+  --tk:#0d7a7a;--tk3:#d4f2f2;
+  --wh:#ffffff;--bg:#f5faf7;
+  --txt:#111;--txt2:#555;--txt3:#888;
+  --bdr:rgba(26,122,74,.15);
+}
+html{scroll-behavior:smooth;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;}
+
+/* ── HEADER ── */
+.hdr{background:linear-gradient(135deg,#0d2218 0%,#1a3d28 50%,#0d2a3a 100%);padding:1.5rem 1.25rem;position:relative;overflow:hidden;}
+.hdr::before{content:'بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ';position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:15px;color:rgba(255,255,255,.07);font-family:serif;letter-spacing:2px;pointer-events:none;}
+.hdr-inner{max-width:980px;margin:0 auto;display:flex;align-items:center;gap:14px;}
+.hdr-ic{width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,var(--gr),var(--gd));display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;box-shadow:0 4px 20px rgba(201,162,39,.3);}
+.hdr h1{font-size:18px;font-weight:700;color:#fff;line-height:1.2;}
+.hdr-sub{font-size:11px;color:rgba(255,255,255,.5);margin-top:3px;line-height:1.4;}
+.hdr-pills{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap;}
+.hpill{font-size:9.5px;font-weight:600;padding:3px 9px;border-radius:20px;border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.55);}
+.ver{margin-left:auto;flex-shrink:0;background:linear-gradient(135deg,var(--gr),var(--gd));color:#fff;font-size:10px;font-weight:700;padding:5px 12px;border-radius:20px;letter-spacing:.05em;}
+
+/* ── WRAP ── */
+.wrap{max-width:980px;margin:0 auto;padding:1.25rem;}
+
+/* ── MODE TABS ── */
+.mode-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:1.25rem;background:rgba(26,122,74,.07);border-radius:12px;padding:5px;}
+.mb{border:none;border-radius:9px;padding:11px 8px;cursor:pointer;text-align:center;background:transparent;color:var(--txt2);transition:all .15s;font-size:12px;font-weight:600;}
+.mb.on{background:var(--wh);color:var(--gr);box-shadow:0 2px 12px rgba(26,122,74,.12);}
+.mb-ic{font-size:18px;display:block;margin-bottom:3px;}
+.mb-tx{display:block;font-size:10.5px;font-weight:700;}
+.mb-sub{display:block;font-size:9px;color:var(--txt3);font-weight:400;margin-top:1px;}
+.mb.on .mb-sub{color:rgba(26,122,74,.6);}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:340px 1fr;gap:1rem;}
+@media(max-width:700px){.layout{grid-template-columns:1fr;}}
+
+/* ── SIDEBAR ── */
+.sidebar{}
+.card{background:var(--wh);border:0.5px solid var(--bdr);border-radius:12px;padding:14px;margin-bottom:.85rem;}
+.lbl{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gr);display:block;margin-bottom:6px;margin-top:.75rem;}
+.lbl:first-child{margin-top:0;}
+
+/* ── SEGMENT BTN ── */
+.seg{display:flex;gap:3px;background:var(--bg);border-radius:8px;padding:3px;flex-wrap:wrap;}
+.sb{flex:1;font-size:10.5px;font-weight:600;padding:6px 5px;border:none;border-radius:6px;cursor:pointer;background:transparent;color:var(--txt2);transition:all .12s;text-align:center;white-space:nowrap;min-width:0;}
+.sb.on{background:var(--wh);color:var(--gr);box-shadow:0 1px 6px rgba(26,122,74,.12);}
+
+/* ── TOPIC GRID ── */
+.topic-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;}
+.tc{border:1.5px solid var(--bdr);border-radius:8px;padding:8px 7px;cursor:pointer;transition:all .12s;background:var(--wh);text-align:center;}
+.tc:hover{border-color:var(--gr);}
+.tc.sel{border-color:var(--gr);background:var(--gr4);}
+.tc.sel .tc-t{color:var(--gr);}
+.tc-i{font-size:16px;display:block;margin-bottom:2px;}
+.tc-t{font-size:10px;font-weight:600;color:var(--txt);line-height:1.3;}
+.tc-s{font-size:9px;color:var(--txt3);margin-top:1px;}
+.safe-tag{display:inline-block;font-size:8px;font-weight:700;padding:1px 5px;border-radius:10px;background:#d4f0e2;color:var(--gr);margin-top:2px;}
+
+/* ── SUBTOPIC PILLS ── */
+.stopic-wrap{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
+.stopic{font-size:10px;padding:3px 9px;border:1px solid var(--bdr);border-radius:20px;cursor:pointer;background:var(--wh);color:var(--txt2);transition:all .12s;}
+.stopic:hover{border-color:var(--gr);}
+.stopic.sel{background:var(--gr);color:#fff;border-color:var(--gr);}
+
+/* ── STYLE GRID ── */
+/* FIX: unified .st and .bst/.kst so they all share same styles */
+.style-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;}
+.st,.bst,.kst{border:1.5px solid var(--bdr);border-radius:8px;padding:9px 8px;cursor:pointer;transition:all .12s;background:var(--wh);}
+.st:hover,.bst:hover,.kst:hover{border-color:var(--gr);}
+.st.sel,.bst.sel,.kst.sel{border-color:var(--gd);background:var(--gd4);}
+.st-i{font-size:16px;margin-bottom:2px;}
+.st-n{font-size:10px;font-weight:700;color:var(--txt);}
+.st-d{font-size:9px;color:var(--txt3);line-height:1.3;margin-top:1px;}
+.st-badge{font-size:8px;font-weight:700;padding:1px 5px;border-radius:10px;background:var(--gd3);color:#7a5800;margin-top:3px;display:inline-block;}
+
+/* ── PLATFORM PILLS ── FIX: renamed from .pp to .ppl to avoid conflict */
+.platform-row{display:flex;gap:4px;flex-wrap:wrap;}
+.ppl{font-size:10px;padding:4px 9px;border:1px solid var(--bdr);border-radius:20px;cursor:pointer;background:var(--wh);color:var(--txt2);transition:all .12s;}
+.ppl:hover{border-color:var(--gr);}
+.ppl.sel{background:var(--nv);color:#fff;border-color:var(--nv);}
+
+/* ── SIZE ── */
+.sz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;}
+.sz{border:1px solid var(--bdr);border-radius:7px;padding:7px 5px;cursor:pointer;text-align:center;transition:all .12s;background:var(--wh);}
+.sz:hover,.sz.sel{border-color:var(--gr);}
+.sz.sel{background:var(--gr4);}
+.sz-n{font-size:9.5px;font-weight:600;color:var(--txt);}
+.sz-d{font-size:8.5px;color:var(--txt3);font-family:monospace;}
+.sz-p{font-size:8px;color:var(--txt3);margin-top:1px;}
+
+/* ── INPUT ── */
+input[type=text],textarea{font-size:12.5px;padding:9px 12px;border:1.5px solid var(--bdr);border-radius:8px;background:var(--wh);color:var(--txt);outline:none;width:100%;transition:border .12s;font-family:inherit;}
+input[type=text]:focus,textarea:focus{border-color:var(--gr);}
+textarea{resize:vertical;min-height:60px;line-height:1.5;}
+::placeholder{color:var(--txt3);}
+
+/* ── AI PLATFORM ── */
+.ai-seg{display:flex;gap:3px;background:var(--bg);border-radius:8px;padding:3px;}
+.ai-b{flex:1;font-size:10px;font-weight:600;padding:7px 4px;border:none;border-radius:6px;cursor:pointer;background:transparent;color:var(--txt2);transition:all .12s;text-align:center;}
+.ai-b.on{background:var(--nv);color:#fff;box-shadow:0 1px 6px rgba(26,46,74,.18);}
+
+/* ── BOOK SECTION ── */
+.char-lock{background:var(--gr3);border-radius:10px;padding:10px 12px;margin-bottom:.65rem;border:1px solid rgba(26,122,74,.2);}
+.char-lock-title{font-size:10px;font-weight:700;color:var(--gr);margin-bottom:6px;letter-spacing:.05em;}
+.page-num-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.page-num-row label{font-size:11px;color:var(--txt2);flex:1;}
+.page-num-row input[type=number]{width:60px;padding:5px 8px;font-size:12px;border:1.5px solid var(--bdr);border-radius:6px;background:var(--wh);color:var(--txt);outline:none;}
+.scene-row{display:flex;gap:5px;align-items:flex-start;margin-bottom:4px;}
+.scene-row input{flex:1;}
+.add-scene{font-size:10.5px;font-weight:600;color:var(--gr);background:transparent;border:1px dashed rgba(26,122,74,.3);border-radius:7px;padding:5px 10px;cursor:pointer;width:100%;transition:all .12s;}
+.add-scene:hover{background:var(--gr4);}
+
+/* ── GEN BTN ── */
+.gen-row{display:flex;gap:6px;margin-top:.75rem;}
+.gen-btn{flex:1;font-size:13px;font-weight:700;padding:12px 18px;border-radius:9px;cursor:pointer;border:none;color:#fff;background:linear-gradient(135deg,var(--gr),var(--gr2));transition:all .15s;letter-spacing:.01em;}
+.gen-btn:hover{opacity:.9;}
+.gen-btn:active{transform:scale(.98);}
+.clr-btn{font-size:12px;padding:12px 13px;border:0.5px solid var(--bdr);border-radius:9px;background:var(--wh);color:var(--txt2);cursor:pointer;transition:all .12s;}
+.clr-btn:hover{background:var(--bg);}
+
+/* ── WARNING BANNER ── */
+.warn-ban{background:var(--gd3);border:1px solid rgba(201,162,39,.3);border-radius:9px;padding:9px 12px;font-size:11px;color:#7a5800;line-height:1.5;display:flex;gap:8px;align-items:flex-start;margin-bottom:.75rem;}
+.safe-ban{background:var(--gr3);border:1px solid rgba(26,122,74,.25);border-radius:9px;padding:9px 12px;font-size:11px;color:#0e5c30;line-height:1.5;display:flex;gap:8px;align-items:flex-start;margin-bottom:.75rem;}
+
+/* ── OUTPUT PANEL ── */
+.output-panel{}
+.out-tabs{display:flex;gap:2px;border-bottom:0.5px solid var(--bdr);margin-bottom:1rem;flex-wrap:wrap;}
+.ot{font-size:11px;font-weight:600;padding:7px 10px;border:none;background:none;cursor:pointer;color:var(--txt2);border-bottom:2px solid transparent;margin-bottom:-.5px;transition:all .12s;white-space:nowrap;}
+.ot.on{color:var(--gr);border-bottom-color:var(--gr);}
+.tc-panel{display:none;}.tc-panel.on{display:block;}
+
+/* ── PROMPT BOX ── FIX: renamed inner text class .pp → .ptext */
+.pb{background:var(--wh);border:0.5px solid var(--bdr);border-radius:10px;padding:14px;margin-bottom:.75rem;}
+.pb-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:6px;flex-wrap:wrap;}
+.pb-tag{font-size:9.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:3px 9px;border-radius:20px;color:#fff;flex-shrink:0;}
+.pb-tag.eng{background:var(--nv);}
+.pb-tag.ind{background:var(--gr);}
+.pb-tag.bk{background:var(--pu);}
+.pb-tag.kw{background:var(--tk);}
+.pb-tag.nm{background:var(--cr);}
+.pb-tag.meta{background:var(--gd);color:#3a2800;}
+.pb-meta{font-size:10px;color:var(--txt3);}
+.cp-btn{font-size:10.5px;padding:4px 10px;border:0.5px solid var(--bdr);border-radius:6px;background:var(--wh);color:var(--txt2);cursor:pointer;transition:all .12s;white-space:nowrap;}
+.cp-btn.ok{color:var(--gr);border-color:var(--gr);}
+/* FIX: was .pp (conflicted with .ppl), now .ptext */
+.ptext{font-family:'JetBrains Mono','Fira Code',monospace;font-size:11px;line-height:1.8;color:var(--txt);white-space:pre-wrap;word-break:break-word;max-height:400px;overflow-y:auto;background:var(--bg);padding:10px;border-radius:7px;border:0.5px solid var(--bdr);}
+.ptext::-webkit-scrollbar{width:4px;}
+.ptext::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:2px;}
+
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--txt3);}
+.empty-ic{font-size:48px;margin-bottom:10px;}
+.empty-t{font-size:14px;font-weight:600;color:var(--txt2);}
+.empty-s{font-size:12px;margin-top:4px;line-height:1.5;}
+
+/* ── SEO KEYWORDS ── */
+.kw-cloud{display:flex;flex-wrap:wrap;gap:5px;}
+.kw-item{font-size:10.5px;padding:4px 10px;border:1px solid var(--bdr);border-radius:20px;cursor:pointer;background:var(--wh);color:var(--txt2);transition:all .12s;}
+.kw-item:hover{border-color:var(--gr);}
+.kw-item.ksel{background:var(--gr);color:#fff;border-color:var(--gr);}
+.kw-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.kw-btn{font-size:10.5px;padding:5px 12px;border:0.5px solid var(--bdr);border-radius:7px;background:var(--wh);color:var(--txt2);cursor:pointer;}
+.kw-btn:hover{background:var(--gr);color:#fff;border-color:var(--gr);}
+.kw-count{font-size:10px;color:var(--txt3);margin-top:6px;}
+.kw-export{background:var(--bg);border:0.5px solid var(--bdr);border-radius:8px;padding:8px 12px;font-family:monospace;font-size:10.5px;color:var(--txt2);margin-top:8px;word-break:break-all;line-height:1.6;min-height:40px;}
+
+/* ── MODE PANELS ── */
+.mode-panel{display:none;}.mode-panel.on{display:block;}
+
+/* ── BOOK PAGE LIST ── */
+.book-pages{display:flex;flex-direction:column;gap:.65rem;}
+.bpage{background:var(--wh);border:0.5px solid var(--bdr);border-radius:10px;padding:12px 14px;}
+.bpage-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.bpage-num{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--gr),var(--gr2));color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.bpage-title{font-size:11px;font-weight:700;color:var(--txt);flex:1;}
+.bpage-content{font-size:11px;font-family:monospace;line-height:1.7;color:var(--txt);background:var(--bg);border-radius:7px;padding:8px 10px;white-space:pre-wrap;word-break:break-word;max-height:280px;overflow-y:auto;}
+.bpage-ind{font-size:10.5px;color:var(--gr2);font-style:italic;margin-top:5px;padding-left:2px;}
+
+/* ── TIPS ── */
+.tip-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.tip-card{background:var(--wh);border:0.5px solid var(--bdr);border-radius:10px;padding:10px 12px;}
+.tip-ic{font-size:16px;margin-bottom:4px;}
+.tip-t{font-size:11px;font-weight:700;color:var(--txt);margin-bottom:3px;}
+.tip-d{font-size:10.5px;color:var(--txt2);line-height:1.5;}
+
+/* ── NICHE INSIGHT ── */
+.niche-list{display:flex;flex-direction:column;gap:6px;}
+.niche-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--wh);border:0.5px solid var(--bdr);border-radius:8px;}
+.niche-name{flex:1;font-size:11.5px;font-weight:600;color:var(--txt);}
+.niche-bar-wrap{width:80px;height:5px;background:var(--bg);border-radius:3px;overflow:hidden;}
+.niche-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gr),var(--gd));}
+.niche-pct{font-size:10px;color:var(--txt2);min-width:28px;text-align:right;font-weight:600;}
+.nbadge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;}
+.nb-hot{background:var(--cr3);color:var(--cr);}
+.nb-ev{background:var(--gr3);color:var(--gr);}
+.nb-pr{background:var(--pu3);color:var(--pu);}
+.nb-sea{background:var(--gd3);color:#7a5800;}
+
+/* ── ADOBE META ── */
+.meta-section{background:var(--gd4);border:1px solid rgba(201,162,39,.25);border-radius:10px;padding:14px;margin-bottom:.75rem;}
+.meta-section-title{font-size:11px;font-weight:700;color:#7a5800;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.meta-field{margin-bottom:10px;}
+.meta-field label{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--txt3);display:block;margin-bottom:3px;}
+.meta-val{background:var(--wh);border:0.5px solid var(--bdr);border-radius:7px;padding:8px 10px;font-size:11px;color:var(--txt);line-height:1.6;word-break:break-word;}
+.meta-char{font-size:10px;color:var(--txt3);margin-top:2px;}
+.meta-char.warn{color:var(--cr);}
+
+/* FIX TAG */
+.fix-badge{display:inline-block;font-size:8.5px;font-weight:700;padding:1px 6px;border-radius:10px;background:#fde8e8;color:var(--cr);margin-left:5px;}
+.new-badge{display:inline-block;font-size:8.5px;font-weight:700;padding:1px 6px;border-radius:10px;background:#d4f0e2;color:var(--gr);margin-left:5px;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-ic">☪️</div>
+    <div style="flex:1;">
+      <h1>Islamic Dakwah Prompt Generator <span style="font-size:12px;opacity:.6">v2.0</span></h1>
+      <div class="hdr-sub">Infografis Islam · Buku Cerita Anak · Karakter Muslim — Prompt bilingual untuk NB2/Gemini, Midjourney v7, Adobe Firefly, DALL·E 3</div>
+      <div class="hdr-pills">
+        <span class="hpill">🍌 NanoBanana2 / Gemini</span>
+        <span class="hpill">⚓ Midjourney v7</span>
+        <span class="hpill">🔥 Adobe Firefly</span>
+        <span class="hpill">✦ DALL·E 3</span>
+        <span class="hpill">🇮🇩 Bilingual AI Prompt</span>
+        <span class="hpill">🛒 Etsy · Adobe Stock · Tokopedia</span>
+        <span class="hpill" style="background:rgba(201,162,39,.25);color:var(--gd2)">📦 Stock Metadata</span>
+      </div>
+    </div>
+    <span class="ver">v2.0</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- MODE TABS -->
+<!-- FIX: setMode now passes `this` directly, no longer relies on global event object -->
+<div class="mode-bar">
+  <button class="mb on" onclick="setMode('infografis',this)">
+    <span class="mb-ic">📊</span>
+    <span class="mb-tx">Infografis Islam</span>
+    <span class="mb-sub">Poster · Edukasi · Wall Art</span>
+  </button>
+  <button class="mb" onclick="setMode('buku',this)">
+    <span class="mb-ic">📖</span>
+    <span class="mb-tx">Buku Cerita Anak</span>
+    <span class="mb-sub">Halaman per halaman · SD/TK</span>
+  </button>
+  <button class="mb" onclick="setMode('karakter',this)">
+    <span class="mb-ic">🧒</span>
+    <span class="mb-tx">Karakter Muslim</span>
+    <span class="mb-sub">Ilustrasi · Sticker · Clipart</span>
+  </button>
+</div>
+
+<div class="layout">
+
+<!-- ══════════════════ SIDEBAR ══════════════════ -->
+<div class="sidebar">
+
+<!-- ── MODE: INFOGRAFIS ── -->
+<div id="panel-infografis" class="mode-panel on">
+
+  <div class="card">
+    <span class="lbl">Topik Utama</span>
+    <div class="topic-grid" id="topic-grid">
+      <div class="tc sel" onclick="selectTopic(this,'asmaul-husna','Asmaul Husna')">
+        <span class="tc-i">📿</span><span class="tc-t">Asmaul Husna</span>
+        <span class="tc-s">99 Nama Allah</span>
+      </div>
+      <div class="tc" onclick="selectTopic(this,'akhlak','Akhlak & Akidah')">
+        <span class="tc-i">🌟</span><span class="tc-t">Akhlak & Akidah</span>
+        <span class="tc-s">Karakter muslim</span>
+      </div>
+      <div class="tc" onclick="selectTopic(this,'quran-hadits','Quran & Hadits')">
+        <span class="tc-i">📖</span><span class="tc-t">Quran & Hadits</span>
+        <span class="tc-s">Ayat & hadits pilihan</span>
+        <span class="safe-tag">Syariah Safe</span>
+      </div>
+      <div class="tc" onclick="selectTopic(this,'rukun-ibadah','Rukun & Ibadah')">
+        <span class="tc-i">🕌</span><span class="tc-t">Rukun & Ibadah</span>
+        <span class="tc-s">Islam, Iman, Sholat</span>
+      </div>
+      <div class="tc" onclick="selectTopic(this,'ramadan','Ramadan & Hari Raya')">
+        <span class="tc-i">🌙</span><span class="tc-t">Ramadan & Hari Raya</span>
+        <span class="tc-s">Puasa, Eid, Idul Adha</span>
+      </div>
+      <div class="tc" onclick="selectTopic(this,'halal-haram','Halal & Haram')">
+        <span class="tc-i">✅</span><span class="tc-t">Halal & Haram</span>
+        <span class="tc-s">Panduan islami</span>
+      </div>
+      <div class="tc" onclick="selectTopic(this,'seerah','Seerah & Sejarah Islam')">
+        <span class="tc-i">🏛️</span><span class="tc-t">Seerah & Sejarah</span>
+        <span class="tc-s">Sahabat, Wali, Sejarah</span>
+        <span class="safe-tag">Syariah Safe</span>
+      </div>
+      <div class="tc" onclick="selectTopic(this,'doa-dzikir','Doa & Dzikir')">
+        <span class="tc-i">🤲</span><span class="tc-t">Doa & Dzikir</span>
+        <span class="tc-s">Doa harian, dzikir</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="lbl">Sub-Topik / Materi Spesifik</span>
+    <div id="subtopic-wrap" class="stopic-wrap"></div>
+    <input type="text" id="custom-subtopic" placeholder="Atau ketik sub-topik kustom…" style="margin-top:8px;"/>
+  </div>
+
+  <div class="card">
+    <span class="lbl">Gaya Visual</span>
+    <div class="style-grid">
+      <div class="st sel" onclick="selectStyle(this,'clay','3D Clay Diorama')">
+        <div class="st-i">🏺</div>
+        <div class="st-n">3D Clay Diorama</div>
+        <div class="st-d">Figur clay hangat, cozy, spiritual</div>
+        <span class="st-badge">+25% harga jual</span>
+      </div>
+      <div class="st" onclick="selectStyle(this,'kawaii','Kawaii Muslim')">
+        <div class="st-i">✨</div>
+        <div class="st-n">Kawaii Muslim</div>
+        <!-- FIX: was "cribi" → fixed to "chibi" -->
+        <div class="st-d">Chibi lucu, pastel, anak-anak</div>
+        <span class="st-badge">Bestseller Anak</span>
+      </div>
+      <div class="st" onclick="selectStyle(this,'geometri','Geometri Islami')">
+        <div class="st-i">🔷</div>
+        <div class="st-n">Geometri Islami</div>
+        <div class="st-d">Pola arabesque, flat clean</div>
+        <span class="st-badge">Adobe Stock Ready</span>
+      </div>
+      <div class="st" onclick="selectStyle(this,'kaligrafi','Kaligrafi Poster')">
+        <div class="st-i">✍️</div>
+        <div class="st-n">Kaligrafi Poster</div>
+        <div class="st-d">Arabic calligraphy focal point</div>
+        <span class="st-badge">Premium Print</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="lbl">Format & Ukuran</span>
+    <div class="sz-grid">
+      <div class="sz sel" onclick="selectSz(this,'square','Square','3000×3000px','Etsy · POD','1:1')">
+        <div class="sz-n">Square</div><div class="sz-d">3000×3000px</div><div class="sz-p">Etsy · POD</div>
+      </div>
+      <div class="sz" onclick="selectSz(this,'portrait','Portrait','2550×3300px','Adobe Stock','17:22')">
+        <div class="sz-n">Portrait</div><div class="sz-d">2550×3300px</div><div class="sz-p">Adobe Stock</div>
+      </div>
+      <div class="sz" onclick="selectSz(this,'a4','A4 Print','2480×3508px','Tokopedia · Cetak','1:1.41')">
+        <div class="sz-n">A4 Print</div><div class="sz-d">2480×3508px</div><div class="sz-p">Cetak lokal</div>
+      </div>
+      <div class="sz" onclick="selectSz(this,'landscape','Landscape','3840×2160px','Wall Art · POD','16:9')">
+        <div class="sz-n">Landscape</div><div class="sz-d">3840×2160px</div><div class="sz-p">Wall Art · POD</div>
+      </div>
+      <div class="sz" onclick="selectSz(this,'sticker','Sticker Pack','2000×2000px','Etsy Sticker','1:1')">
+        <div class="sz-n">Sticker Pack</div><div class="sz-d">2000×2000px</div><div class="sz-p">Etsy Sticker</div>
+      </div>
+      <div class="sz" onclick="selectSz(this,'sosmed','Sosmed','1080×1080px','Instagram · IG','1:1')">
+        <div class="sz-n">Sosmed</div><div class="sz-d">1080×1080px</div><div class="sz-p">Instagram</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="lbl">Target Platform Jual</span>
+    <div class="platform-row">
+      <!-- FIX: renamed class .pp → .ppl (avoid CSS conflict with prompt text) -->
+      <span class="ppl sel" onclick="togglePlatform(this,'Etsy')">🛍 Etsy</span>
+      <span class="ppl" onclick="togglePlatform(this,'Adobe Stock')">📸 Adobe Stock</span>
+      <span class="ppl" onclick="togglePlatform(this,'Gumroad')">🟢 Gumroad</span>
+      <span class="ppl" onclick="togglePlatform(this,'Tokopedia')">🛒 Tokopedia</span>
+      <span class="ppl" onclick="togglePlatform(this,'Shopee')">🔴 Shopee</span>
+    </div>
+  </div>
+
+</div><!-- /panel-infografis -->
+
+<!-- ── MODE: BUKU ── -->
+<div id="panel-buku" class="mode-panel">
+
+  <div class="card">
+    <span class="lbl">Judul & Tema Buku</span>
+    <input type="text" id="book-title" placeholder="Cth: Hewan dalam Al-Quran – Kisah Lebah Madu"/>
+
+    <span class="lbl" style="margin-top:10px;">Tema / Sub-Topik</span>
+    <div class="topic-grid" style="margin-top:4px;">
+      <div class="tc" onclick="selectBookTopic(this,'hewan-quran','Hewan dalam Al-Quran')">
+        <span class="tc-i">🐝</span><span class="tc-t">Hewan Al-Quran</span>
+        <span class="tc-s">Lebah, laba-laba, dll</span>
+      </div>
+      <div class="tc sel" onclick="selectBookTopic(this,'kisah-nabi','Kisah Nabi')">
+        <span class="tc-i">🌟</span><span class="tc-t">Kisah Nabi</span>
+        <span class="tc-s">Cerita Nabi bergambar</span>
+        <span class="safe-tag">Syariah Safe</span>
+      </div>
+      <div class="tc" onclick="selectBookTopic(this,'adab-akhlak','Adab & Akhlak')">
+        <span class="tc-i">🌻</span><span class="tc-t">Adab & Akhlak</span>
+        <span class="tc-s">Jujur, sopan, tolong</span>
+      </div>
+      <div class="tc" onclick="selectBookTopic(this,'ramadan-anak','Ramadan Anak')">
+        <span class="tc-i">🌙</span><span class="tc-t">Ramadan Anak</span>
+        <span class="tc-s">Puasa, tarawih, Eid</span>
+      </div>
+      <div class="tc" onclick="selectBookTopic(this,'doa-harian','Doa Sehari-hari')">
+        <span class="tc-i">🤲</span><span class="tc-t">Doa Harian</span>
+        <span class="tc-s">Doa makan, tidur, dll</span>
+      </div>
+      <div class="tc" onclick="selectBookTopic(this,'sahabat-nabi','Kisah Sahabat')">
+        <span class="tc-i">⭐</span><span class="tc-t">Kisah Sahabat</span>
+        <span class="tc-s">Abu Bakar, Umar, dll</span>
+        <span class="safe-tag">Syariah Safe</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="char-lock">
+      <div class="char-lock-title">🔒 KUNCI KARAKTER — DNA Konsistensi (wajib diisi)</div>
+      <input type="text" id="char-name" placeholder="Nama karakter: Cth. Zaid, Fatimah" style="margin-bottom:5px;"/>
+      <input type="text" id="char-look" placeholder="Cth: baju koko biru dongker, peci putih, kulit sawo matang, wajah bulat ceria, usia 7 tahun"/>
+      <div style="font-size:9.5px;color:#0e5c30;margin-top:5px;line-height:1.5;">💡 Makin detail makin konsisten. Sertakan: warna baju, warna kulit, model rambut/hijab, ekspresi khas, usia perkiraan.</div>
+    </div>
+
+    <div class="page-num-row">
+      <label>Jumlah halaman:</label>
+      <input type="number" id="page-count" value="5" min="1" max="20" onchange="renderPageInputs()"/>
+    </div>
+
+    <div id="scene-inputs"></div>
+    <button class="add-scene" onclick="addScene()">+ Tambah halaman / scene</button>
+  </div>
+
+  <div class="card">
+    <span class="lbl">Gaya Visual Buku</span>
+    <div class="style-grid">
+      <!-- FIX: .bst now shares CSS with .st -->
+      <div class="bst sel" onclick="selectBStyle(this,'clay','3D Clay Kids')">
+        <div class="st-i">🏺</div><div class="st-n">3D Clay Kids</div>
+        <div class="st-d">Hangat, chubby, cozy</div>
+        <span class="st-badge">Paling Laku</span>
+      </div>
+      <div class="bst" onclick="selectBStyle(this,'kawaii','Kawaii Soft')">
+        <div class="st-i">🌸</div><div class="st-n">Kawaii Soft</div>
+        <div class="st-d">Pastel, chibi, imut</div>
+        <span class="st-badge">SD/TK Friendly</span>
+      </div>
+      <div class="bst" onclick="selectBStyle(this,'watercolor','Watercolor')">
+        <div class="st-i">🎨</div><div class="st-n">Watercolor</div>
+        <div class="st-d">Lembut, artistik</div>
+        <span class="st-badge">Print Premium</span>
+      </div>
+      <div class="bst" onclick="selectBStyle(this,'flat','Flat Ilustrasi')">
+        <div class="st-i">🔲</div><div class="st-n">Flat Ilustrasi</div>
+        <div class="st-d">Bold, warna cerah</div>
+        <span class="st-badge">Buku Teks</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="lbl">Target Usia</span>
+    <div class="seg">
+      <button class="sb on" onclick="selSeg(this,'age','3-5')">3–5 Thn (TK)</button>
+      <button class="sb" onclick="selSeg(this,'age','6-8')">6–8 Thn (SD Awal)</button>
+      <button class="sb" onclick="selSeg(this,'age','9-12')">9–12 Thn (SD Atas)</button>
+    </div>
+  </div>
+
+</div><!-- /panel-buku -->
+
+<!-- ── MODE: KARAKTER ── -->
+<div id="panel-karakter" class="mode-panel">
+
+  <div class="card">
+    <span class="lbl">Jenis Karakter</span>
+    <div class="topic-grid">
+      <div class="tc sel" onclick="selectKarakter(this,'anak-laki','Anak Laki-laki Muslim')">
+        <span class="tc-i">👦</span><span class="tc-t">Anak Laki-laki</span>
+        <span class="tc-s">Baju koko, peci</span>
+      </div>
+      <div class="tc" onclick="selectKarakter(this,'anak-perempuan','Anak Perempuan Muslim')">
+        <span class="tc-i">👧</span><span class="tc-t">Anak Perempuan</span>
+        <span class="tc-s">Hijab, gamis</span>
+      </div>
+      <div class="tc" onclick="selectKarakter(this,'ibu','Ibu Muslim')">
+        <span class="tc-i">👩</span><span class="tc-t">Ibu Muslim</span>
+        <span class="tc-s">Hijab syar'i, hangat</span>
+      </div>
+      <div class="tc" onclick="selectKarakter(this,'ayah','Ayah Muslim')">
+        <span class="tc-i">👨</span><span class="tc-t">Ayah Muslim</span>
+        <span class="tc-s">Baju koko, jenggot</span>
+      </div>
+      <div class="tc" onclick="selectKarakter(this,'ustadz','Ustadz / Guru')">
+        <span class="tc-i">👳</span><span class="tc-t">Ustadz / Guru</span>
+        <span class="tc-s">Sorban, jubah</span>
+      </div>
+      <div class="tc" onclick="selectKarakter(this,'keluarga','Keluarga Muslim')">
+        <span class="tc-i">👨‍👩‍👧‍👦</span><span class="tc-t">Keluarga Muslim</span>
+        <span class="tc-s">Set lengkap keluarga</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="lbl">Aktivitas / Pose</span>
+    <div class="stopic-wrap" id="activity-wrap">
+      <span class="stopic sel" onclick="toggleActivity(this,'sedang membaca Al-Quran dengan khusyuk')">Baca Al-Quran</span>
+      <span class="stopic" onclick="toggleActivity(this,'sedang melaksanakan sholat berjamaah')">Sholat</span>
+      <span class="stopic" onclick="toggleActivity(this,'sedang berdoa dengan tangan menengadah penuh harap')">Berdoa</span>
+      <span class="stopic" onclick="toggleActivity(this,'sedang belajar ilmu agama dengan semangat')">Belajar</span>
+      <span class="stopic" onclick="toggleActivity(this,'sedang berbagi makanan dan bersedekah dengan senyuman')">Sedekah</span>
+      <span class="stopic" onclick="toggleActivity(this,'sedang tolong-menolong dengan teman')">Tolong-menolong</span>
+      <span class="stopic" onclick="toggleActivity(this,'sedang menyapa dengan senyuman ramah dan ucapan salam')">Senyum Sapa</span>
+      <span class="stopic" onclick="toggleActivity(this,'berdiri tegap anggun penuh keyakinan dan percaya diri')">Pose Anggun</span>
+    </div>
+    <input type="text" id="custom-activity" placeholder="Atau ketik aktivitas kustom…" style="margin-top:8px;"/>
+  </div>
+
+  <div class="card">
+    <span class="lbl">Gaya Visual Karakter</span>
+    <div class="style-grid">
+      <!-- FIX: .kst now shares CSS with .st -->
+      <div class="kst sel" onclick="selectKStyle(this,'clay','3D Clay')">
+        <div class="st-i">🏺</div><div class="st-n">3D Clay</div>
+        <div class="st-d">Chubby, warm, cozy</div>
+        <span class="st-badge">+25% premium</span>
+      </div>
+      <div class="kst" onclick="selectKStyle(this,'kawaii','Kawaii Chibi')">
+        <div class="st-i">✨</div><div class="st-n">Kawaii Chibi</div>
+        <div class="st-d">Cute, big eyes, pastel</div>
+        <span class="st-badge">Sticker ready</span>
+      </div>
+      <div class="kst" onclick="selectKStyle(this,'semi-real','Semi Realistis')">
+        <div class="st-i">🎭</div><div class="st-n">Semi Realistis</div>
+        <div class="st-d">Proporsional, dewasa</div>
+        <span class="st-badge">Adobe Stock</span>
+      </div>
+      <div class="kst" onclick="selectKStyle(this,'watercolor','Watercolor')">
+        <div class="st-i">🖌️</div><div class="st-n">Watercolor</div>
+        <div class="st-d">Artistic, soft blend</div>
+        <span class="st-badge">Print premium</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="lbl">Ekspresi & Suasana</span>
+    <div class="seg">
+      <button class="sb on" onclick="selSeg(this,'mood','ceria dan penuh semangat')">Ceria</button>
+      <button class="sb" onclick="selSeg(this,'mood','khusyuk dan penuh ketenangan batin')">Khusyuk</button>
+      <button class="sb" onclick="selSeg(this,'mood','bijaksana dan hangat')">Bijaksana</button>
+      <button class="sb" onclick="selSeg(this,'mood','penuh kasih sayang dan kelembutan')">Sayang</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="lbl">Output Format</span>
+    <div class="seg">
+      <button class="sb on" onclick="selSeg(this,'kfmt','isolated character on transparent background, PNG cutout ready')">Isolated / PNG</button>
+      <button class="sb" onclick="selSeg(this,'kfmt','masjid or garden Islamic setting as background')">Dengan Background</button>
+      <button class="sb" onclick="selSeg(this,'kfmt','multiple poses character sheet, 6 poses on white background, sticker pack layout')">Sticker Pack</button>
+    </div>
+  </div>
+
+</div><!-- /panel-karakter -->
+
+<!-- SHARED: AI Platform + Generate Btn -->
+<div class="card">
+  <span class="lbl">AI Platform Target</span>
+  <div class="ai-seg">
+    <button class="ai-b on" onclick="selAI(this,'nb2')">🍌 NB2</button>
+    <button class="ai-b" onclick="selAI(this,'mj')">⚓ MJ v7</button>
+    <button class="ai-b" onclick="selAI(this,'dalle')">✦ DALL·E 3</button>
+    <button class="ai-b" onclick="selAI(this,'firefly')">🔥 Firefly</button>
+  </div>
+  <span class="lbl" style="margin-top:10px;">DPI / Kualitas Output</span>
+  <div class="seg">
+    <button class="sb" onclick="selSeg(this,'dpi','72dpi')">72dpi (Web)</button>
+    <button class="sb" onclick="selSeg(this,'dpi','150dpi')">150dpi (Mid)</button>
+    <button class="sb on" onclick="selSeg(this,'dpi','300dpi')">300dpi (Print)</button>
+    <button class="sb" onclick="selSeg(this,'dpi','600dpi')">600dpi (Press)</button>
+  </div>
+</div>
+
+<div class="gen-row">
+  <button class="gen-btn" onclick="generateAll()">⚡ Generate Semua Prompt</button>
+  <button class="clr-btn" onclick="clearAll()">✕</button>
+</div>
+
+</div><!-- /sidebar -->
+
+<!-- ══════════════════ OUTPUT PANEL ══════════════════ -->
+<div class="output-panel">
+  <div class="out-tabs">
+    <button class="ot on" onclick="setOutTab('prompt-eng')">🇬🇧 English Prompt</button>
+    <button class="ot" onclick="setOutTab('prompt-ind')">🇮🇩 Prompt Indo</button>
+    <button class="ot" onclick="setOutTab('book-pages')">📖 Halaman Buku</button>
+    <button class="ot" onclick="setOutTab('seo-kw')">🏷️ SEO Keywords</button>
+    <button class="ot" onclick="setOutTab('stock-meta')">📦 Stock Metadata</button>
+    <button class="ot" onclick="setOutTab('tips')">💡 Tips & Niche</button>
+  </div>
+
+  <!-- ENGLISH PROMPT -->
+  <div id="tab-prompt-eng" class="tc-panel on">
+    <div id="out-eng">
+      <div class="empty-state">
+        <div class="empty-ic">☪️</div>
+        <div class="empty-t">Pilih topik & gaya visual</div>
+        <div class="empty-s">Klik "Generate Semua Prompt"<br>untuk membuat prompt siap paste ke AI</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INDONESIA PROMPT (bukan hanya listing — ini actual AI prompt dalam Bahasa Indonesia) -->
+  <div id="tab-prompt-ind" class="tc-panel">
+    <div id="out-ind">
+      <div class="empty-state">
+        <div class="empty-ic">🇮🇩</div>
+        <div class="empty-t">Prompt AI Bahasa Indonesia</div>
+        <div class="empty-s">Prompt siap pakai dalam Bahasa Indonesia<br>untuk NB2/Gemini + deskripsi listing Tokopedia/Shopee</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOOK PAGES -->
+  <div id="tab-book-pages" class="tc-panel">
+    <div id="out-book">
+      <div class="empty-state">
+        <div class="empty-ic">📖</div>
+        <div class="empty-t">Prompt per halaman buku</div>
+        <div class="empty-s">Aktifkan mode "Buku Cerita Anak"<br>dan generate untuk melihat prompt tiap halaman</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEO KEYWORDS -->
+  <div id="tab-seo-kw" class="tc-panel">
+    <div id="out-kw">
+      <div class="empty-state">
+        <div class="empty-ic">🏷️</div>
+        <div class="empty-t">SEO Keywords</div>
+        <div class="empty-s">Keyword otomatis untuk Etsy,<br>Adobe Stock, dan Gumroad (max 49)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STOCK METADATA (NEW) -->
+  <div id="tab-stock-meta" class="tc-panel">
+    <div id="out-meta">
+      <div class="empty-state">
+        <div class="empty-ic">📦</div>
+        <div class="empty-t">Adobe Stock & Etsy Metadata</div>
+        <div class="empty-s">Title, description, dan keywords siap<br>upload ke Adobe Stock & listing Etsy</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIPS & NICHE -->
+  <div id="tab-tips" class="tc-panel">
+    <div class="warn-ban">
+      ⚠️ <span><strong>Riset Pasar 2025:</strong> Konten Islam digital tumbuh +40%/tahun di Etsy. 3D Clay style command price premium 20–30%. Mulai dari Asmaul Husna + Akhlak + Ramadan untuk ROI terbaik.</span>
+    </div>
+    <div class="niche-list" style="margin-bottom:1rem;">
+      <div class="niche-item"><span class="niche-name">📿 Asmaul Husna</span><div class="niche-bar-wrap"><div class="niche-bar" style="width:97%"></div></div><span class="niche-pct">97%</span><span class="nbadge nb-pr">Premium</span></div>
+      <div class="niche-item"><span class="niche-name">🌟 Akhlak & Karakter</span><div class="niche-bar-wrap"><div class="niche-bar" style="width:95%"></div></div><span class="niche-pct">95%</span><span class="nbadge nb-hot">Terlaris</span></div>
+      <div class="niche-item"><span class="niche-name">🌙 Ramadan & Hari Raya</span><div class="niche-bar-wrap"><div class="niche-bar" style="width:93%"></div></div><span class="niche-pct">93%</span><span class="nbadge nb-sea">Seasonal</span></div>
+      <div class="niche-item"><span class="niche-name">📖 Quran & Hadits</span><div class="niche-bar-wrap"><div class="niche-bar" style="width:90%"></div></div><span class="niche-pct">90%</span><span class="nbadge nb-ev">Evergreen</span></div>
+      <div class="niche-item"><span class="niche-name">🕌 Rukun & Ibadah</span><div class="niche-bar-wrap"><div class="niche-bar" style="width:87%"></div></div><span class="niche-pct">87%</span><span class="nbadge nb-ev">Edu</span></div>
+      <div class="niche-item"><span class="niche-name">🏛️ Seerah & Sejarah</span><div class="niche-bar-wrap"><div class="niche-bar" style="width:83%"></div></div><span class="niche-pct">83%</span><span class="nbadge nb-pr">Niche</span></div>
+      <div class="niche-item"><span class="niche-name">🧒 Karakter Muslim</span><div class="niche-bar-wrap"><div class="niche-bar" style="width:80%"></div></div><span class="niche-pct">80%</span><span class="nbadge nb-ev">Growing</span></div>
+      <div class="niche-item"><span class="niche-name">✅ Halal & Haram</span><div class="niche-bar-wrap"><div class="niche-bar" style="width:75%"></div></div><span class="niche-pct">75%</span><span class="nbadge nb-ev">Edu</span></div>
+    </div>
+    <div class="tip-grid">
+      <div class="tip-card"><div class="tip-ic">🏺</div><div class="tip-t">3D Clay = +25% harga</div><div class="tip-d">Gunakan gaya clay untuk Etsy. Price premium vs flat design sudah terbukti dari data penjual top.</div></div>
+      <div class="tip-card"><div class="tip-ic">📦</div><div class="tip-t">Bundle 3 angle = 2–3× revenue</div><div class="tip-d">1 topik → 3 listing berbeda (overview, detail, diagram). Adobe Stock menghargai bundle lebih tinggi.</div></div>
+      <div class="tip-card"><div class="tip-ic">🌙</div><div class="tip-t">Stok Ramadan dari Januari</div><div class="tip-d">Upload konten Ramadan 60–90 hari sebelum bulan puasa agar terindeks sebelum peak season.</div></div>
+      <div class="tip-card"><div class="tip-ic">📖</div><div class="tip-t">Buku anak bilingual = harga 2×</div><div class="tip-d">Buku Indonesia–Inggris terbukti laku di Etsy global DAN Tokopedia lokal. Satu produk dua pasar.</div></div>
+      <div class="tip-card"><div class="tip-ic">🔒</div><div class="tip-t">Syariah Safe Prompt</div><div class="tip-d">Topik Nabi & Malaikat otomatis diarahkan ke simbol, cahaya, kaligrafi — tanpa penggambaran wajah.</div></div>
+      <div class="tip-card"><div class="tip-ic">📸</div><div class="tip-t">Adobe Stock: white BG</div><div class="tip-d">Gunakan pure white background untuk acceptance rate tertinggi di Adobe Stock dan Shutterstock.</div></div>
+    </div>
+  </div>
+
+</div><!-- /output-panel -->
+</div><!-- /layout -->
+</div><!-- /wrap -->
+
+<script>
+// ══ STATE ══
+let currentMode = 'infografis';
+let selectedTopic = 'asmaul-husna';
+let selectedTopicLabel = 'Asmaul Husna';
+let selectedSubtopic = '';
+let selectedStyle = 'clay';
+let selectedStyleLabel = '3D Clay Diorama';
+let selectedSz = 'square';
+let selectedSzLabel = 'Square 3000×3000px';
+let selectedSzPx = '3000×3000px';
+// FIX: AR is now stored separately and passed to MJ prompt
+let selectedSzAR = '1:1';
+let selectedPlatforms = ['Etsy'];
+let selectedAI = 'nb2';
+let selectedDPI = '300dpi';
+let selectedAge = '3-5';
+let selectedMood = 'ceria dan penuh semangat';
+let selectedKfmt = 'isolated character on transparent background, PNG cutout ready';
+let selectedBookTopic = 'kisah-nabi';
+let selectedBookTopicLabel = 'Kisah Nabi';
+let selectedBStyle = 'clay';
+let selectedBStyleLabel = '3D Clay Kids';
+let selectedKarakter = 'anak-laki';
+let selectedKarakterLabel = 'Anak Laki-laki Muslim';
+let selectedActivities = ['sedang membaca Al-Quran dengan khusyuk'];
+let selectedKStyle = 'clay';
+let selectedKStyleLabel = '3D Clay';
+let selectedKwItems = new Set();
+
+// ── SUBTOPIC DATABASE ──
+const subtopics = {
+  'asmaul-husna': ['Ar-Rahman & Ar-Rahim','Al-Malik (Raja Segala Raja)','Al-Quddus (Yang Maha Suci)','As-Salam (Sumber Kedamaian)','Al-Mumin (Pemberi Keamanan)','Al-Aziz (Yang Maha Perkasa)','Al-Jabbar & Al-Mutakabbir','Al-Khaliq (Sang Pencipta)','Ar-Razzaq (Pemberi Rezeki)','Al-Fattah (Pembuka Pintu Rahmat)','Al-Alim (Yang Maha Mengetahui)','Set 10 Nama Pertama','Set 99 Nama Lengkap (Kompendium)'],
+  'akhlak': ['4 Golongan Diharamkan Api Neraka','7 Golongan dalam Naungan Allah','Sifat-sifat Mukmin Sejati','Kejujuran (As-Shidq)','Sabar & Syukur','Ikhlas & Tawakal','Tolong-menolong (Ta\'awun)','Akhlak kepada Orang Tua','Adab Bertamu','Adab Makan & Minum','Menjaga Lisan dari Ghibah'],
+  'quran-hadits': ['Ayat Kursi (Al-Baqarah: 255)','Surah Al-Fatihah','Surah Al-Ikhlas','Surah Al-Falaq & An-Nas','Surah Yasin (Ayat Kunci)','Surah Ar-Rahman (31 Nikmat)','40 Hadits Arba\'in Nawawi','Hadits tentang Niat','Hadits Kebersihan Sebagian Iman','Hadits Silaturahmi','Hadits tentang Ilmu & Amal'],
+  'rukun-ibadah': ['5 Rukun Islam (Lengkap)','6 Rukun Iman','Tata Cara Sholat 5 Waktu','Tata Cara Wudhu Langkah demi Langkah','Tata Cara Tayammum','Panduan Puasa Ramadan','Zakat Fitrah & Maal','Perjalanan Ibadah Haji','Sholat Sunnah & Keutamaannya','Doa & Dzikir Setelah Sholat'],
+  'ramadan': ['Keutamaan Bulan Ramadan','Jadwal Kegiatan Ramadan Harian','Amalan Sunnah di Bulan Ramadan','Lailatul Qadar — Tanda & Cara Meraih','Zakat Fitrah (Waktu, Kadar, Cara)','Eid Mubarak / Idul Fitri','Idul Adha & Qurban','Tarawih & Witir','Tips Produktif Ramadan','Ramadan untuk Anak-Anak'],
+  'halal-haram': ['Makanan Halal & Haram','Minuman Islami','Transaksi Halal (Anti Riba)','Pakaian Muslimah & Muslim','Adab Pergaulan Islami','Hiburan Islami','Investasi Halal','Media Sosial Islami'],
+  'seerah': ['Abu Bakar Ash-Shiddiq','Umar bin Khattab','Utsman bin Affan','Ali bin Abi Thalib','Fatimah Az-Zahra','Bilal bin Rabah','Khadijah binti Khuwailid','Wali Songo','Perang Badar','Fathu Makkah (Pembebasan Makkah)','Isra\' Mi\'raj (Perjalanan Nabi)'],
+  'doa-dzikir': ['Dzikir Pagi Lengkap','Dzikir Sore Lengkap','Doa Sebelum & Sesudah Makan','Doa Masuk & Keluar Masjid','Doa untuk Orang Tua','Doa Sebelum & Bangun Tidur','Istighfar & Kalimat Taubat','Doa Mohon Rezeki Berkah','Doa Kesembuhan','Kumpulan Doa Harian Anak Muslim'],
+};
+
+// ── STYLE PROMPTS (IMPROVED) ──
+// FIX: "cribi" typo fixed → "chibi". Added composition + lighting per style.
+const stylePrompts = {
+  clay: 'ultra-soft 3D clay render, smooth matte clay sculpture texture, handcrafted clay figurines with rounded gentle forms, warm pastel clay earth-tone color palette (soft beige, muted sage green, warm ivory, gentle terracotta), cozy Islamic atmosphere, clay diorama composition on a small display platform, warm overhead studio lighting with soft diffused shadows, delicate fine clay detail work, professional product photography quality',
+  kawaii: 'kawaii chibi illustration style, oversized sparkly eyes with star-shaped highlights, soft pastel color palette, rounded cute chibi proportions (head slightly larger than body), kawaii Muslim character in modest clothing, joyful innocent expression, clean crisp digital illustration, flat 2D composition with soft drop shadow',
+  geometri: 'flat Islamic geometric infographic design, intricate arabesque zellige pattern border frame, deep emerald green and warm gold color scheme, clean structured information layout, Islamic geometric star motifs as decorative accents, modern professional flat vector style, clear visual hierarchy',
+  kaligrafi: 'premium Arabic calligraphy as central focal artwork, elegant Thuluth or Naskh script in gold, deep navy or forest green background, decorative Islamic geometric ornamental frame border, small explanatory typography in clean Latin font below, no human faces depicted, traditional Islamic calligraphic art composition',
+  watercolor: 'soft translucent watercolor illustration, gentle flowing brush strokes with natural pigment bloom, pastel watercolor wash palette, organic soft edges where colors blend, warm watercolor palette, dreamy artistic quality, professional children book watercolor illustration style',
+  flat: 'bold clean flat illustration, solid flat vector art, vibrant saturated colors, clear simple outlines, modern flat design, educational poster style, strong visual hierarchy, easy to read from a distance',
+  'semi-real': 'semi-realistic digital illustration, detailed anatomically proportional character, warm cinematic soft lighting, professional editorial character design, clean background, no extra limbs or distortions',
+};
+
+// ── TOPIC-SPECIFIC VISUAL CONTEXT ──
+const topicContext = {
+  'asmaul-husna': 'showing the divine name in elegant Arabic calligraphy with its Indonesian meaning, surrounded by subtle Islamic geometric patterns',
+  'akhlak': 'depicting Muslim characters demonstrating the noble character trait through a warm scene',
+  'quran-hadits': 'displaying the Quranic verse or hadith text in clear Arabic script with Indonesian translation and source citation',
+  'rukun-ibadah': 'illustrating the steps and pillars of Islamic worship with numbered annotations and clear instructional layout',
+  'ramadan': 'capturing the spiritual warmth and festive atmosphere of the holy month with crescent moon and lantern elements',
+  'halal-haram': 'presenting the Islamic guidance with clear visual YES/NO indicators and explanatory examples',
+  'seerah': 'representing the historical period through symbolic Islamic architecture, calligraphy, and landscape without depicting faces of companions unless verified',
+  'doa-dzikir': 'showing the Arabic supplication text with transliteration and Indonesian meaning in a peaceful devotional composition',
+};
+
+// ── SYARIAH SAFE REDIRECT (IMPROVED) ──
+// FIX: No longer blanket-flags all quran-hadits. Now only flags when subtopic specifically
+// involves Prophets or Angels. Surah/Ayat text infographics are NOT sensitive.
+function safeRedirect(topic, subtopic) {
+  // Topics where depicting figures is always sensitive
+  const alwaysSensitive = ['seerah'];
+  // Specific subtopic keywords that require symbolic treatment
+  const sensitiveKeywords = ['nabi','rasul','malaikat','prophet','angel','jibril','ibrahim','musa','isa','muhammad','sulaiman','yusuf','nuh','ayub'];
+  const sub = subtopic.toLowerCase();
+  const isSensitiveByKeyword = sensitiveKeywords.some(k => sub.includes(k));
+  const isSensitiveByTopic = alwaysSensitive.includes(topic);
+
+  if (isSensitiveByTopic || isSensitiveByKeyword) {
+    return {
+      safe: true,
+      note: '☪️ Syariah Safe Mode aktif: Konten ini mengandung figur Nabi/Malaikat. Visualisasi otomatis diganti ke representasi simbolik — cahaya bersinar, kaligrafi Arab, arsitektur masjid, lanskap suci — tanpa penggambaran wajah sesuai adab Islam.',
+      modifier: 'IMPORTANT: Do NOT depict any human face for prophets or angels. Represent them through: radiant divine light rays, Arabic calligraphy of their name, symbolic objects (staff, ark, scroll, fire from heaven), masjid architecture, desert landscape with golden light, spiritual glowing atmosphere. No facial representation of prophets, companions, or angels — follow Islamic artistic tradition.'
+    };
+  }
+  return { safe: false, modifier: '', note: '' };
+}
+
+// ── AI PLATFORM SUFFIX (FIXED) ──
+// FIX: NB2/Gemini no longer uses Midjourney flags (--ar, --q, --style are MJ-only)
+// FIX: AR is now dynamic based on selectedSzAR
+// FIX: DALL-E no longer claims "4K resolution" (meaningless for DALL-E 3)
+function getAISuffix(ai) {
+  const ar = selectedSzAR;
+  const suffixes = {
+    nb2: `\n\nOutput specifications: ${selectedSzPx} at ${selectedDPI}. Generate as a high quality professional digital illustration. No watermark. Ensure clean sharp details and accurate Islamic representation.`,
+    mj: `--ar ${ar} --v 7 --style raw --stylize 800 --q 2\n\n--no blurry, low quality, watermark, wrong arabic text, non-halal elements, faces of prophets or angels, inappropriate islamic imagery`,
+    dalle: `\n\nGenerate as a high-quality professional digital illustration at ${selectedSzPx}. Ensure crisp details, accurate Islamic artistic representation, and clean professional finish. No watermark or signature.`,
+    firefly: `\n\nAdobe Firefly 3 Image — Commercial use. Suitable for Adobe Stock submission. AI-generated, commercially safe illustration. Output: ${selectedSzPx} @ ${selectedDPI}. No watermark. Add Content Credentials if available.`,
+  };
+  return suffixes[ai] || '';
+}
+
+// ── GENERATE INFOGRAFIS (IMPROVED PROMPT QUALITY) ──
+function generateInfoPrompt() {
+  const subtopic = document.getElementById('custom-subtopic').value.trim() || selectedSubtopic;
+  const fullTopic = subtopic ? `${selectedTopicLabel}: ${subtopic}` : selectedTopicLabel;
+  const safe = safeRedirect(selectedTopic, subtopic);
+  const styleMod = stylePrompts[selectedStyle] || stylePrompts.clay;
+  const aiSuffix = getAISuffix(selectedAI);
+  const platforms = selectedPlatforms.join(', ');
+  const topicCtx = topicContext[selectedTopic] || '';
+
+  // IMPROVED: Prompt with proper composition, lighting, colors (no hex codes), and layout guide
+  const engPrompt = `${safe.safe ? 'Symbolic Islamic educational infographic illustration' : 'Islamic educational infographic illustration'} about: "${fullTopic}"
+
+VISUAL STYLE: ${styleMod}
+
+SUBJECT CONTEXT: ${topicCtx}
+
+COMPOSITION & LAYOUT:
+- Format: ${selectedSzPx} at ${selectedDPI}, aspect ratio ${selectedSzAR}
+- Background: pure white clean studio background, non-reflective
+- Layout: professional infographic design with clear visual hierarchy, organized information zones
+- Typography: Arabic text as primary decorative element, clean Indonesian/English labels
+- Color palette: deep emerald green, warm gold, ivory white, terracotta — classic Islamic color harmony (NO other color references)
+- Spacing: balanced negative space for educational breathing room
+
+ISLAMIC DESIGN ELEMENTS:
+- Subtle Islamic geometric pattern accents or borders
+- Arabic calligraphy as integrated design element (not decorative only)
+- Warm spiritual atmosphere appropriate for Islamic content
+${safe.safe ? '- ' + safe.modifier : '- Muslim character figures in modest Islamic clothing (hijab for women, koko/jubah for men) if any characters present'}
+
+QUALITY: High quality commercial print illustration, suitable for ${platforms}. Sharp details, no pixelation, no watermark.${aiSuffix}`;
+
+  const negativeEng = `Negative prompt: blurry, low quality, pixelated, watermark, inappropriate content, revealing clothing, non-halal elements, faces of prophets or angels, incorrect Arabic text, offensive imagery, anatomical errors, extra limbs, multiple heads, distorted proportions`;
+
+  // IMPROVED: Indonesian tab is now an actual AI prompt in Indonesian, PLUS product listing
+  const indAIPrompt = `Buat ilustrasi infografis Islam edukatif berkualitas tinggi tentang: "${fullTopic}"
+
+GAYA VISUAL: ${styleMod}
+
+KONTEKS SUBJEK: ${topicCtx}
+
+KOMPOSISI & TATA LETAK:
+- Format: ${selectedSzPx} pada ${selectedDPI}, rasio ${selectedSzAR}
+- Latar belakang: putih bersih, studio professional
+- Tata letak: desain infografis profesional dengan hierarki visual yang jelas
+- Tipografi: teks Arab sebagai elemen dekoratif utama, label Indonesia yang bersih
+- Palet warna: hijau zamrud gelap, emas hangat, putih gading, terracotta — harmoni warna Islam klasik
+- Elemen desain Islam: aksen pola geometri islami, kaligrafi Arab terintegrasi, suasana spiritual hangat
+${safe.safe ? '- ' + safe.modifier : '- Figur karakter Muslim berpakaian sopan islami (hijab untuk perempuan, koko/jubah untuk laki-laki)'}
+
+KUALITAS: Ilustrasi cetak komersial berkualitas tinggi untuk ${platforms}. Detail tajam, tanpa watermark.
+
+---
+📋 DESKRIPSI PRODUK (Tokopedia / Shopee / Etsy):
+${generateIndListing(fullTopic, subtopic)}`;
+
+  const seoKw = generateSEOKeywords(selectedTopic, subtopic, selectedStyle, 'infografis');
+  const stockMeta = buildStockMeta(fullTopic, subtopic, selectedStyle, 'infografis', seoKw);
+
+  renderOutput('infografis', engPrompt, negativeEng, indAIPrompt, seoKw, safe.note, stockMeta);
+}
+
+// ── GENERATE BUKU (IMPROVED CHARACTER LOCK) ──
+function generateBukuPrompt() {
+  const bookTitle = document.getElementById('book-title').value.trim() || `${selectedBookTopicLabel} — Buku Anak Islami`;
+  const charName = document.getElementById('char-name').value.trim() || 'Zaid';
+  const charLook = document.getElementById('char-look').value.trim() || 'anak laki-laki usia 7 tahun, baju koko biru dongker, peci putih bulat, kulit sawo matang hangat, wajah bulat ceria dengan pipi chubby, rambut pendek hitam rapi, mata besar ekspresif';
+  const styleMod = stylePrompts[selectedBStyle] || stylePrompts.clay;
+  const aiSuffix = getAISuffix(selectedAI);
+  const ageMap = { '3-5': 'toddler age 3–5, very simple scenes', '6-8': 'early school age 6–8, simple narrative', '9-12': 'school age 9–12, more detailed scenes' };
+  const ageLabel = ageMap[selectedAge] || ageMap['3-5'];
+  const safe = safeRedirect(selectedBookTopic, selectedBookTopicLabel);
+
+  // IMPROVED: Strong character DNA consistency prompt
+  const charDNA = `CHARACTER DNA — ${charName}: ${charLook}. CRITICAL FOR CONSISTENCY: maintain exact same hair/hijab color, exact same clothing color and style, same face shape and proportions, same skin tone, same eye size and expression style across ALL pages.`;
+
+  const coverEng = `Islamic children picture book COVER illustration.
+Book title: "${bookTitle}"
+${styleMod}
+${charDNA}
+Setting: warm Islamic environment (masjid garden, cozy home interior, or nature with Islamic architecture in background)
+Layout: beautiful book cover composition, large clear title area at top (leave blank white space for title text), author name area at bottom
+Age target: ${ageLabel}
+Background: warm rich colors suitable for book cover (NOT white)
+Quality: professional children book illustration, print-ready, vibrant colors${safe.safe ? '\n' + safe.modifier : ''}${aiSuffix}`;
+
+  const pagePrompts = [];
+  const sceneRows = document.querySelectorAll('.scene-input-val');
+  const total = sceneRows.length;
+
+  sceneRows.forEach((inp, i) => {
+    const scene = inp.value.trim() || `Halaman ${i+1}: adegan cerita`;
+    // IMPROVED: Explicit character repeat + consistency lock per page
+    const pageEng = `Islamic children picture book INTERIOR illustration — PAGE ${i+1} of ${total}
+
+SCENE: ${scene}
+
+${charDNA}
+⚠️ CHARACTER CONSISTENCY: This MUST be the exact same character as the cover and all previous pages. Same face, same clothing, same proportions — do not redesign.
+
+STYLE: ${styleMod}
+AGE TARGET: ${ageLabel}
+BACKGROUND: soft simple scene background matching the story context, uncluttered for child readability
+TEXT AREA: leave blank white/light area at bottom (15–20% of height) for story text caption
+MOOD: warm, nurturing, positive Islamic atmosphere${safe.safe ? '\n' + safe.modifier : ''}${aiSuffix}`;
+
+    pagePrompts.push({
+      num: i + 1, scene,
+      prompt: pageEng,
+      indonesian: `Halaman ${i+1}: "${scene}"\nKarakter ${charName} (${charLook}) dalam adegan tersebut. Gaya: ${selectedBStyleLabel}.`
+    });
+  });
+
+  const mjTip = selectedAI === 'mj' ? '\n\n💡 Midjourney Tip: Untuk konsistensi karakter antar halaman, gunakan --cref [URL gambar cover] di setiap prompt halaman setelah cover dihasilkan.' : '';
+
+  const indAIPrompt = `📚 Buku Cerita Anak Islam: "${bookTitle}"
+🎯 Target Usia: ${selectedAge} tahun
+🎨 Gaya: ${selectedBStyleLabel}
+👤 Karakter: ${charName} (${charLook})
+📖 Tema: ${selectedBookTopicLabel}
+${mjTip}
+
+📋 DESKRIPSI PRODUK (Tokopedia/Shopee):
+✨ Buku cerita anak Islam premium tentang ${selectedBookTopicLabel} dengan ilustrasi ${selectedBStyleLabel} yang hangat dan menarik untuk anak usia ${selectedAge} tahun. Cocok sebagai hadiah islami dan media pembelajaran.
+
+Format ideal:
+• PDF digital → Tokopedia/Shopee (Rp 15.000–45.000)
+• PDF bilingual Indonesia-Inggris → Etsy ($4–$12)
+• Cetak fisik A5 → POD lokal (Rp 35.000–75.000)`;
+
+  const seoKw = generateSEOKeywords(selectedBookTopic, selectedBookTopicLabel, selectedBStyle, 'buku');
+  const stockMeta = buildStockMeta(bookTitle, selectedBookTopicLabel, selectedBStyle, 'buku cerita anak Islam', seoKw);
+  renderBookOutput(coverEng, pagePrompts, indAIPrompt, seoKw, safe.note, stockMeta);
+}
+
+// ── GENERATE KARAKTER (IMPROVED NEGATIVE PROMPT) ──
+function generateKarakterPrompt() {
+  const activity = document.getElementById('custom-activity').value.trim() || selectedActivities.join(', ');
+  const styleMod = stylePrompts[selectedKStyle] || stylePrompts.clay;
+  const aiSuffix = getAISuffix(selectedAI);
+
+  const charDesc = {
+    'anak-laki': 'young Muslim boy, approximately age 6–10, wearing baju koko (traditional Islamic shirt), white peci (skull cap), gentle warm smile, wholesome appearance',
+    'anak-perempuan': 'young Muslim girl, approximately age 6–10, wearing colorful hijab and loose modest gamis dress, bright joyful expression, innocent wholesome appearance',
+    'ibu': 'Muslim mother, wearing proper hijab syar\'i (full coverage), modest elegant loose dress, warm nurturing motherly expression, gentle kind eyes',
+    'ayah': 'Muslim father, wearing koko shirt and prayer cap (peci), trimmed gentle beard, wise loving expression, calm and strong',
+    'ustadz': 'Islamic teacher / ustadz, wearing white jubah (robe) and sorban turban, holding tasbih prayer beads, wise scholarly expression, warm and approachable',
+    'keluarga': 'Muslim family group — father in koko and peci, mother in hijab and modest dress, children in Islamic clothing, harmonious loving family portrait, warm connection between members',
+  };
+
+  const engPrompt = `Islamic Muslim character illustration:
+
+CHARACTER: ${charDesc[selectedKarakter] || charDesc['anak-laki']}
+ACTIVITY: ${activity}
+VISUAL STYLE: ${styleMod}
+MOOD: ${selectedMood}
+OUTPUT FORMAT: ${selectedKfmt}
+
+COLOR PALETTE: warm Islamic tones — sage green, warm gold, ivory, soft terracotta, clean whites
+LIGHTING: warm soft ambient studio lighting, gentle shadows
+QUALITY: high quality commercial character illustration, ${selectedSzPx} at ${selectedDPI}
+USE: suitable for Islamic sticker packs, educational materials, dakwah content${aiSuffix}`;
+
+  // IMPROVED: Specific negative prompt for characters (added anatomical errors)
+  const negEng = `Negative prompt: non-Islamic clothing, revealing or tight outfits, inappropriate gestures, faces of prophets or angels, non-halal elements, Western casual dress without hijab for women, extra limbs, distorted fingers (must have exactly 5 fingers per hand), anatomical errors, multiple heads, fused body parts, low quality, blurry, watermark`;
+
+  const indAIPrompt = `Ilustrasi karakter Muslim Islam:
+
+KARAKTER: ${charDesc[selectedKarakter] || charDesc['anak-laki']} (dalam ${selectedKStyleLabel} style)
+AKTIVITAS: ${activity}
+GAYA: ${styleMod}
+EKSPRESI: ${selectedMood}
+FORMAT: ${selectedKfmt}
+
+Palet warna: hijau sage, emas hangat, gading, terracotta lembut
+Pencahayaan: studio ambient hangat
+Kualitas: ilustrasi karakter komersial premium, ${selectedSzPx} pada ${selectedDPI}
+
+💡 Ide Produk:
+• Sticker pack PNG (Etsy $3–8/pack)
+• Clipart bundle untuk desainer grafis
+• Karakter buku anak (reuse di 10+ halaman)
+• Konten sosial media dakwah
+• Poster cetak A4 ruang belajar anak`;
+
+  const seoKw = generateSEOKeywords('karakter', selectedKarakter, selectedKStyle, 'karakter');
+  const fullLabel = (charDesc[selectedKarakter]||'').split(',')[0];
+  const stockMeta = buildStockMeta(fullLabel + ' — Muslim Character', selectedKarakter, selectedKStyle, 'karakter Muslim ilustrasi', seoKw);
+  renderOutput('karakter', engPrompt, negEng, indAIPrompt, seoKw, '', stockMeta);
+}
+
+// ── INDONESIAN LISTING HELPER ──
+function generateIndListing(fullTopic, subtopic) {
+  const platforms = selectedPlatforms.join(', ');
+  return `✨ Infografis Islam Premium: ${fullTopic}
+Gaya Visual: ${selectedStyleLabel} | Ukuran: ${selectedSzLabel} • ${selectedDPI}
+Platform: ${platforms}
+
+Kegunaan:
+• Poster dinding ruang keluarga & kamar anak
+• Media pembelajaran sekolah Islam / TPQ / TPA
+• Hadiah ulang tahun & Hari Raya islami
+• Konten dakwah media sosial (siap upload)
+• Cetak sticker pack & merchandise`;
+}
+
+// ── SEO KEYWORDS GENERATOR ──
+function generateSEOKeywords(topic, subtopic, style, type) {
+  const baseKw = {
+    'asmaul-husna': ['99 names of Allah','asmaul husna print','Islamic wall art','Allah names poster','Muslim home decor','Islamic calligraphy print','99 names poster','Islamic nursery decor','Quran art print','Arabic names wall art','asmaul husna infographic'],
+    'akhlak': ['Islamic character poster','Muslim values print','akhlak infographic','Islamic education poster','Muslim children poster','Islamic virtue art','halal lifestyle print','Islamic parenting art','muslim character traits'],
+    'quran-hadits': ['Quran verse print','Islamic wall art','Arabic calligraphy print','hadith poster','Quran art digital download','surah print','Islamic scripture art','muslim prayer art','quran infographic'],
+    'rukun-ibadah': ['5 pillars of Islam poster','Islamic prayer guide','wudu steps poster','salah guide print','Islamic learning poster','Muslim child education','prayer times poster','rukun islam infographic'],
+    'ramadan': ['Ramadan poster','Eid Mubarak print','Ramadan decoration','Islamic holiday art','Ramadan activity poster','Eid gift printable','Ramadan Kareem print','Muslim holiday decor'],
+    'halal-haram': ['halal haram guide','Islamic food guide poster','halal lifestyle art','Muslim dietary guide','Islamic infographic print','halal certification guide'],
+    'seerah': ['Islamic history poster','sahabat story print','seerah infographic','Islamic timeline poster','Muslim children history','wali songo infographic'],
+    'doa-dzikir': ['Islamic dua print','Muslim prayer poster','daily dua printable','dhikr reminder art','Islamic supplication print','dzikir pagi petang'],
+    'kisah-nabi': ['prophet story children book','Islamic children book','Muslim kids book','Islamic bedtime stories','cerita nabi anak'],
+    'hewan-quran': ['Quran animals book','Islamic nature book','Quran science kids','animals in Quran printable'],
+    'adab-akhlak': ['Islamic manners book','Muslim etiquette children','Islamic values kids book','Muslim character book'],
+    'ramadan-anak': ['Ramadan kids book','children Ramadan activity','Muslim Ramadan printable','Islamic Eid book'],
+    'karakter': ['Muslim character clipart','Islamic character PNG','Muslim sticker pack','hijab character clipart','Islamic illustration bundle','muslim family clipart'],
+    'anak-laki': ['Muslim boy clipart','Islamic boy illustration','Muslim child PNG','baju koko character'],
+    'anak-perempuan': ['Muslim girl clipart','hijab girl illustration','Islamic girl PNG','gamis character clipart'],
+    'ibu': ['Muslim mother clipart','hijab mother illustration','Islamic woman PNG','modest dress character'],
+    'ayah': ['Muslim father clipart','Islamic man illustration','koko character PNG'],
+    'keluarga': ['Muslim family clipart','Islamic family illustration','Muslim family PNG','halal family art'],
+  };
+  const styleKw = {
+    clay: ['3D clay illustration','clay art printable','clay render poster','3D clay Islamic art'],
+    kawaii: ['kawaii Muslim art','cute Islamic illustration','kawaii Islamic printable','chibi Muslim character'],
+    geometri: ['Islamic geometric art','arabesque pattern print','Islamic pattern poster','zellige Islamic art'],
+    kaligrafi: ['Arabic calligraphy art','Islamic calligraphy print','calligraphy wall art','thuluth calligraphy'],
+    watercolor: ['watercolor Islamic art','watercolor Muslim print','Islamic watercolor poster'],
+    'semi-real': ['realistic Muslim illustration','editorial Islamic art','semi realistic character'],
+  };
+  const generalKw = ['digital download','printable art','instant download','wall art print','Islamic digital art','Muslim gift','Islamic printable','educational poster','high resolution','commercial use','dakwah content'];
+  const combined = [...(baseKw[topic] || baseKw['akhlak']), ...(baseKw[subtopic] || []), ...(styleKw[style] || []), ...generalKw];
+  return [...new Set(combined)].slice(0, 49);
+}
+
+// ── ADOBE STOCK / ETSY METADATA BUILDER (NEW) ──
+function buildStockMeta(fullTopic, subtopic, style, type, kws) {
+  const styleLabel = { clay:'3D Clay Illustration', kawaii:'Kawaii Chibi Illustration', geometri:'Islamic Geometric Design', kaligrafi:'Arabic Calligraphy Art', watercolor:'Watercolor Illustration', flat:'Flat Vector Illustration', 'semi-real':'Semi-Realistic Illustration' }[style] || 'Digital Illustration';
+  const titleRaw = `${fullTopic} — Islamic ${type.charAt(0).toUpperCase()+type.slice(1)} | ${styleLabel} | Digital Download`;
+  const title = titleRaw.length > 200 ? titleRaw.substring(0,197)+'...' : titleRaw;
+  const titleLen = title.length;
+  const kw49 = kws.slice(0,49);
+
+  const etsyTitle = `${fullTopic} Islamic Print | ${styleLabel} | Muslim Home Decor | Digital Download`.substring(0,140);
+  const etsyTags = kws.slice(0,13).join(', ');
+
+  return { title, titleLen, description:`Professional Islamic ${type} about "${fullTopic}" in ${styleLabel} style. ${selectedSzPx} at ${selectedDPI}. Suitable for Islamic home decor, Muslim education, mosque display, and dakwah content. High resolution print-ready digital file. Target platforms: ${selectedPlatforms.join(', ')}.`, keywords:kw49, etsyTitle, etsyTags };
+}
+
+// ── RENDER OUTPUT ──
+function renderOutput(mode, engPrompt, negEng, indDesc, seoKw, safeNote, stockMeta) {
+  let engHTML = '';
+  if (safeNote) engHTML += `<div class="safe-ban">☪️ <span>${safeNote}</span></div>`;
+  engHTML += makePromptBox('MAIN PROMPT', 'eng', engPrompt, `${selectedAI.toUpperCase()} — ${selectedSzPx} @ ${selectedDPI}`);
+  engHTML += makePromptBox('NEGATIVE PROMPT', 'nm', negEng, 'Paste di field Negative Prompt AI');
+  document.getElementById('out-eng').innerHTML = engHTML;
+
+  document.getElementById('out-ind').innerHTML = makePromptBox('PROMPT BAHASA INDONESIA + LISTING', 'ind', indDesc, 'Prompt AI dalam Bahasa Indonesia & deskripsi produk');
+
+  if (mode !== 'buku') {
+    document.getElementById('out-book').innerHTML = '<div class="empty-state"><div class="empty-ic">📖</div><div class="empty-t">Mode Infografis/Karakter aktif</div><div class="empty-s">Ganti ke mode Buku Cerita untuk prompt per halaman</div></div>';
+  }
+
+  renderKeywords(seoKw);
+  renderStockMeta(stockMeta);
+  setOutTab('prompt-eng');
+}
+
+function makePromptBox(tag, type, content, meta) {
+  const id = 'pb_' + Math.random().toString(36).slice(2,8);
+  // FIX: output text class is now .ptext (was .pp which conflicted with .ppl)
+  return `<div class="pb">
+    <div class="pb-head">
+      <span class="pb-tag ${type}">${tag}</span>
+      <span class="pb-meta">${meta}</span>
+      <button class="cp-btn" onclick="copyText('${id}', this)">📋 Copy</button>
+    </div>
+    <div class="ptext" id="${id}">${escHtml(content)}</div>
+  </div>`;
+}
+
+function renderBookOutput(coverEng, pagePrompts, indDesc, seoKw, safeNote, stockMeta) {
+  let engHTML = '';
+  if (safeNote) engHTML += `<div class="safe-ban">☪️ <span>${safeNote}</span></div>`;
+  engHTML += makePromptBox('COVER PROMPT', 'bk', coverEng, 'Prompt untuk sampul buku');
+  document.getElementById('out-eng').innerHTML = engHTML;
+
+  let bookHTML = `<div class="safe-ban" style="margin-bottom:.75rem;">📌 <span>Gunakan deskripsi karakter yang <strong>sama persis</strong> di setiap halaman. Untuk Midjourney: tambahkan <strong>--cref [URL cover]</strong> setelah cover selesai dihasilkan untuk konsistensi maksimal.</span></div>`;
+  bookHTML += `<div class="book-pages">`;
+  pagePrompts.forEach(p => {
+    const id = 'bp_' + Math.random().toString(36).slice(2,8);
+    bookHTML += `<div class="bpage">
+      <div class="bpage-head">
+        <div class="bpage-num">${p.num}</div>
+        <div class="bpage-title">Halaman ${p.num}: ${escHtml(p.scene)}</div>
+        <button class="cp-btn" onclick="copyText('${id}',this)">📋 Copy</button>
+      </div>
+      <div class="bpage-content" id="${id}">${escHtml(p.prompt)}</div>
+      <div class="bpage-ind">🇮🇩 ${escHtml(p.indonesian)}</div>
+    </div>`;
+  });
+  bookHTML += `</div>`;
+  document.getElementById('out-book').innerHTML = bookHTML;
+  document.getElementById('out-ind').innerHTML = makePromptBox('PROMPT INDO + DESKRIPSI PRODUK', 'ind', indDesc, 'Untuk Tokopedia · Shopee · Etsy description');
+
+  renderKeywords(seoKw);
+  renderStockMeta(stockMeta);
+  setOutTab('prompt-eng');
+}
+
+// ── RENDER STOCK METADATA (NEW) ──
+function renderStockMeta(meta) {
+  if (!meta) return;
+  const titleWarnClass = meta.titleLen > 190 ? 'warn' : '';
+  const html = `
+  <div class="meta-section">
+    <div class="meta-section-title">📸 Adobe Stock Metadata</div>
+    <div class="meta-field">
+      <label>Title <span style="font-size:9px;color:var(--txt3)">(max 200 chars)</span></label>
+      <div class="meta-val">${escHtml(meta.title)}</div>
+      <div class="meta-char ${titleWarnClass}">${meta.titleLen}/200 karakter</div>
+    </div>
+    <div class="meta-field">
+      <label>Description</label>
+      <div class="meta-val">${escHtml(meta.description)}</div>
+    </div>
+    <div class="meta-field">
+      <label>Keywords (${meta.keywords.length}/49) <button class="cp-btn" style="margin-left:8px;" onclick="copyRaw(\`${meta.keywords.join(', ').replace(/`/g,"'")}\`, this)">📋 Copy Keywords</button></label>
+      <div class="meta-val" style="font-size:10.5px">${meta.keywords.map(k=>`<span style="display:inline-block;background:var(--gr3);border-radius:12px;padding:2px 8px;margin:2px;font-size:10px;">${escHtml(k)}</span>`).join('')}</div>
+    </div>
+    <div style="margin-top:6px;font-size:10px;color:var(--txt3)">CATEGORY: Religion &amp; Spirituality → Islam &nbsp;|&nbsp; AI DECLARATION: ☑ Generative AI &nbsp;|&nbsp; SUBMIT AS: Illustration</div>
+  </div>
+  <div class="meta-section" style="margin-top:.65rem;">
+    <div class="meta-section-title">🛍️ Etsy Listing Metadata</div>
+    <div class="meta-field">
+      <label>Etsy Title <span style="font-size:9px;color:var(--txt3)">(max 140 chars)</span></label>
+      <div class="meta-val">${escHtml(meta.etsyTitle)}</div>
+      <div class="meta-char">${meta.etsyTitle.length}/140 karakter</div>
+    </div>
+    <div class="meta-field">
+      <label>Etsy Tags <span style="font-size:9px;color:var(--txt3)">(max 13 tags)</span> <button class="cp-btn" style="margin-left:8px;" onclick="copyRaw(\`${meta.etsyTags.replace(/`/g,"'")}\`, this)">📋 Copy Tags</button></label>
+      <div class="meta-val" style="font-size:10.5px">${escHtml(meta.etsyTags)}</div>
+    </div>
+  </div>`;
+  document.getElementById('out-meta').innerHTML = html;
+}
+
+function renderKeywords(kw) {
+  selectedKwItems.clear();
+  let html = `<div style="margin-bottom:8px;font-size:11px;color:var(--txt2);">Klik keyword untuk select/deselect. <strong>Max 49 keywords</strong> untuk Adobe Stock & Etsy.</div>`;
+  html += `<div class="kw-cloud" id="kw-cloud">`;
+  kw.forEach(k => { html += `<span class="kw-item" onclick="toggleKw(this,'${escJs(k)}')">${escHtml(k)}</span>`; });
+  html += `</div>`;
+  html += `<div class="kw-actions">
+    <button class="kw-btn" onclick="selectAllKw()">Select All</button>
+    <button class="kw-btn" onclick="deselectAllKw()">Deselect All</button>
+    <button class="kw-btn" onclick="copyKwSelected()">📋 Copy Selected</button>
+  </div>`;
+  html += `<div class="kw-count" id="kw-count">Terpilih: <strong>0</strong> / 49</div>`;
+  html += `<div class="kw-export" id="kw-export">Pilih keyword di atas, lalu klik Copy Selected</div>`;
+  document.getElementById('out-kw').innerHTML = html;
+}
+
+function toggleKw(el, kw) {
+  if (selectedKwItems.has(kw)) { selectedKwItems.delete(kw); el.classList.remove('ksel'); }
+  else if (selectedKwItems.size < 49) { selectedKwItems.add(kw); el.classList.add('ksel'); }
+  document.getElementById('kw-count').innerHTML = `Terpilih: <strong>${selectedKwItems.size}</strong> / 49`;
+  document.getElementById('kw-export').textContent = [...selectedKwItems].join(', ');
+}
+
+function selectAllKw() {
+  document.querySelectorAll('.kw-item').forEach(el => {
+    if (selectedKwItems.size < 49) { selectedKwItems.add(el.textContent.trim()); el.classList.add('ksel'); }
+  });
+  document.getElementById('kw-count').innerHTML = `Terpilih: <strong>${selectedKwItems.size}</strong> / 49`;
+  document.getElementById('kw-export').textContent = [...selectedKwItems].join(', ');
+}
+
+function deselectAllKw() {
+  selectedKwItems.clear();
+  document.querySelectorAll('.kw-item').forEach(el => el.classList.remove('ksel'));
+  document.getElementById('kw-count').innerHTML = `Terpilih: <strong>0</strong> / 49`;
+  document.getElementById('kw-export').textContent = 'Pilih keyword di atas, lalu klik Copy Selected';
+}
+
+function copyKwSelected() {
+  const txt = [...selectedKwItems].join(', ');
+  if (!txt) return;
+  navigator.clipboard.writeText(txt).catch(() => {});
+}
+
+// ── MAIN GENERATE ──
+function generateAll() {
+  if (currentMode === 'infografis') generateInfoPrompt();
+  else if (currentMode === 'buku') generateBukuPrompt();
+  else generateKarakterPrompt();
+}
+
+// ── UI HELPERS ──
+// FIX: setMode now takes `el` as parameter directly (no longer relies on global `event` object)
+function setMode(m, el) {
+  currentMode = m;
+  document.querySelectorAll('.mb').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('on'));
+  document.getElementById('panel-' + m).classList.add('on');
+  if (m === 'buku') renderPageInputs();
+}
+
+function selectTopic(el, id, label) {
+  document.querySelectorAll('#topic-grid .tc').forEach(t => t.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedTopic = id;
+  selectedTopicLabel = label;
+  selectedSubtopic = '';
+  renderSubtopics();
+}
+
+function renderSubtopics() {
+  const wrap = document.getElementById('subtopic-wrap');
+  const items = subtopics[selectedTopic] || [];
+  selectedSubtopic = '';
+  document.getElementById('custom-subtopic').value = '';
+  wrap.innerHTML = items.map(s =>
+    `<span class="stopic" onclick="selectSubtopic(this,'${escJs(s)}')">${escHtml(s)}</span>`
+  ).join('');
+}
+
+function selectSubtopic(el, s) {
+  document.querySelectorAll('#subtopic-wrap .stopic').forEach(t => t.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedSubtopic = s;
+  document.getElementById('custom-subtopic').value = s;
+}
+
+function selectStyle(el, id, label) {
+  document.querySelectorAll('.st').forEach(t => t.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedStyle = id;
+  selectedStyleLabel = label;
+}
+
+function selectBStyle(el, id, label) {
+  document.querySelectorAll('.bst').forEach(t => t.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedBStyle = id;
+  selectedBStyleLabel = label;
+}
+
+function selectKStyle(el, id, label) {
+  document.querySelectorAll('.kst').forEach(t => t.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedKStyle = id;
+  selectedKStyleLabel = label;
+}
+
+// FIX: selectSz now also stores AR separately
+function selectSz(el, id, label, px, use, ar) {
+  document.querySelectorAll('.sz').forEach(t => t.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedSz = id;
+  selectedSzLabel = `${label} ${px}`;
+  selectedSzPx = px;
+  selectedSzAR = ar || '1:1';
+}
+
+function togglePlatform(el, name) {
+  if (el.classList.contains('sel')) {
+    el.classList.remove('sel');
+    selectedPlatforms = selectedPlatforms.filter(p => p !== name);
+    if (selectedPlatforms.length === 0) { el.classList.add('sel'); selectedPlatforms = [name]; }
+  } else {
+    el.classList.add('sel');
+    selectedPlatforms.push(name);
+  }
+}
+
+function selAI(el, id) {
+  document.querySelectorAll('.ai-b').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  selectedAI = id;
+}
+
+function selSeg(el, group, val) {
+  el.closest('.seg').querySelectorAll('.sb').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  if (group === 'age') selectedAge = val;
+  else if (group === 'mood') selectedMood = val;
+  else if (group === 'kfmt') selectedKfmt = val;
+  else if (group === 'dpi') selectedDPI = val;
+}
+
+function selectBookTopic(el, id, label) {
+  document.querySelectorAll('#panel-buku .topic-grid .tc').forEach(t => t.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedBookTopic = id;
+  selectedBookTopicLabel = label;
+}
+
+function selectKarakter(el, id, label) {
+  document.querySelectorAll('#panel-karakter .topic-grid .tc').forEach(t => t.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedKarakter = id;
+  selectedKarakterLabel = label;
+}
+
+function toggleActivity(el, act) {
+  if (el.classList.contains('sel')) {
+    el.classList.remove('sel');
+    selectedActivities = selectedActivities.filter(a => a !== act);
+  } else {
+    el.classList.add('sel');
+    selectedActivities.push(act);
+  }
+}
+
+// ── BOOK PAGE INPUTS ──
+function renderPageInputs() {
+  const count = parseInt(document.getElementById('page-count').value) || 5;
+  const container = document.getElementById('scene-inputs');
+  const existing = Array.from(document.querySelectorAll('.scene-input-val')).map(i => i.value);
+  container.innerHTML = '';
+  for (let i = 0; i < count; i++) {
+    const val = existing[i] || '';
+    container.innerHTML += `<div class="scene-row">
+      <input type="text" class="scene-input-val" placeholder="Hal ${i+1}: Cth. Zaid menemukan lebah madu di taman masjid" value="${escAttr(val)}"/>
+    </div>`;
+  }
+}
+
+function addScene() {
+  const count = parseInt(document.getElementById('page-count').value) || 5;
+  document.getElementById('page-count').value = count + 1;
+  renderPageInputs();
+}
+
+// ── OUTPUT TABS ──
+function setOutTab(id) {
+  document.querySelectorAll('.ot').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.tc-panel').forEach(p => p.classList.remove('on'));
+  const tabEl = Array.from(document.querySelectorAll('.ot')).find(t => t.getAttribute('onclick') && t.getAttribute('onclick').includes(`'${id}'`));
+  if (tabEl) tabEl.classList.add('on');
+  const panel = document.getElementById('tab-' + id);
+  if (panel) panel.classList.add('on');
+}
+
+// ── COPY UTILS ──
+function copyText(id, btn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const text = el.textContent || el.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('ok'); btn.textContent = '✓ Copied!';
+    setTimeout(() => { btn.classList.remove('ok'); btn.textContent = '📋 Copy'; }, 1800);
+  }).catch(() => {
+    const t = document.createElement('textarea');
+    t.value = text; document.body.appendChild(t); t.select();
+    document.execCommand('copy'); document.body.removeChild(t);
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy', 1800);
+  });
+}
+
+function copyRaw(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('ok'); btn.textContent = '✓ Copied!';
+    setTimeout(() => { btn.classList.remove('ok'); btn.textContent = '📋 Copy'; }, 1800);
+  }).catch(() => {});
+}
+
+function clearAll() {
+  ['out-eng','out-ind','out-book','out-kw','out-meta'].forEach(id => {
+    const el = document.getElementById(id);
+    const emptyIcons = {'out-eng':'☪️','out-ind':'🇮🇩','out-book':'📖','out-kw':'🏷️','out-meta':'📦'};
+    const emptyTitles = {'out-eng':'Pilih topik & gaya visual','out-ind':'Prompt AI Bahasa Indonesia','out-book':'Prompt per halaman buku','out-kw':'SEO Keywords','out-meta':'Adobe Stock & Etsy Metadata'};
+    if(el) el.innerHTML = `<div class="empty-state"><div class="empty-ic">${emptyIcons[id]||'☪️'}</div><div class="empty-t">${emptyTitles[id]||''}</div></div>`;
+  });
+  setOutTab('prompt-eng');
+}
+
+// ── UTILS ──
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escJs(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+function escAttr(s) { return String(s).replace(/"/g,'&quot;'); }
+
+// ── INIT ──
+renderSubtopics();
+renderPageInputs();
+</script>
+</body>
+</html>
