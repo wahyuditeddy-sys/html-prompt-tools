@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Museum Teardown Prompt Builder</title>
+<style>
+:root{
+  --bg:#0f1117;--bg2:#161b22;--bg3:#1c2230;--bg4:#21283a;
+  --border:#2a3347;--border2:#334155;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
+  --blue:#3b82f6;--blue-bg:rgba(59,130,246,.12);--blue-border:rgba(59,130,246,.3);
+  --green:#22c55e;--green-bg:rgba(34,197,94,.12);--green-border:rgba(34,197,94,.3);
+  --amber:#f59e0b;--amber-bg:rgba(245,158,11,.12);--amber-border:rgba(245,158,11,.3);
+  --red:#ef4444;--red-bg:rgba(239,68,68,.12);--red-border:rgba(239,68,68,.3);
+  --purple:#a855f7;--purple-bg:rgba(168,85,247,.12);--purple-border:rgba(168,85,247,.3);
+  --cyan:#06b6d4;--cyan-bg:rgba(6,182,212,.12);--cyan-border:rgba(6,182,212,.3);
+  --radius:10px;--radius-sm:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.app{max-width:900px;margin:0 auto;padding:24px 16px}
+
+/* Header */
+.header{margin-bottom:24px}
+.header h1{font-size:20px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:10px}
+.header h1 span{font-size:22px}
+.header p{font-size:13px;color:var(--text2);margin-top:4px}
+.header-meta{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.meta-chip{font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--border);color:var(--text3)}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:20px;overflow-x:auto}
+.tab{font-size:13px;padding:8px 14px;border:none;background:none;color:var(--text3);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:.15s;flex-shrink:0}
+.tab:hover{color:var(--text2)}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);font-weight:500}
+.panel{display:none}.panel.active{display:block}
+
+/* Cards */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+.card-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+
+/* Badges */
+.badge{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500}
+.badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border)}
+.badge-green{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.badge-amber{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+.badge-red{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+.badge-purple{background:var(--purple-bg);color:var(--purple);border:1px solid var(--purple-border)}
+
+/* Form */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.grid2.full{grid-template-columns:1fr}
+.field label{font-size:11px;color:var(--text2);display:block;margin-bottom:5px;font-weight:500;letter-spacing:.03em}
+input,select,textarea{width:100%;font-size:13px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg3);color:var(--text);padding:7px 10px;outline:none;transition:.15s}
+input:focus,select:focus,textarea:focus{border-color:var(--blue);background:var(--bg4)}
+textarea{resize:vertical;min-height:64px;font-family:inherit;line-height:1.5}
+select option{background:var(--bg3)}
+
+/* Compliance bar */
+.compliance{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 4px}
+.c-item{font-size:11px;padding:3px 10px;border-radius:12px;display:flex;align-items:center;gap:4px}
+.c-ok{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.c-warn{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border)}
+
+/* Buttons */
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+button{font-size:13px;padding:7px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;color:var(--text2);cursor:pointer;transition:.15s;white-space:nowrap}
+button:hover{background:var(--bg3);color:var(--text)}
+button.primary{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:500}
+button.primary:hover{background:#2563eb}
+button.success{background:var(--green-bg);color:var(--green);border-color:var(--green-border)}
+.toast{font-size:12px;color:var(--green);display:none;align-items:center;gap:4px}
+
+/* Output */
+.output-box{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;font-family:'Cascadia Code','Fira Code',monospace;font-size:11.5px;color:#c4d4f0;white-space:pre-wrap;word-break:break-word;line-height:1.7;max-height:420px;overflow-y:auto;margin-top:0}
+.output-box::-webkit-scrollbar{width:4px}
+.output-box::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* Variations grid */
+.var-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media(max-width:700px){.var-grid{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}}
+.var-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px}
+.var-card-head{font-size:11px;font-weight:600;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
+.var-card .output-box{max-height:260px;font-size:10.5px}
+
+/* Keywords */
+.kw-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.kw{font-size:12px;padding:4px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;color:var(--text2);cursor:pointer;transition:.15s;user-select:none}
+.kw:hover{border-color:var(--blue);color:var(--blue)}
+.kw.selected{background:var(--blue-bg);border-color:var(--blue-border);color:var(--blue)}
+.kw-count{font-size:12px;color:var(--text3);margin-top:8px}
+.kw-count span{color:var(--amber);font-weight:600}
+.kw-export{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;font-size:12px;color:var(--text2);margin-top:10px;min-height:40px;word-break:break-all;line-height:1.6}
+
+/* Stock guide */
+.platform-list{display:flex;flex-direction:column;gap:8px}
+.plat-item{padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start}
+.plat-icon{font-size:20px;padding-top:2px}
+.plat-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}
+.plat-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.plat-badge{font-size:10px;padding:2px 8px;border-radius:10px;white-space:nowrap;align-self:start}
+
+/* Niche grid */
+.niche-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:600px){.niche-grid{grid-template-columns:1fr 1fr}}
+.niche-card{padding:10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:.15s}
+.niche-card:hover{border-color:var(--blue);background:var(--bg3)}
+.niche-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px}
+.niche-sub{font-size:11px;color:var(--text3)}
+.niche-score{font-size:10px;margin-top:4px;display:flex;align-items:center;gap:4px}
+
+/* Anatomy layers */
+.layer-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.layer{padding:10px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border)}
+.layer-head{font-size:11px;font-weight:600;margin-bottom:4px}
+.layer-body{font-size:12px;color:var(--text2);line-height:1.5}
+
+/* Divider */
+hr{border:none;border-top:1px solid var(--border);margin:12px 0}
+
+/* Tips */
+.tip{font-size:12px;color:var(--text2);background:var(--bg3);border-left:2px solid var(--blue);padding:8px 12px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;line-height:1.6}
+
+/* Section label */
+.sec-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <h1><span>🏛️</span> Museum Teardown Prompt Builder</h1>
+    <p>Generate museum-exhibit style technical infographic prompts for AI image generators — optimized for stock market sales.</p>
+    <div class="header-meta">
+      <span class="meta-chip">Gemini · Midjourney · DALL·E · Firefly · Grok</span>
+      <span class="meta-chip">Adobe Stock · Shutterstock · Etsy</span>
+      <span class="meta-chip">v2.0 Standalone</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="swTab('builder',this)">⚡ Prompt Builder</button>
+    <button class="tab" onclick="swTab('variations',this)">🔁 3 Variations</button>
+    <button class="tab" onclick="swTab('keywords',this)">🏷️ SEO Keywords</button>
+    <button class="tab" onclick="swTab('template',this)">📋 Master Template</button>
+    <button class="tab" onclick="swTab('stock',this)">📈 Stock Guide</button>
+  </div>
+
+  <!-- TAB: BUILDER -->
+  <div id="tab-builder" class="panel active">
+    <div class="card">
+      <div class="card-title">Konfigurasi Subjek <span class="badge badge-blue">Wajib</span></div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Nama Produk / Objek</label>
+          <input id="el" placeholder="cth: Mechanical Keyboard, Human Heart, V8 Engine" oninput="liveCompliance()" />
+        </div>
+        <div class="field">
+          <label>Kategori</label>
+          <select id="cat">
+            <option value="Consumer Electronics">Consumer Electronics</option>
+            <option value="Mechanical Device">Mechanical Device</option>
+            <option value="Biological / Anatomy">Biological / Anatomy</option>
+            <option value="Food & Beverage">Food &amp; Beverage</option>
+            <option value="Industrial Machine">Industrial Machine</option>
+            <option value="Vehicle / Engine">Vehicle / Engine</option>
+            <option value="Architecture / Building">Architecture / Building</option>
+            <option value="Scientific Instrument">Scientific Instrument</option>
+            <option value="Nature / Organism">Nature / Organism</option>
+            <option value="Toy / Game">Toy / Game</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Platform AI</label>
+          <select id="platform" onchange="liveCompliance()">
+            <option value="gemini">Gemini (Imagen 3)</option>
+            <option value="midjourney">Midjourney v7</option>
+            <option value="dalle">DALL·E 3</option>
+            <option value="firefly">Adobe Firefly</option>
+            <option value="grok">Grok Aurora</option>
+            <option value="universal">Universal (Multi-Platform)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Background Style</label>
+          <select id="bg" onchange="liveCompliance()">
+            <option value="pure white">Pure White ⭐ Stock-Friendly</option>
+            <option value="midnight black">Midnight Black — Editorial</option>
+            <option value="light gray #F5F5F5">Light Gray — Technical</option>
+            <option value="cream #FAFAF5">Cream — Museum Style</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Accent Color Scheme</label>
+          <select id="accent">
+            <option value="Red, Blue, Orange, Green">RBOG — Red, Blue, Orange, Green (Standard)</option>
+            <option value="Cyan, Magenta, Yellow, White">CMYW — Cyan, Magenta, Yellow (Scientific)</option>
+            <option value="Gold, Crimson, Navy, Silver">Premium — Gold, Crimson, Navy, Silver</option>
+            <option value="Teal, Amber, Coral, Sage">Natural — Teal, Amber, Coral, Sage</option>
+            <option value="Electric Blue, Neon Green, White">Tech Dark — Electric Blue, Neon Green, White</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Output Ratio</label>
+          <select id="ratio" onchange="liveCompliance()">
+            <option value="1:1 square">1:1 Square ⭐ Instagram / Stock</option>
+            <option value="16:9 landscape">16:9 Landscape — Wide / Banner</option>
+            <option value="4:5 portrait">4:5 Portrait — Print-Friendly</option>
+            <option value="3:4 portrait">3:4 Portrait — Editorial</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid2 full">
+        <div class="field">
+          <label>Komponen Utama — pisahkan koma (kosongkan untuk auto berdasarkan kategori)</label>
+          <textarea id="comps" placeholder="cth: PCB Mainboard, Mechanical Switch, Keycap, Stabilizer, USB-C Port, RGB LED Strip, Aluminum Plate"></textarea>
+        </div>
+      </div>
+
+      <!-- Compliance indicator -->
+      <div class="sec-label">Stock Compliance Check</div>
+      <div class="compliance" id="compliance-row">
+        <span class="c-item c-ok">✓ Background OK</span>
+        <span class="c-item c-ok">✓ Ratio OK</span>
+        <span class="c-item c-ok">✓ Platform OK</span>
+      </div>
+
+      <div class="btn-row">
+        <button class="primary" onclick="generate()">Generate Prompt ↗</button>
+        <button onclick="randomize()">🎲 Contoh Random</button>
+        <button onclick="loadFromLS()">⏱ Terakhir Dipakai</button>
+      </div>
+    </div>
+
+    <div id="output-section" style="display:none">
+      <div class="card">
+        <div class="card-title">
+          Generated Prompt
+          <span class="badge badge-green" id="platform-badge">Gemini</span>
+          <span class="badge badge-blue" id="ratio-badge">1:1</span>
+        </div>
+        <div class="output-box" id="output"></div>
+        <div class="btn-row">
+          <button onclick="copyPrompt('output','copy-ok')">Copy Prompt</button>
+          <button onclick="swTab('keywords',null);buildKeywords()">🏷️ Generate SEO Keywords</button>
+          <button onclick="swTab('variations',null);generateVars()">🔁 Generate 3 Variations</button>
+          <div class="toast" id="copy-ok">✓ Copied!</div>
+        </div>
+      </div>
+      <div class="tip">💡 <b>Stock Tips:</b> Background Pure White + Ratio 1:1 = peluang accept Adobe Stock & Shutterstock tertinggi. Resolusi render minimum 4000×4000px. Jangan sertakan teks/watermark kecuali label teknis bagian desain.</div>
+    </div>
+  </div>
+
+  <!-- TAB: VARIATIONS -->
+  <div id="tab-variations" class="panel">
+    <div class="card">
+      <div class="card-title">3 Angle Variations <span class="badge badge-purple">Auto dari Builder</span></div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Tiga variasi angle dan style berbeda dari subjek yang sama — cocok untuk bundle submission ke stock platform.</p>
+      <div class="btn-row" style="margin-bottom:14px">
+        <button class="primary" onclick="generateVars()">Generate 3 Variations ↗</button>
+        <button onclick="copyAllVars()">Copy All (Numbered)</button>
+        <div class="toast" id="copy-vars-ok">✓ All Copied!</div>
+      </div>
+      <div class="var-grid" id="var-grid">
+        <div class="var-card">
+          <div class="var-card-head"><span style="color:var(--blue)">VAR 1 — Hero Angle</span></div>
+          <div class="output-box" id="var1" style="color:var(--text3);font-size:12px">← Isi form di Prompt Builder lalu klik Generate</div>
+        </div>
+        <div class="var-card">
+          <div class="var-card-head"><span style="color:var(--purple)">VAR 2 — Close-Up Detail</span></div>
+          <div class="output-box" id="var2" style="color:var(--text3);font-size:12px">← Isi form di Prompt Builder lalu klik Generate</div>
+        </div>
+        <div class="var-card">
+          <div class="var-card-head"><span style="color:var(--amber)">VAR 3 — Flat Lay Schematic</span></div>
+          <div class="output-box" id="var3" style="color:var(--text3);font-size:12px">← Isi form di Prompt Builder lalu klik Generate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: SEO KEYWORDS -->
+  <div id="tab-keywords" class="panel">
+    <div class="card">
+      <div class="card-title">SEO Keyword Generator <span class="badge badge-amber">Adobe Stock · Shutterstock</span></div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px">Klik keyword untuk select/deselect. Adobe Stock max <b>49 keywords</b>, Shutterstock max <b>50</b>. Klik <b>Copy Selected</b> untuk export.</p>
+
+      <div class="grid2">
+        <div class="field">
+          <label>Subjek (auto dari Builder atau ketik manual)</label>
+          <input id="kw-el" placeholder="cth: Mechanical Keyboard" />
+        </div>
+        <div class="field">
+          <label>Kategori</label>
+          <select id="kw-cat">
+            <option value="Consumer Electronics">Consumer Electronics</option>
+            <option value="Mechanical Device">Mechanical Device</option>
+            <option value="Biological / Anatomy">Biological / Anatomy</option>
+            <option value="Food & Beverage">Food &amp; Beverage</option>
+            <option value="Industrial Machine">Industrial Machine</option>
+            <option value="Vehicle / Engine">Vehicle / Engine</option>
+            <option value="Architecture / Building">Architecture / Building</option>
+            <option value="Scientific Instrument">Scientific Instrument</option>
+            <option value="Nature / Organism">Nature / Organism</option>
+            <option value="Toy / Game">Toy / Game</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row" style="margin-bottom:14px">
+        <button class="primary" onclick="buildKeywords()">Generate Keywords</button>
+        <button onclick="selectAll()">Select All</button>
+        <button onclick="deselectAll()">Deselect All</button>
+        <button class="success" onclick="copyKeywords()">Copy Selected</button>
+        <div class="toast" id="copy-kw-ok">✓ Copied!</div>
+      </div>
+
+      <div class="kw-count">Selected: <span id="kw-sel-count">0</span> / 49 (Adobe Stock limit)</div>
+      <div class="kw-grid" id="kw-grid"></div>
+      <hr>
+      <div class="sec-label">Export (comma-separated)</div>
+      <div class="kw-export" id="kw-export">Pilih keyword di atas lalu klik Copy Selected</div>
+    </div>
+  </div>
+
+  <!-- TAB: MASTER TEMPLATE -->
+  <div id="tab-template" class="panel">
+    <div class="card">
+      <div class="card-title">Universal Master Template <span class="badge badge-amber">Copy &amp; Customize</span></div>
+      <div class="output-box" id="master-template"></div>
+      <div class="btn-row">
+        <button onclick="copyPrompt('master-template','copy-master-ok')">Copy Master Template</button>
+        <div class="toast" id="copy-master-ok">✓ Copied!</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Struktur Anatomi Prompt — 4 Layer System</div>
+      <div class="layer-grid">
+        <div class="layer">
+          <div class="layer-head" style="color:var(--blue)">LAYER 1 — Objective</div>
+          <div class="layer-body">Subject + rendering style + camera angle. Ini "headline" visual yang menentukan tone keseluruhan.</div>
+        </div>
+        <div class="layer">
+          <div class="layer-head" style="color:var(--amber)">LAYER 2 — Layout &amp; Annotation</div>
+          <div class="layer-body">Title block, callout boxes, leader lines. Elemen infographic yang membedakan dari foto biasa.</div>
+        </div>
+        <div class="layer">
+          <div class="layer-head" style="color:var(--green)">LAYER 3 — Material &amp; Style</div>
+          <div class="layer-body">Texture, lighting, color density, linework. Kualitas render yang menentukan harga jual.</div>
+        </div>
+        <div class="layer">
+          <div class="layer-head" style="color:var(--red)">LAYER 4 — Technical Spec</div>
+          <div class="layer-body">Aspect ratio, DPI, quality modifiers. Output specification untuk platform compliance.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: STOCK GUIDE -->
+  <div id="tab-stock" class="panel">
+    <div class="card">
+      <div class="card-title">Platform Requirements untuk Stock Sales</div>
+      <div class="platform-list">
+        <div class="plat-item">
+          <div class="plat-icon">🅰</div>
+          <div>
+            <div class="plat-name">Adobe Stock</div>
+            <div class="plat-desc">Min 4MP · No watermark/teks selain label desain · Wajib declare AI-generated · Background putih/transparan diutamakan · Max 49 keywords · Title max 200 char</div>
+          </div>
+          <span class="badge badge-green plat-badge">Top Pick</span>
+        </div>
+        <div class="plat-item">
+          <div class="plat-icon">🔴</div>
+          <div>
+            <div class="plat-name">Shutterstock</div>
+            <div class="plat-desc">Min 4MP · Wajib tandai AI-generated · Infographic teknikal sangat diminati untuk editorial &amp; educational licensing · Max 50 keywords</div>
+          </div>
+          <span class="badge badge-blue plat-badge">High Demand</span>
+        </div>
+        <div class="plat-item">
+          <div class="plat-icon">📷</div>
+          <div>
+            <div class="plat-name">iStock / Getty Images</div>
+            <div class="plat-desc">Standar ketat untuk AI content · Lebih fokus ke editorial use · Technical infographic masuk kategori editorial illustration · Proses review lebih lama</div>
+          </div>
+          <span class="badge badge-amber plat-badge">Selective</span>
+        </div>
+        <div class="plat-item">
+          <div class="plat-icon">🛍</div>
+          <div>
+            <div class="plat-name">Etsy (Digital Download)</div>
+            <div class="plat-desc">Tidak ada batasan AI, tapi harus transparan ke buyer · Bundle 5–20 gambar lebih laku · Harga $3–$25 per set · Niche terlaris: anatomy charts, educational posters</div>
+          </div>
+          <span class="badge badge-purple plat-badge">Bundle Friendly</span>
+        </div>
+        <div class="plat-item">
+          <div class="plat-icon">🟠</div>
+          <div>
+            <div class="plat-name">Freepik Premium</div>
+            <div class="plat-desc">AI content diterima, harus dilabeli · Sangat relevan untuk audience desainer &amp; educator · Royalty model berbeda (per download) · Cocok untuk volume tinggi</div>
+          </div>
+          <span class="badge badge-blue plat-badge">Volume Play</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🔥 Niche Paling Profitable — Museum Teardown Style</div>
+      <div class="niche-grid" id="niche-grid"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💡 Submission Strategy</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="tip">📦 <b>Bundle Rule:</b> Submit 1 subjek × 3 angle (hero + close-up + schematic) = 1 bundle. Harga bundle 2–3× lebih tinggi dari single image di Etsy.</div>
+        <div class="tip">🎯 <b>Keyword Strategy:</b> Gunakan campuran high-volume keywords (infographic, technical) + long-tail (mechanical keyboard exploded view). Jangan spam generic keywords.</div>
+        <div class="tip">⚡ <b>Rejection Prevention:</b> Background pure white, tidak ada teks yang terlihat seperti watermark, pastikan aspect ratio sesuai minimum requirement platform.</div>
+        <div class="tip">📅 <b>Upload Cadence:</b> 5–10 gambar per minggu lebih efektif daripada upload massal 1x. Algoritma platform menyukai contributor yang konsisten aktif.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─── MASTER TEMPLATE ───────────────────────────────────────────
+const MASTER=`# MUSEUM EXHIBIT TECHNICAL INFOGRAPHIC PROMPT
+# Universal Version — Compatible: Gemini, Midjourney, DALL·E, Firefly, Grok
+
+## OBJECTIVE:
+Create a museum-exhibit style technical infographic of [ELEMENT], depicted as a
+photorealistic, 45-degree isometric 3D teardown render slightly tilted to reveal
+extreme depth, complex internal architecture, and multi-layered dimension.
+
+## LAYOUT & ANNOTATIONS:
+- Place a hand-drawn rectangular title block in the top-left corner:
+  bold title text "[ELEMENT NAME] — ANATOMICAL STUDY"
+- Include 6–10 technical callout boxes attached to key components
+  via thin, precise black leader lines
+- Each callout: SHORT component name (UPPERCASE) + 1-line function descriptor
+- No dense paragraphs. No complex numbering systems.
+- Optional: small scale bar and compass rose in bottom-right corner
+
+## EXPLODED VIEW PHYSICS:
+- True 45-degree isometric explosion — parts burst outward from central axis
+- NOT a simple vertical stack. Reveal depth and parallax between layers
+- Transparent glass-like outer casing with multiple cutaway sections
+- Internal components must be visible AND aesthetically arranged
+
+## MATERIAL & TEXTURE:
+[SPECIFY BASED ON SUBJECT]
+- Electronics: PCB traces amber-glowing, metal brushed-grain, glass refractive
+- Organic/Bio: tissue translucency, fibrous surfaces, fluid-like membranes
+- Mechanical: machined metal edges, rubber gaskets matte-textured, chrome
+- All: ultra-crisp macro photography-style micro texture
+
+## STYLE & COMPOSITION:
+- Seamless blend: photorealistic 3D rendering + stylized black-ink linework
+- Educational museum-exhibit aesthetic with balanced negative space
+- Background: [BACKGROUND COLOR] — pure, non-reflective, no gradients
+- Lighting: cool diffused overhead + warm underlighting on internals + blue rim light
+- Accent color density: 10–15% of composition
+- Accent colors: [ACCENT COLORS] — flow arrows, highlight zones, energy paths
+- Dominant: black-and-white technical linework
+
+## QUALITY MODIFIERS:
+- Ultra-high detail, 8K photorealistic render
+- iFixit teardown meets WIRED magazine editorial illustration
+- Museum-quality scientific illustration precision
+- No lens distortion, no chromatic aberration, studio-clean output
+
+## ASPECT RATIO: [RATIO]
+## OUTPUT: Single image, no watermarks except integrated technical labels`;
+
+// ─── COMPONENT AUTO-MAP (all 10 categories) ────────────────────
+const COMP_MAP={
+  "Consumer Electronics":"[OUTER SHELL/CASING] → [DISPLAY PANEL/SCREEN] → [MAINBOARD PCB] → [BATTERY CELL ARRAY] → [THERMAL COOLING MODULE] → [CONNECTOR PORTS] → [SENSOR ARRAY] → [SPEAKER MODULE]",
+  "Mechanical Device":"[OUTER HOUSING] → [DRIVE MECHANISM] → [GEAR ASSEMBLY] → [MOTOR UNIT] → [BEARINGS & SHAFT] → [CONTROL INTERFACE] → [POWER SUPPLY] → [STRUCTURAL FRAME]",
+  "Biological / Anatomy":"[OUTER MEMBRANE/SKIN] → [CONNECTIVE TISSUE LAYER] → [PRIMARY ORGAN CHAMBERS] → [VASCULAR NETWORK] → [NEURAL PATHWAYS] → [CELLULAR MICROSTRUCTURES] → [FLUID SYSTEMS]",
+  "Food & Beverage":"[OUTER SKIN/SHELL] → [PROTECTIVE MEMBRANE] → [FLAVOUR COMPOUND LAYER] → [NUTRIENT MATRIX] → [SEED/CORE] → [VOLATILE AROMATIC COMPOUNDS] → [STRUCTURAL CELLULAR MATRIX]",
+  "Industrial Machine":"[PROTECTIVE ENCLOSURE] → [MAIN DRIVE SHAFT] → [HYDRAULIC SYSTEM] → [ELECTRICAL CONTROL PANEL] → [ACTUATOR ASSEMBLY] → [PNEUMATIC LINES] → [SENSOR NETWORK] → [SAFETY MECHANISMS]",
+  "Vehicle / Engine":"[ENGINE BLOCK] → [CYLINDER HEAD] → [PISTON ASSEMBLY] → [CRANKSHAFT] → [VALVE TRAIN & CAMSHAFT] → [FUEL INJECTION SYSTEM] → [COOLING SYSTEM] → [EXHAUST MANIFOLD]",
+  "Architecture / Building":"[OUTER FACADE/CLADDING] → [STRUCTURAL SKELETON] → [LOAD-BEARING WALLS] → [FLOOR PLATE SYSTEM] → [MECHANICAL/HVAC CORE] → [PLUMBING NETWORK] → [ELECTRICAL CONDUITS] → [FOUNDATION SYSTEM]",
+  "Scientific Instrument":"[OUTER PROTECTIVE CASING] → [OPTICAL/SENSOR ELEMENT] → [PRECISION MECHANISM] → [CALIBRATION SYSTEM] → [SIGNAL PROCESSING UNIT] → [DATA INTERFACE] → [POWER REGULATION MODULE]",
+  "Nature / Organism":"[OUTER PROTECTIVE LAYER] → [EPIDERMIS/BARK] → [VASCULAR TRANSPORT SYSTEM] → [STORAGE TISSUE] → [REPRODUCTIVE STRUCTURES] → [ROOT/ANCHOR SYSTEM] → [SYMBIOTIC MICROBIOME LAYER]",
+  "Toy / Game":"[OUTER SHELL/BODY] → [STRUCTURAL CHASSIS] → [MECHANISM ASSEMBLY] → [ELECTRONIC CONTROL BOARD] → [BATTERY COMPARTMENT] → [JOINT/ARTICULATION SYSTEM] → [SURFACE DETAIL LAYER]"
+};
+
+// ─── PLATFORM SUFFIXES ──────────────────────────────────────────
+const PLAT_SUFFIX={
+  midjourney:"\n\n--ar 1:1 --v 7 --style raw --q 2 --chaos 10",
+  dalle:"\n\nStyle: photorealistic technical illustration, museum exhibit quality, ultra-detailed 4K render",
+  firefly:"\n\nGenerative match: photorealistic, technical illustration, museum quality. Avoid text overlays.",
+  grok:"\n\nHigh fidelity render, museum exhibit technical diagram, ultra-detailed photorealistic",
+  gemini:"",
+  universal:""
+};
+
+// ─── EXAMPLES ───────────────────────────────────────────────────
+const EXAMPLES=[
+  {el:"Mechanical Keyboard",cat:"Consumer Electronics",comps:"PCB Mainboard, Mechanical Switch (Cherry MX), Keycap Set, Plate Stabilizer, USB-C Controller, RGB LED Strip, Aluminum Top Plate, Foam Sound Dampener"},
+  {el:"Arabica Coffee Bean",cat:"Food & Beverage",comps:"Silver Skin Layer, Parchment Husk, Mucilage Coating, Coffee Cherry Pulp, Endosperm Core, Volatile Aromatic Oils, Lipid Layer, Protein Matrix"},
+  {el:"Human Heart",cat:"Biological / Anatomy",comps:"Left Ventricle, Right Ventricle, Ascending Aorta, Pulmonary Artery, Mitral Valve, Tricuspid Valve, Coronary Artery Network, Sinoatrial Node, Pericardium"},
+  {el:"V8 Engine",cat:"Vehicle / Engine",comps:"Cylinder Block, Cylinder Head, Pistons x8, Crankshaft, Twin Camshafts, Intake Manifold, Exhaust Header, Oil Pan, Timing Chain"},
+  {el:"Beehive",cat:"Nature / Organism",comps:"Hexagonal Honeycomb Cell, Royal Jelly Chamber, Brood Nursery Cell, Honey Storage Cell, Propolis Resin Layer, Queen Breeding Cell, Wax Secretion Gland, Ventilation Channel"},
+  {el:"Acoustic Guitar",cat:"Mechanical Device",comps:"Soundboard (Spruce Top), Back Panel, Side Ribs, Neck/Fingerboard, Truss Rod, Bridge Saddle, Bracing System, Sound Hole Rosette, Tuning Machines"},
+  {el:"Espresso Machine",cat:"Consumer Electronics",comps:"Boiler Unit, Pump Motor, Portafilter Basket, Steam Wand, Pressure Gauge, Water Reservoir, Group Head, Thermal Block, Control PCB"},
+  {el:"Telescope (Reflector)",cat:"Scientific Instrument",comps:"Primary Mirror, Secondary Mirror, Eyepiece Lens, Focuser Mechanism, Optical Tube, Equatorial Mount, Counterweight Shaft, Finder Scope, Dew Shield"},
+  {el:"Sourdough Bread",cat:"Food & Beverage",comps:"Crust Layer, Crumb Structure, Air Pocket Matrix, Gluten Network, Fermentation Bubble, Bran Fleck, Maillard Crust Crystals, Yeast Culture Layer"},
+  {el:"Mosque (Traditional)",cat:"Architecture / Building",comps:"Main Dome Structure, Minaret Tower, Prayer Hall Floor, Mihrab Niche, Qibla Wall, Ablution Fountain, Muqarnas Ceiling, Geometric Tile System, Structural Arches"}
+];
+
+// ─── NICHES ─────────────────────────────────────────────────────
+const NICHES=[
+  {title:"Human Anatomy",sub:"Heart, Brain, Eye, Lung",score:98,color:"var(--red)"},
+  {title:"Consumer Tech",sub:"Smartphone, AirPods, Laptop",score:95,color:"var(--blue)"},
+  {title:"Engine & Motor",sub:"V8, Electric Motor, Jet",score:92,color:"var(--amber)"},
+  {title:"Food Science",sub:"Coffee Bean, Chocolate, Bread",score:88,color:"var(--amber)"},
+  {title:"Nature & Biology",sub:"Beehive, Coral, Plant Cell",score:85,color:"var(--green)"},
+  {title:"Architecture",sub:"Mosque, Skyscraper, House",score:82,color:"var(--purple)"},
+  {title:"Scientific Instruments",sub:"Microscope, Telescope, MRI",score:80,color:"var(--cyan)"},
+  {title:"Musical Instruments",sub:"Guitar, Piano, Violin",score:78,color:"var(--purple)"},
+  {title:"Kitchen Appliances",sub:"Espresso Machine, Blender",score:75,color:"var(--amber)"},
+  {title:"Toy & Gadget",sub:"LEGO, Rubik's Cube, RC Car",score:72,color:"var(--blue)"},
+  {title:"Weapons & Tools",sub:"Swiss Knife, Katana, Firearm",score:70,color:"var(--red)"},
+  {title:"Space & Aerospace",sub:"Rocket, Satellite, Space Suit",score:88,color:"var(--cyan)"}
+];
+
+// ─── KEYWORD BANK ───────────────────────────────────────────────
+const KW_BASE=["technical infographic","exploded view","museum exhibit","scientific illustration","cutaway diagram","anatomy poster","infographic art","detailed illustration","educational poster","technical diagram","cross section","engineering diagram","blueprint style","architectural drawing","technical art"];
+const KW_STYLE=["isometric 3D","photorealistic render","black and white linework","museum quality","ultra detailed","8K render","editorial illustration","WIRED magazine style","iFixit teardown style"];
+const KW_USE=["stock photo","digital download","wall art print","educational material","science poster","interior decor","modern wall art","printable art","office wall decor"];
+const KW_CAT={
+  "Consumer Electronics":["electronic components","PCB circuit board","technology art","gadget illustration","circuit diagram","electronic teardown","keyboard art","tech poster"],
+  "Biological / Anatomy":["human anatomy","medical illustration","anatomy chart","biology poster","organ diagram","medical art","anatomical study","body systems"],
+  "Food & Beverage":["food science","botanical illustration","food cross section","ingredient diagram","food art","culinary science","coffee art","botanical art"],
+  "Vehicle / Engine":["engine diagram","automotive art","engine cutaway","mechanical drawing","car engine art","engineering print","automotive poster","engine anatomy"],
+  "Architecture / Building":["architectural diagram","building section","architectural art","cross section building","structural diagram","architectural print"],
+  "Nature / Organism":["nature illustration","biology diagram","natural history","organism anatomy","nature art","scientific nature","biology art","ecosystem diagram"],
+  "Industrial Machine":["industrial design","machine diagram","industrial art","machinery cutaway","technical engineering","industrial poster"],
+  "Scientific Instrument":["scientific equipment","laboratory diagram","optical instrument","precision instrument","science illustration","laboratory art"],
+  "Mechanical Device":["mechanical engineering","gear diagram","mechanical art","mechanism illustration","engineering art","precision mechanics"],
+  "Toy / Game":["toy design","game illustration","product diagram","toy anatomy","product art","childhood nostalgia","collector art"]
+};
+
+// ─── STATE ───────────────────────────────────────────────────────
+let selKw=new Set();
+
+// ─── CORE FUNCTIONS ──────────────────────────────────────────────
+function buildPrompt(el,cat,plat,bg,accent,ratio,userComps){
+  const comps=userComps||COMP_MAP[cat]||"[OUTER LAYER] → [MIDDLE STRUCTURE] → [CORE COMPONENTS] → [MICRO ELEMENTS]";
+  const pNames={gemini:'Gemini (Imagen 3)',midjourney:'Midjourney v7',dalle:"DALL·E 3",firefly:'Adobe Firefly',grok:'Grok Aurora',universal:'Universal'};
+  const suffix=PLAT_SUFFIX[plat]||'';
+  return `# MUSEUM EXHIBIT TECHNICAL INFOGRAPHIC
+# Subject: ${el} | Platform: ${pNames[plat]}
+
+## OBJECTIVE:
+Create a museum-exhibit style technical infographic of a ${el} (${cat}),
+depicted as a photorealistic, 45-degree isometric 3D teardown render,
+slightly tilted to reveal extreme depth, complex internal architecture,
+and multi-layered dimension.
+
+## EXPLODED ANATOMY:
+Components radially exploded from central axis (core → outward):
+${comps}
+
+Transparent glass-like outer casing with cutaway sections.
+Internal architecture fully visible. True spatial explosion — NOT a vertical stack.
+
+## LAYOUT & ANNOTATIONS:
+- Top-left: hand-drawn rectangular title block
+  → "${el.toUpperCase()} — TECHNICAL TEARDOWN"
+- 6–10 technical callout boxes connected via thin black leader lines
+- Each label: COMPONENT NAME (bold, uppercase) + brief function descriptor
+- Bottom-right: optional scale bar + edition mark
+
+## STYLE & COMPOSITION:
+- Visual blend: photorealistic 3D render + black-ink technical architectural linework
+- Museum exhibit aesthetic — educational, precise, cinematic depth
+- Background: ${bg}, pure, non-reflective, no gradient
+- Lighting: cool overhead diffused + warm amber underlighting on internals + blue rim
+- Accent colors (10–15% density): ${accent}
+  → Used on: flow arrows, highlight zones, energy paths, callout accents
+- Dominant visual language: black-and-white technical linework
+
+## QUALITY:
+Photorealistic 8K, ultra-detailed micro texture, studio-clean,
+no lens distortion, museum-grade scientific illustration precision,
+iFixit teardown meets WIRED editorial aesthetic${suffix}
+
+## ASPECT RATIO: ${ratio}
+## OUTPUT: Single image, no watermarks except integrated technical labels`;
+}
+
+function buildVar(el,cat,bg,accent,ratio,varNum){
+  const comps=document.getElementById('comps').value.trim()||COMP_MAP[cat]||"[LAYERS]";
+  const configs=[
+    {name:"Hero Angle — 45° Isometric",angle:"45-degree isometric 3D exploded view, dramatic depth",cam:"slight downward tilt 10°, maximum component separation, all layers visible simultaneously",extra:"Dramatic studio lighting, deep shadow beneath each component layer, cinema-quality depth of field on internals"},
+    {name:"Close-Up Detail — Core Focus",angle:"extreme close-up macro render of the core internal section",cam:"near-orthographic projection, 0° tilt, single focal plane",extra:"Ultra-macro texture detail, each component fills 80% of frame, callout lines zoomed in, visible material micro-texture"},
+    {name:"Flat Lay Schematic — Blueprint Style",angle:"perfect top-down orthographic flat layout, all components arranged like a product schematic",cam:"90° bird's-eye view, zero perspective distortion",extra:"Blueprint grid overlay, component shadows flat and minimal, WIRED magazine editorial layout style, components neatly arranged with spacing"}
+  ];
+  const c=configs[varNum-1];
+  return `# MUSEUM TEARDOWN — VAR ${varNum}: ${c.name}
+# Subject: ${el} (${cat})
+
+## VIEW STYLE: ${c.angle}
+Camera: ${c.cam}
+
+## COMPONENTS:
+${comps}
+
+## SPECIAL TREATMENT:
+${c.extra}
+
+## STYLE:
+Background: ${bg} · Accent: ${accent}
+Lighting: cool diffused overhead + warm amber internal glow + blue rim
+Black-ink technical linework · 8K photorealistic · museum-grade precision
+
+## ANNOTATION:
+Title block: "${el.toUpperCase()} — VAR ${varNum}"
+6–8 callout boxes · thin black leader lines · UPPERCASE labels
+
+## RATIO: ${ratio}
+## OUTPUT: Single clean image, technical labels only`;
+}
+
+function generate(){
+  const el=document.getElementById('el').value.trim()||'[ELEMENT]';
+  const cat=document.getElementById('cat').value;
+  const plat=document.getElementById('platform').value;
+  const bg=document.getElementById('bg').value;
+  const accent=document.getElementById('accent').value;
+  const ratio=document.getElementById('ratio').value;
+  const comps=document.getElementById('comps').value.trim();
+
+  const pBadge={gemini:'Gemini',midjourney:'Midjourney v7',dalle:'DALL·E 3',firefly:'Adobe Firefly',grok:'Grok Aurora',universal:'Universal'};
+  document.getElementById('platform-badge').textContent=pBadge[plat]||plat;
+  document.getElementById('ratio-badge').textContent=ratio.split(' ')[0];
+
+  const prompt=buildPrompt(el,cat,plat,bg,accent,ratio,comps);
+  document.getElementById('output').textContent=prompt;
+  document.getElementById('output-section').style.display='block';
+
+  // sync to keywords tab
+  document.getElementById('kw-el').value=el;
+  document.getElementById('kw-cat').value=cat;
+
+  saveToLS();
+  document.getElementById('output').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function generateVars(){
+  const el=document.getElementById('el').value.trim()||'[ELEMENT]';
+  const cat=document.getElementById('cat').value;
+  const bg=document.getElementById('bg').value;
+  const accent=document.getElementById('accent').value;
+  const ratio=document.getElementById('ratio').value;
+  if(!el||el==='[ELEMENT]'){alert('Isi Nama Produk/Objek di tab Prompt Builder terlebih dahulu!');return;}
+  [1,2,3].forEach(i=>{
+    document.getElementById('var'+i).textContent=buildVar(el,cat,bg,accent,ratio,i);
+  });
+}
+
+function copyAllVars(){
+  const all=[1,2,3].map(i=>`=== VARIATION ${i} ===\n`+document.getElementById('var'+i).textContent).join('\n\n');
+  navigator.clipboard.writeText(all);
+  showToast('copy-vars-ok');
+}
+
+// ─── KEYWORDS ────────────────────────────────────────────────────
+function buildKeywords(){
+  const el=document.getElementById('kw-el').value.trim();
+  const cat=document.getElementById('kw-cat').value;
+
+  const elWords=el.split(/[\s,]+/).filter(w=>w.length>2).map(w=>w.toLowerCase());
+  const catKw=KW_CAT[cat]||[];
+
+  const allKw=[...new Set([
+    ...elWords,
+    ...[`${el.toLowerCase()} diagram`,`${el.toLowerCase()} anatomy`,`${el.toLowerCase()} exploded view`,`${el.toLowerCase()} infographic`,`${el.toLowerCase()} cross section`,`${el.toLowerCase()} cutaway`].filter(k=>el.length>2),
+    ...KW_BASE,...KW_STYLE,...KW_USE,...catKw
+  ])].slice(0,80);
+
+  selKw=new Set(allKw.slice(0,49));
+  renderKwGrid(allKw);
+  updateKwExport();
+}
+
+function renderKwGrid(kws){
+  const g=document.getElementById('kw-grid');
+  g.innerHTML=kws.map(k=>`<span class="kw${selKw.has(k)?' selected':''}" onclick="toggleKw(this,'${k.replace(/'/,"\\'")}')">
+    ${k}</span>`).join('');
+  updateKwCount();
+}
+
+function toggleKw(el,k){
+  if(selKw.has(k))selKw.delete(k);
+  else if(selKw.size<49)selKw.add(k);
+  el.classList.toggle('selected',selKw.has(k));
+  updateKwCount();updateKwExport();
+}
+
+function updateKwCount(){document.getElementById('kw-sel-count').textContent=selKw.size;}
+
+function updateKwExport(){
+  document.getElementById('kw-export').textContent=selKw.size>0?[...selKw].join(', '):'Belum ada keyword yang dipilih';
+}
+
+function selectAll(){
+  document.querySelectorAll('.kw').forEach(el=>{
+    const k=el.textContent.trim();
+    if(selKw.size<49)selKw.add(k);
+    el.classList.toggle('selected',selKw.has(k));
+  });
+  updateKwCount();updateKwExport();
+}
+
+function deselectAll(){
+  selKw.clear();
+  document.querySelectorAll('.kw').forEach(el=>el.classList.remove('selected'));
+  updateKwCount();updateKwExport();
+}
+
+function copyKeywords(){
+  if(!selKw.size){alert('Pilih minimal 1 keyword!');return;}
+  navigator.clipboard.writeText([...selKw].join(', '));
+  showToast('copy-kw-ok');
+}
+
+// ─── COMPLIANCE ──────────────────────────────────────────────────
+function liveCompliance(){
+  const bg=document.getElementById('bg').value;
+  const ratio=document.getElementById('ratio').value;
+  const plat=document.getElementById('platform').value;
+  const el=document.getElementById('el').value.trim();
+
+  const items=[];
+  items.push({ok:bg.includes('white'),label:`Background: ${bg.includes('white')?'✓ White (Stock-safe)':'⚠ Non-white (lower acceptance)'}`});
+  items.push({ok:ratio.startsWith('1:1'),label:`Ratio: ${ratio.startsWith('1:1')?'✓ 1:1 Square (Optimal)':'ℹ '+ratio.split(' ')[0]+' (OK)'}`});
+  items.push({ok:plat!=='grok',label:`Platform: ${plat==='grok'?'ℹ Grok (limited)':'✓ '+plat.charAt(0).toUpperCase()+plat.slice(1)}`});
+  items.push({ok:el.length>0,label:el.length>0?'✓ Subject filled':'⚠ Subject empty'});
+
+  document.getElementById('compliance-row').innerHTML=items.map(i=>
+    `<span class="c-item ${i.ok?'c-ok':'c-warn'}">${i.label}</span>`
+  ).join('');
+}
+
+// ─── UTILS ───────────────────────────────────────────────────────
+function swTab(id,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  else document.querySelectorAll('.tab').forEach((t,i)=>{
+    const ids=['builder','variations','keywords','template','stock'];
+    if(ids[i]===id)t.classList.add('active');
+  });
+  document.getElementById('tab-'+id).classList.add('active');
+  if(id==='template')document.getElementById('master-template').textContent=MASTER;
+  if(id==='stock')renderNiches();
+}
+
+function copyPrompt(srcId,toastId){
+  navigator.clipboard.writeText(document.getElementById(srcId).textContent);
+  showToast(toastId);
+}
+
+function showToast(id){
+  const el=document.getElementById(id);
+  el.style.display='flex';
+  setTimeout(()=>el.style.display='none',2200);
+}
+
+function randomize(){
+  const ex=EXAMPLES[Math.floor(Math.random()*EXAMPLES.length)];
+  document.getElementById('el').value=ex.el;
+  document.getElementById('cat').value=ex.cat;
+  document.getElementById('comps').value=ex.comps;
+  liveCompliance();
+  generate();
+}
+
+function saveToLS(){
+  localStorage.setItem('mtb_last',JSON.stringify({
+    el:document.getElementById('el').value,
+    cat:document.getElementById('cat').value,
+    platform:document.getElementById('platform').value,
+    bg:document.getElementById('bg').value,
+    accent:document.getElementById('accent').value,
+    ratio:document.getElementById('ratio').value,
+    comps:document.getElementById('comps').value
+  }));
+}
+
+function loadFromLS(){
+  const s=localStorage.getItem('mtb_last');
+  if(!s){alert('Belum ada data yang tersimpan. Gunakan Generate Prompt terlebih dahulu.');return;}
+  const d=JSON.parse(s);
+  document.getElementById('el').value=d.el||'';
+  document.getElementById('cat').value=d.cat||'Consumer Electronics';
+  document.getElementById('platform').value=d.platform||'gemini';
+  document.getElementById('bg').value=d.bg||'pure white';
+  document.getElementById('accent').value=d.accent||'Red, Blue, Orange, Green';
+  document.getElementById('ratio').value=d.ratio||'1:1 square';
+  document.getElementById('comps').value=d.comps||'';
+  liveCompliance();
+  generate();
+}
+
+function renderNiches(){
+  const g=document.getElementById('niche-grid');
+  if(g.innerHTML)return;
+  g.innerHTML=NICHES.map(n=>`
+    <div class="niche-card" onclick="loadNiche('${n.title}')">
+      <div class="niche-title">${n.title}</div>
+      <div class="niche-sub">${n.sub}</div>
+      <div class="niche-score">
+        <span style="color:${n.color};font-weight:600;font-size:12px">${n.score}%</span>
+        <span style="color:var(--text3);font-size:11px">profitability score</span>
+      </div>
+    </div>`).join('');
+}
+
+function loadNiche(title){
+  swTab('builder',null);
+  document.querySelectorAll('.tab')[0].classList.add('active');
+  const n=NICHES.find(x=>x.title===title);
+  if(n){
+    document.getElementById('el').value=n.sub.split(',')[0].trim();
+    document.getElementById('cat').value=
+      title==='Human Anatomy'||title==='Nature & Biology'?'Biological / Anatomy':
+      title==='Consumer Tech'?'Consumer Electronics':
+      title==='Engine & Motor'?'Vehicle / Engine':
+      title==='Food Science'?'Food & Beverage':
+      title==='Architecture'?'Architecture / Building':
+      title==='Scientific Instruments'?'Scientific Instrument':
+      title==='Musical Instruments'||title==='Kitchen Appliances'?'Mechanical Device':
+      title==='Toy & Gadget'?'Toy / Game':'Consumer Electronics';
+    liveCompliance();
+  }
+}
+
+// ─── INIT ────────────────────────────────────────────────────────
+liveCompliance();
+</script>
+</body>
+</html>
